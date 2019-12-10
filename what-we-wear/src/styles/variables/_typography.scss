@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css?family=Baskervville|Roboto:400,400i,700&display=swap');
+
+$titleFont: 'Baskervville', serif;
+
+$regularFont: 'Roboto', sans-serif;
+
+@mixin regular(){
+    font-family: $regularFont;
+    font-weight: 400;
+}
+@mixin italic(){
+    font-family: $regularFont;
+    font-weight: 400i;
+}
+@mixin bold(){
+    font-family: $regularFont;
+    font-weight: 700;
+}
+h1{
+    font-size: 3em;
+    font-family: $titleFont;
+    font-weight: normal;
+}
