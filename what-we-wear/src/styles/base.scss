@@ -2,7 +2,29 @@
 
 @import "./variables/colors";
 @import "./variables/typography";
+@import "./variables/mixins";
 body{
     background-color: $dark;
     color: $one;
+}
+#loader{
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: $neon;
+    .fullNumber{
+        font-size: 12em;
+    }
+    .decimal{
+        font-size: 4em;
+    }
+    .percent{ 
+        font-weight: normal;
+        font-size: 12em;
+    }
+    &.finished{
+        color: $one;
+        @include glow($one, $medium-dark);
+    }
 }

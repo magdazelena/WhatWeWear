@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import './styles/base.scss';
+import LoadingApp from './pages/LoadingApp';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>'Sup?</h1>
+        <h1><LoadingApp loading="true"/></h1>
       </div>
     );
   }

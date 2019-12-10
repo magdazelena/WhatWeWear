@@ -1,9 +1,10 @@
-@import url('https://fonts.googleapis.com/css?family=Baskervville|Roboto:400,400i,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Baskervville|Tomorrow|Roboto:400,400i,700&display=swap');
 
 $titleFont: 'Baskervville', serif;
 
 $regularFont: 'Roboto', sans-serif;
 
+$neon: 'Tomorrow', sans-serif;
 @mixin regular(){
     font-family: $regularFont;
     font-weight: 400;

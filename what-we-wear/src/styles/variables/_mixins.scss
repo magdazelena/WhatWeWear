@@ -1,0 +1,11 @@
+@mixin glow($baseColor, $foreColor){
+    animation: glow 1s ease-in-out infinite alternate;
+    @keyframes glow {
+        from {
+          text-shadow: 0 0 10px $baseColor, 0 0 20px $baseColor, 0 0 30px $foreColor, 0 0 40px $foreColor, 0 0 50px $foreColor, 0 0 60px $foreColor, 0 0 70px $foreColor;
+        }
+        to {
+          text-shadow: 0 0 20px $baseColor, 0 0 30px lighten($foreColor, .7), 0 0 40px lighten($foreColor, .7), 0 0 50px lighten($foreColor, .7), 0 0 60px lighten($foreColor, .7), 0 0 70px lighten($foreColor, .7), 0 0 80px lighten($foreColor, .7)
+        }
+      }
+}
