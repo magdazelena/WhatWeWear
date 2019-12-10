@@ -1,17 +1,18 @@
 import React, {Component} from 'react';
-import {gsap} from 'gsap';
-import {SplitText} from 'gsap/SplitText';
 import {TweenMax} from 'gsap/all';
 import texts from '../dictionary/en.json';
 class LoadingApp extends Component{
-    state={
-        loaded: false,
-        counter: 0.00
-    }
     
+    constructor(props){
+        super(props);
+        this.state={
+                loaded: false,
+                 counter: 0.00
+            }
+        this.headingRef = null;
+    }
     componentDidMount(){
-        gsap.registerPlugin(SplitText);
-        this.startAnimating()
+        this.startAnimating();
     }
     componentDidUpdate(prevProps, prevState){
         // if(this.props.loading !== prevProps.loading){
@@ -48,12 +49,17 @@ class LoadingApp extends Component{
     }
     animateText = () =>{
         //extended from https://codepen.io/natewiley/pen/xGyZXp Nate Wiley
-        const text = new SplitText(texts.pageOne.description);
+        
+        const text = texts.pageOne.description.split('');
+        console.log(text)
         let random = (min, max) =>{
             return (Math.random() * (max - min)) + min;
         }
-        text.chars.forEach((element, i) => {
-            TweenMax.from(element, 2.5, {
+        text.forEach((element, i) => {
+            let span = document.createElement('span');
+            span.innerText = element;
+            this.headingRef.appendChild(span);
+            TweenMax.from(span, 2.5, {
                 opacity: 0,
                 x: random(-500, 500),
                 y: random(-500, 500),
@@ -70,6 +76,8 @@ class LoadingApp extends Component{
                 <span className="fullNumber">{this.state.counter.toString().split(".")[0]}.</span>
                 <span className="decimal">{(this.state.counter).toFixed(2).toString().split('.')[1]}</span>
                 <span className="percent">%</span>
+            </div>
+            <div ref={element => {this.headingRef = element}} id="introText">
             </div>
         </div>
     }
