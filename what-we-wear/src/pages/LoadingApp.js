@@ -20,7 +20,7 @@ class LoadingApp extends Component{
         //         loaded: true
         //     })
         // }
-        if(this.state.counter == 1 && this.state.counter !== prevState.counter){
+        if(this.state.counter === 1 && this.state.counter !== prevState.counter){
             this.animateText();
         }
     }
@@ -51,7 +51,6 @@ class LoadingApp extends Component{
         //extended from https://codepen.io/natewiley/pen/xGyZXp Nate Wiley
         
         const text = texts.pageOne.description.split('');
-        console.log(text)
         let random = (min, max) =>{
             return (Math.random() * (max - min)) + min;
         }
@@ -64,7 +63,7 @@ class LoadingApp extends Component{
                 x: random(-500, 500),
                 y: random(-500, 500),
                 z: random(-500, 500),
-                scale: .01,
+                scale: .1,
                 delay: i * .02
             })
         });

@@ -28,3 +28,13 @@ body{
         @include glow($one, $medium-dark);
     }
 }
+#introText{
+    text-align: center;
+    width: 100%;
+    @include italic();
+    span{
+        display: inline-block;
+        position: relative;
+        min-width: .6em;
+    }
+}
