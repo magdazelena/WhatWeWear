@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {TweenMax} from 'gsap/all';
+import {TweenMax, Expo} from 'gsap/all';
+import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 class LoadingApp extends Component{
     
@@ -7,9 +8,11 @@ class LoadingApp extends Component{
         super(props);
         this.state={
                 loaded: false,
-                 counter: 0.00
+                 counter: 100
             }
         this.headingRef = null;
+        this.counterRef = null;
+        this.controller = new ScrollMagic.Controller();
     }
     componentDidMount(){
         this.startAnimating();
@@ -20,33 +23,33 @@ class LoadingApp extends Component{
         //         loaded: true
         //     })
         // }
-        if(this.state.counter === 1 && this.state.counter !== prevState.counter){
+        if(this.state.counter === 2 && this.state.counter !== prevState.counter){
             this.animateText();
         }
     }
     
     startAnimating(){
-        let counter = this.state.counter;
-        let timer = 400;
-        let iteration = () => {
-            
-            if(counter >= 1){
-                clearInterval(interval);
-                if(counter > 1){
-                    this.setState({
-                        counter : 1.00
-                    })
-                }
-            }else{
-                counter+=Math.random()/10;
-                this.setState({
-                    counter: counter
-                })
-            }   
+        let counter = {value:this.state.counter};
+        TweenMax.to(counter, 16, {
+            value: 1, 
+            roundProps: 'value',
+            ease: Expo.easeOut,
+            onUpdate: function(){
+                updateCounter(counter.value)
+            }
+        })
+
+        TweenMax.to(this.counterRef, 16, {
+            ease: Expo.easeOut,
+            fontSize: '100px'
+        })
+        var updateCounter=(value)=>{
+            this.setState({
+                counter: value
+            })
         }
-        let interval = setInterval(iteration, timer);
-        
     }
+    
     animateText = () =>{
         //extended from https://codepen.io/natewiley/pen/xGyZXp Nate Wiley
         
@@ -71,10 +74,10 @@ class LoadingApp extends Component{
     }
     render(){
         return <div>
-            <div id="loader" className={this.state.counter >= 1 ? 'finished': ''}>
-                <span className="fullNumber">{this.state.counter.toString().split(".")[0]}.</span>
-                <span className="decimal">{(this.state.counter).toFixed(2).toString().split('.')[1]}</span>
-                <span className="percent">%</span>
+            <div id="loader" className={this.state.counter <= 1 ? 'finished': ''}>
+                <span className="fullNumber" ref={element => {this.counterRef = element}}>{this.state.counter}</span>
+                {/* <span className="decimal">{(this.state.counter).toFixed(2).toString().split('.')[1]}</span> */}
+                {/* <span className="percent">%</span> */}
             </div>
             <div ref={element => {this.headingRef = element}} id="introText">
             </div>

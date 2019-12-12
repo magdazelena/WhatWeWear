@@ -13,6 +13,7 @@ body{
     justify-content: center;
     align-items: center;
     font-family: $neon;
+    height: 80vh;
     .fullNumber{
         font-size: 12em;
     }
@@ -25,7 +26,7 @@ body{
     }
     &.finished{
         color: $one;
-        @include glow($one, $medium-dark);
+        @include glow(lighten($one, .8), lighten($medium-dark, .8));
     }
 }
 #introText{
