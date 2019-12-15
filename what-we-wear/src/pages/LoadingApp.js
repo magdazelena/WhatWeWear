@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {TweenMax, Expo} from 'gsap/all';
-import ScrollMagic from 'scrollmagic';
+import {Controller, Scene} from 'react-scrollmagic';
 import texts from '../dictionary/en.json';
 class LoadingApp extends Component{
     
@@ -12,10 +12,12 @@ class LoadingApp extends Component{
             }
         this.headingRef = null;
         this.counterRef = null;
-        this.controller = new ScrollMagic.Controller();
+        this.loader1Ref = null;
+        this.loader2Ref = null;
     }
     componentDidMount(){
         this.startAnimating();
+        
     }
     componentDidUpdate(prevProps, prevState){
         // if(this.props.loading !== prevProps.loading){
@@ -24,7 +26,7 @@ class LoadingApp extends Component{
         //     })
         // }
         if(this.state.counter === 2 && this.state.counter !== prevState.counter){
-            this.animateText();
+            this.animateText(false);
         }
     }
     
@@ -50,37 +52,74 @@ class LoadingApp extends Component{
         }
     }
     
-    animateText = () =>{
+    animateText = (reverse) =>{
         //extended from https://codepen.io/natewiley/pen/xGyZXp Nate Wiley
         
-        const text = texts.pageOne.description.split('');
+        
         let random = (min, max) =>{
             return (Math.random() * (max - min)) + min;
         }
-        text.forEach((element, i) => {
-            let span = document.createElement('span');
-            span.innerText = element;
-            this.headingRef.appendChild(span);
-            TweenMax.from(span, 2.5, {
-                opacity: 0,
-                x: random(-500, 500),
-                y: random(-500, 500),
-                z: random(-500, 500),
-                scale: .1,
-                delay: i * .02
-            })
+        let textAnimation = (span,i)=>TweenMax.from(span, 2, {
+            opacity: 0,
+            ease: Expo.easeIn,
+            x: random(-50, 50),
+            y: random(-5, 500),
+            z: random(-50, 50),
+            scale: .1,
+            delay: i * .02
         });
+        [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
+            if(!reverse) textAnimation(span, i).play();
+            if(reverse) textAnimation(span, i).reverse(0);
+        })
 
+    }
+    generateTextForAnimation = (text) => {
+        return text.map((el,i) =>{
+            return <span key={i}>{el}</span>;
+        })
     }
     render(){
         return <div>
-            <div id="loader" className={this.state.counter <= 1 ? 'finished': ''}>
-                <span className="fullNumber" ref={element => {this.counterRef = element}}>{this.state.counter}</span>
-                {/* <span className="decimal">{(this.state.counter).toFixed(2).toString().split('.')[1]}</span> */}
-                {/* <span className="percent">%</span> */}
-            </div>
-            <div ref={element => {this.headingRef = element}} id="introText">
-            </div>
+            <Controller>
+                <Scene 
+                    indicators={true}
+                    duration="100%"
+                >
+                  {(progress, event) => {
+                      console.log(event)
+                      if(event.type === 'leave' && event.scrollDirection === 'FORWARD') this.animateText(true);
+                      if(event.type === 'enter' && event.scrollDirection === 'REVERSE') this.animateText(false);
+                       return <div id="loadingPage">
+                            <div id="loadingSectionOne" className="loadingSection">
+                                <div 
+                                    id="loader"  
+                                    ref={el => this.loader1Ref = el } 
+                                    className={this.state.counter <= 1 ? 'finished': ''}
+                                >
+                                    <span className="fullNumber" ref={element => {this.counterRef = element}}>         {this.state.counter}
+                                    </span>
+                                </div>
+                                <div 
+                                    ref={element => {this.headingRef = element}} 
+                                    className="introText"
+                                >
+                                    {
+                                        this.state.counter <=2 && (this.generateTextForAnimation(texts.pageOne.description.split('')))
+                                    }
+                                </div>
+                            </div>
+                            <div id="loadingSectionTwo" className="loadingSection">
+                                <div 
+                                    ref={element => {this.loader2Ref = element}} 
+                                    className="introText"
+                                >
+                                </div>
+                            </div>
+                        </div>
+                  }}
+                </Scene>
+            </Controller>
         </div>
     }
 }

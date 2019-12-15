@@ -11,7 +11,8 @@ $neon: 'Tomorrow', sans-serif;
 }
 @mixin italic(){
     font-family: $regularFont;
-    font-weight: 400i;
+    font-weight: 400;
+    font-style: italic;
 }
 @mixin bold(){
     font-family: $regularFont;
