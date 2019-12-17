@@ -1,5 +1,8 @@
 {
     "pageOne": {
         "description": "percent of our clothing can be ulitmately recycled"
+    },
+    "pageTwo": {
+        "description": "each second 1 truck of clothes is send to landfill"
     }
 }

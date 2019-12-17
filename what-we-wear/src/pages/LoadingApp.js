@@ -1,19 +1,22 @@
 import React, {Component} from 'react';
-import {TweenMax, Expo} from 'gsap/all';
-import {Controller, Scene} from 'react-scrollmagic';
+import {TweenMax, Expo, TimelineMax} from 'gsap/all';
+import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
+require("../helpers/scrollmagicdebug.js");
 class LoadingApp extends Component{
     
     constructor(props){
         super(props);
         this.state={
                 loaded: false,
-                 counter: 100
+                 counter: 0,
+                 animation :0
             }
         this.headingRef = null;
         this.counterRef = null;
         this.loader1Ref = null;
         this.loader2Ref = null;
+        this.controller = new ScrollMagic.Controller();
     }
     componentDidMount(){
         this.startAnimating();
@@ -25,29 +28,71 @@ class LoadingApp extends Component{
         //         loaded: true
         //     })
         // }
-        if(this.state.counter === 2 && this.state.counter !== prevState.counter){
+        if(this.state.animation === 1 && this.state.animation !== prevState.animation){
             this.animateText(false);
         }
     }
     
     startAnimating(){
         let counter = {value:this.state.counter};
-        TweenMax.to(counter, 16, {
-            value: 1, 
+        let timeline = new TimelineMax();
+        timeline.to(counter, 10, {
+            value: 100,
             roundProps: 'value',
             ease: Expo.easeOut,
             onUpdate: function(){
                 updateCounter(counter.value)
             }
         })
-
-        TweenMax.to(this.counterRef, 16, {
+        .to(this.counterRef, 6, {
             ease: Expo.easeOut,
-            fontSize: '100px'
+            fontSize: 100
+        }, "-=10")
+        .to(counter, 6, {
+            value: 710,
+            roundProps: 'value',
+            ease: Expo.easeIn,
+            onUpdate: function(){
+                updateCounter(counter.value)
+            }
         })
+        .delay(2)
+        .to(counter, 1,
+            {
+                value: "710 000",
+                onUpdate: function(){
+                    updateCounter("710 000")
+                },
+                onComplete: function(){
+                    nextAnimation();
+                }
+        })
+        .to(this.counterRef, .5, {
+            ease: Expo.easeOut,
+            fontSize: '50px'
+        }, '-=1')
+        .delay(2)
+        .to(counter, 1,
+            {
+                value: "710 000 000",
+                onUpdate: function(){
+                    updateCounter("710 000 000")
+                }
+            })
+            .to(this.counterRef, .5, {
+                ease: Expo.easeOut,
+                fontSize: '25px'
+            }, '-=1')
+        
+
         var updateCounter=(value)=>{
             this.setState({
                 counter: value
+            })
+        }
+        var nextAnimation=()=>{
+            this.setState({
+                animation: this.state.animation+1
             })
         }
     }
@@ -60,7 +105,7 @@ class LoadingApp extends Component{
             return (Math.random() * (max - min)) + min;
         }
         let textAnimation = (span,i)=>TweenMax.from(span, 2, {
-            opacity: 0,
+            //opacity: 0,
             ease: Expo.easeIn,
             x: random(-50, 50),
             y: random(-5, 500),
@@ -72,7 +117,6 @@ class LoadingApp extends Component{
             if(!reverse) textAnimation(span, i).play();
             if(reverse) textAnimation(span, i).reverse(0);
         })
-
     }
     generateTextForAnimation = (text) => {
         return text.map((el,i) =>{
@@ -81,16 +125,8 @@ class LoadingApp extends Component{
     }
     render(){
         return <div>
-            <Controller>
-                <Scene 
-                    indicators={true}
-                    duration="100%"
-                >
-                  {(progress, event) => {
-                      console.log(event)
-                      if(event.type === 'leave' && event.scrollDirection === 'FORWARD') this.animateText(true);
-                      if(event.type === 'enter' && event.scrollDirection === 'REVERSE') this.animateText(false);
-                       return <div id="loadingPage">
+            
+                    <div id="loadingPage">
                             <div id="loadingSectionOne" className="loadingSection">
                                 <div 
                                     id="loader"  
@@ -105,7 +141,7 @@ class LoadingApp extends Component{
                                     className="introText"
                                 >
                                     {
-                                        this.state.counter <=2 && (this.generateTextForAnimation(texts.pageOne.description.split('')))
+                                        this.state.animation === 1 && (this.generateTextForAnimation(texts.pageOne.description.split('')))
                                     }
                                 </div>
                             </div>
@@ -114,12 +150,12 @@ class LoadingApp extends Component{
                                     ref={element => {this.loader2Ref = element}} 
                                     className="introText"
                                 >
+                                    {
+                                       (this.generateTextForAnimation(texts.pageTwo.description.split('')))
+                                    }
                                 </div>
                             </div>
                         </div>
-                  }}
-                </Scene>
-            </Controller>
         </div>
     }
 }
