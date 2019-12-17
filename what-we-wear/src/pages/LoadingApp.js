@@ -20,7 +20,24 @@ class LoadingApp extends Component{
     }
     componentDidMount(){
         this.startAnimating();
-        
+        new ScrollMagic.Scene({
+            duration: "50%",
+        })
+        .setPin(this.loader2Ref)
+        .addIndicators()
+        .on('leave', () => {
+            [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
+                this.animateText(span, i).reverse(0);
+            })
+        })
+        .on('enter', event =>{
+            if(event.scrollDirection === "REVERSE"){
+                [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
+                    this.reanimateText(span);
+                })
+            }
+        })
+        .addTo(this.controller);
     }
     componentDidUpdate(prevProps, prevState){
         // if(this.props.loading !== prevProps.loading){
@@ -29,7 +46,9 @@ class LoadingApp extends Component{
         //     })
         // }
         if(this.state.animation === 1 && this.state.animation !== prevState.animation){
-            this.animateText(false);
+            [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
+                this.animateText(span, i).play();
+            })
         }
     }
     
@@ -69,7 +88,7 @@ class LoadingApp extends Component{
         })
         .to(this.counterRef, .5, {
             ease: Expo.easeOut,
-            fontSize: '50px'
+            fontSize: '60px'
         }, '-=1')
         .delay(2)
         .to(counter, 1,
@@ -81,7 +100,7 @@ class LoadingApp extends Component{
             })
             .to(this.counterRef, .5, {
                 ease: Expo.easeOut,
-                fontSize: '25px'
+                fontSize: '50px'
             }, '-=1')
         
 
@@ -97,26 +116,34 @@ class LoadingApp extends Component{
         }
     }
     
-    animateText = (reverse) =>{
+    animateText = (span, i) =>{
         //extended from https://codepen.io/natewiley/pen/xGyZXp Nate Wiley
-        
-        
-        let random = (min, max) =>{
-            return (Math.random() * (max - min)) + min;
-        }
-        let textAnimation = (span,i)=>TweenMax.from(span, 2, {
+        let textAnimation = new TimelineMax()
+        .from(span, 2, {
             //opacity: 0,
             ease: Expo.easeIn,
-            x: random(-50, 50),
-            y: random(-5, 500),
-            z: random(-50, 50),
+            x: this.random(-50, 50),
+            y: this.random(-5, 500),
+            z: this.random(-50, 50),
             scale: .1,
             delay: i * .02
         });
-        [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
-            if(!reverse) textAnimation(span, i).play();
-            if(reverse) textAnimation(span, i).reverse(0);
-        })
+        return textAnimation;
+    }
+    reanimateText = (span) => {
+        let textAnimation = new TimelineMax()
+        .to(span, 1, {
+            //opacity: 0,
+            ease: Expo.easeIn,
+            x: 0,
+            y: 0,
+            z: 0,
+            scale: 1
+        });
+        return textAnimation;
+    }
+    random = (min, max) =>{
+        return (Math.random() * (max - min)) + min;
     }
     generateTextForAnimation = (text) => {
         return text.map((el,i) =>{

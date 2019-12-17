@@ -18,7 +18,7 @@ body{
     font-family: $neon;
     height: 80vh;
     .fullNumber{
-        font-size: 12px;
+        font-size: 30px;
     }
     &.finished{
         color: $three;
@@ -40,6 +40,7 @@ body{
             display: inline-block;
             position: relative;
             min-width: .4em;
+            transform: translate3d(0px, 0px, 0px) scale(1, 1);
         }
     }
 }
