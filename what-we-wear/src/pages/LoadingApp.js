@@ -13,31 +13,98 @@ class LoadingApp extends Component{
                  animation :0
             }
         this.headingRef = null;
+        this.headingTopRef = null;
         this.counterRef = null;
+        this.progressBar = null;
         this.loader1Ref = null;
         this.loader2Ref = null;
+        this.loader3Ref = null;
         this.controller = new ScrollMagic.Controller();
     }
     componentDidMount(){
         this.startAnimating();
-        new ScrollMagic.Scene({
+        let scene1 = new ScrollMagic.Scene({
             duration: "50%",
         })
-        .setPin(this.loader2Ref)
         .addIndicators()
         .on('leave', () => {
             [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
                 this.animateText(span, i).reverse(0);
+            });
+            
+            this.setState({
+                counter: "73%",
+                animation : 2
             })
+           TweenMax.to(this.counterRef, 1, {
+               fontSize: 100
+           })
         })
         .on('enter', event =>{
             if(event.scrollDirection === "REVERSE"){
                 [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
                     this.reanimateText(span);
                 })
+                this.setState({
+                    counter: "710 000 000",
+                    animation: 1
+                })
+                TweenMax.to(this.counterRef, 1, {
+                    fontSize: 50
+                })
             }
         })
-        .addTo(this.controller);
+        let scene2 = new ScrollMagic.Scene({
+            duration: "50%",
+            offset: "400px",
+            triggerElement: this.headingRef
+        })
+        .on('enter', event => {
+            if(event.scrollDirection === 'FORWARD'){
+                [...this.headingTopRef.getElementsByTagName('span')].forEach((span, i)=>{
+                    this.animateText(span, i).play();
+                });
+                [...this.loader2Ref.getElementsByTagName('span')].forEach((span, i)=>{
+                    this.animateText(span, i).play();
+                });
+            }else{
+                this.setState({
+                    counter: "73%",
+                    animation : 2
+                })
+               TweenMax.to(this.counterRef, 1, {
+                   fontSize: 100
+               })
+            }
+        })
+        .on('leave', ()=>{
+            this.setState({
+                counter: "1%",
+                animation : 3
+            })
+           TweenMax.to(this.counterRef, 1, {
+               fontSize: 200
+           })
+        })
+        .addIndicators();
+        let scene3 = new ScrollMagic.Scene({
+            duration: "50%",
+            offset: "200px",
+            triggerElement: this.loader2Ref
+        })
+        .on('enter', event => {
+            if(event.scrollDirection === 'FORWARD'){
+                [...this.headingTopRef.getElementsByTagName('span')].forEach((span, i)=>{
+                    this.animateText(span, i).play();
+                });
+                [...this.loader3Ref.getElementsByTagName('span')].forEach((span, i)=>{
+                    this.animateText(span, i).play();
+                });
+            }
+        })
+        .addIndicators()
+        this.controller.addScene([scene1, scene2, scene3])
+
     }
     componentDidUpdate(prevProps, prevState){
         // if(this.props.loading !== prevProps.loading){
@@ -47,6 +114,9 @@ class LoadingApp extends Component{
         // }
         if(this.state.animation === 1 && this.state.animation !== prevState.animation){
             [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
+                this.animateText(span, i).play();
+            });
+            [...this.headingTopRef.getElementsByTagName('span')].forEach((span, i)=>{
                 this.animateText(span, i).play();
             })
         }
@@ -63,6 +133,10 @@ class LoadingApp extends Component{
                 updateCounter(counter.value)
             }
         })
+        .to(this.progressBar, 10, {
+            width: "100vw",
+            ease: Expo.easeOut
+        }, "-=10")
         .to(this.counterRef, 6, {
             ease: Expo.easeOut,
             fontSize: 100
@@ -75,7 +149,13 @@ class LoadingApp extends Component{
                 updateCounter(counter.value)
             }
         })
+        .to(this.progressBar, 6,{
+            opacity: 0
+        }, "-=6")
         .delay(2)
+        .set(this.progressBar, {
+            display: "none"
+        })
         .to(counter, 1,
             {
                 value: "710 000",
@@ -120,7 +200,6 @@ class LoadingApp extends Component{
         //extended from https://codepen.io/natewiley/pen/xGyZXp Nate Wiley
         let textAnimation = new TimelineMax()
         .from(span, 2, {
-            //opacity: 0,
             ease: Expo.easeIn,
             x: this.random(-50, 50),
             y: this.random(-5, 500),
@@ -133,7 +212,6 @@ class LoadingApp extends Component{
     reanimateText = (span) => {
         let textAnimation = new TimelineMax()
         .to(span, 1, {
-            //opacity: 0,
             ease: Expo.easeIn,
             x: 0,
             y: 0,
@@ -150,18 +228,37 @@ class LoadingApp extends Component{
             return <span key={i}>{el}</span>;
         })
     }
+    slideTextToPercent = () => {
+        let textAnimation = new TimelineMax()
+        .to(this.counterRef, 3, {
+            ease: Expo.easeIn,
+            marginLeft: "-90%"
+        })
+        return textAnimation;
+    }
     render(){
         return <div>
             
                     <div id="loadingPage">
                             <div id="loadingSectionOne" className="loadingSection">
+                            <div className="introHeadline"
+                                        ref= {e => this.headingTopRef = e}>
+                                         { this.state.animation === 1 && (this.generateTextForAnimation(texts.pageOne.headline.split('')))}
+                                         { this.state.animation === 2 && (this.generateTextForAnimation(texts.pageTwo.headline.split('')))}
+                                         { this.state.animation === 3 && (this.generateTextForAnimation(texts.pageThree.headline.split('')))}
+                                    </div>
                                 <div 
                                     id="loader"  
                                     ref={el => this.loader1Ref = el } 
                                     className={this.state.counter <= 1 ? 'finished': ''}
                                 >
+                                
+                                    <div id="progressBar" >
+                                        <span ref={e => this.progressBar = e}></span>
+                                    </div>
                                     <span className="fullNumber" ref={element => {this.counterRef = element}}>         {this.state.counter}
                                     </span>
+                                    
                                 </div>
                                 <div 
                                     ref={element => {this.headingRef = element}} 
@@ -177,8 +274,18 @@ class LoadingApp extends Component{
                                     ref={element => {this.loader2Ref = element}} 
                                     className="introText"
                                 >
-                                    {
+                                    {  this.state.animation === 2 && 
                                        (this.generateTextForAnimation(texts.pageTwo.description.split('')))
+                                    }
+                                </div>
+                            </div>
+                            <div id="loadingSectionThree" className="loadingSection">
+                                <div 
+                                    ref={element => {this.loader3Ref = element}} 
+                                    className="introText"
+                                >
+                                    {  this.state.animation === 3 && 
+                                       (this.generateTextForAnimation(texts.pageThree.description.split('')))
                                     }
                                 </div>
                             </div>

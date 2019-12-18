@@ -1,8 +1,14 @@
 {
     "pageOne": {
+        "headline" : "on average",
         "description": "kilograms of clothes is consumed yearly in a European country"
     },
     "pageTwo": {
-        "description": "each second 1 truck of clothes is send to landfill"
+        "headline": "in production of which",
+        "description": "of textile material is discarded"
+    },
+    "pageThree": {
+        "headline": "and less than",
+        "description": "can be ultimately recycled"
     }
 }
