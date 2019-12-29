@@ -90,7 +90,7 @@ class LoadingApp extends Component{
         let scene3 = new ScrollMagic.Scene({
             duration: "50%",
             offset: "200px",
-            triggerElement: this.loader2Ref
+           // triggerElement: this.loader2Ref
         })
         .on('enter', event => {
             if(event.scrollDirection === 'FORWARD'){
