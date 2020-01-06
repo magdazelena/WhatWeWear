@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {TweenMax, Expo, TimelineMax} from 'gsap/all';
 import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
+import {enableScroll, disableScroll} from "../helpers/cancelScrolling";
 require("../helpers/scrollmagicdebug.js");
 class LoadingApp extends Component{
     
@@ -21,52 +22,68 @@ class LoadingApp extends Component{
         this.loader3Ref = null;
         this.controller = new ScrollMagic.Controller();
     }
+    
+    promiseState = async state => new Promise(resolve => this.setState(state, resolve));
     componentDidMount(){
+        window.onbeforeunload = function () {
+            window.scrollTo(0, 0);
+          }
         this.startAnimating();
         let scene1 = new ScrollMagic.Scene({
-            duration: "50%",
+            duration: "50%"
         })
         .addIndicators()
         .on('leave', () => {
-            [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
-                this.animateText(span, i).reverse(0);
-            });
-            
-            this.setState({
-                counter: "73%",
-                animation : 2
+            let requests = [...this.headingRef.getElementsByTagName('span')].map(item =>{
+                return new Promise(resolve => {
+                    this.animateText(item, resolve).reverse(0);
+                })
             })
+            Promise.all(requests);
            TweenMax.to(this.counterRef, 1, {
-               fontSize: 100
+               fontSize: 200
            })
         })
         .on('enter', event =>{
             if(event.scrollDirection === "REVERSE"){
-                [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
-                    this.reanimateText(span);
-                })
+                
                 this.setState({
                     counter: "710 000 000",
                     animation: 1
+                }, ()=>{
+                    [...this.headingRef.getElementsByTagName('span')].forEach((span, i)=>{
+                        this.reanimateText(span);
+                    });
+                   
                 })
                 TweenMax.to(this.counterRef, 1, {
                     fontSize: 50
                 })
             }
+            
         })
         let scene2 = new ScrollMagic.Scene({
             duration: "50%",
-            offset: "400px",
+            offset: 100,
             triggerElement: this.headingRef
         })
         .on('enter', event => {
             if(event.scrollDirection === 'FORWARD'){
-                [...this.headingTopRef.getElementsByTagName('span')].forEach((span, i)=>{
-                    this.animateText(span, i).play();
-                });
-                [...this.loader2Ref.getElementsByTagName('span')].forEach((span, i)=>{
-                    this.animateText(span, i).play();
-                });
+                this.setState({
+                    counter: "73%",
+                    animation: 2
+                },
+                ()=>{
+                    [...this.headingTopRef.getElementsByTagName('span')].forEach((span, i)=>{
+                        this.animateText(span, i).play();
+                    });
+                    [...this.loader2Ref.getElementsByTagName('span')].forEach((span, i)=>{
+                        this.animateText(span, i).play();
+                    });
+                }
+
+                )
+                
             }else{
                 this.setState({
                     counter: "73%",
@@ -78,28 +95,31 @@ class LoadingApp extends Component{
             }
         })
         .on('leave', ()=>{
-            this.setState({
-                counter: "1%",
-                animation : 3
-            })
+            
            TweenMax.to(this.counterRef, 1, {
-               fontSize: 200
+               fontSize: 400
            })
         })
         .addIndicators();
         let scene3 = new ScrollMagic.Scene({
-            duration: "50%",
-            offset: "200px",
-           // triggerElement: this.loader2Ref
+            duration: "10%",
+            offset: 100,
+            triggerElement: this.loader2Ref
         })
         .on('enter', event => {
             if(event.scrollDirection === 'FORWARD'){
-                [...this.headingTopRef.getElementsByTagName('span')].forEach((span, i)=>{
-                    this.animateText(span, i).play();
+                this.setState({
+                    counter: "1%",
+                    animation : 3
+                }, () => {
+                    [...this.headingTopRef.getElementsByTagName('span')].forEach((span, i)=>{
+                        this.animateText(span, i).play();
+                    });
+                    [...this.loader3Ref.getElementsByTagName('span')].forEach((span, i)=>{
+                        this.animateText(span, i).play();
+                    });
                 });
-                [...this.loader3Ref.getElementsByTagName('span')].forEach((span, i)=>{
-                    this.animateText(span, i).play();
-                });
+                
             }
         })
         .addIndicators()
@@ -123,6 +143,7 @@ class LoadingApp extends Component{
     }
     
     startAnimating(){
+        disableScroll();
         let counter = {value:this.state.counter};
         let timeline = new TimelineMax();
         timeline.to(counter, 10, {
@@ -176,6 +197,9 @@ class LoadingApp extends Component{
                 value: "710 000 000",
                 onUpdate: function(){
                     updateCounter("710 000 000")
+                },
+                onComplete: function(){
+                    enableScroll();
                 }
             })
             .to(this.counterRef, .5, {
@@ -199,7 +223,8 @@ class LoadingApp extends Component{
     animateText = (span, i) =>{
         //extended from https://codepen.io/natewiley/pen/xGyZXp Nate Wiley
         let textAnimation = new TimelineMax()
-        .from(span, 2, {
+        .from(span, 1, {
+            opacity: 0,
             ease: Expo.easeIn,
             x: this.random(-50, 50),
             y: this.random(-5, 500),
@@ -216,7 +241,8 @@ class LoadingApp extends Component{
             x: 0,
             y: 0,
             z: 0,
-            scale: 1
+            scale: 1,
+            opacity:1 
         });
         return textAnimation;
     }
