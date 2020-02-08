@@ -3,17 +3,24 @@ import {TweenMax, Expo, TimelineMax} from 'gsap/all';
 import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 import THREE from '../3d/three';
+import FBXLoader from '../3d/fbxloader';
 require("../helpers/scrollmagicdebug.js");
 class DressesSequence extends Component {
+    constructor(props){
+        super(props);
+        this.scene = null; 
+        this.renderer = null;
+        this.camera = null;
+        this.model = null;                              
+        this.possibleAnims = null;                      // Animations found in our file
+        this.mixer = null;                              // THREE.js animations mixer
+        this.idle = null;  
+        this.loader = null;                            // Idle, the default state our character returns to
+        this.clock = new THREE.Clock();          // Used for anims, which run to a clock instead of frame rate 
+    }
     componentDidMount(){
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( renderer.domElement );
-        var geometry = new THREE.BoxGeometry( 3, 3, 3 );
-        var geometry1 = new THREE.BoxGeometry(8,8,8);
+        this.init();
+        this.update();
         var material = new THREE.MeshPhysicalMaterial(
             {
             metalness: 0.7,
@@ -22,79 +29,101 @@ class DressesSequence extends Component {
             reflectivity: 0.8,
             color: 0Xffffff
             });
-        var material1 = new THREE.MeshLambertMaterial({
-        color: 0xff4594,
-        reflectivity: 0.6,
-        transparent: true,
-        opacity: 0.6
-        })
-        var cube = new THREE.Mesh( geometry, material );
-        var cube1 = new THREE.Mesh(geometry1, material1);
-        var dress1 = null;
-        var loader = new THREE.GLTFLoader();
-
-            loader.load( '3d/models/sukienkaMap.gltf', function ( gltf ) {
-                gltf.scene.scale.x = gltf.scene.scale.y = gltf.scene.scale.z = 0.5;
-                gltf.scene.position.x = -2;
-                gltf.scene.position.z = 4;
-                gltf.scene.position.y = -6; 
-                gltf.scene.traverse( object => {
-                    if(object.isMesh){
-                        object.material = material;
-                        object.material.emissive =new THREE.Color(0x0000ff);
-                        object.material.emissiveIntensity = .3;
-                        object.castShadow = true;
-                        object.receiveShadow = true;
-                    }
-                })
-                dress1 = gltf.scene;
-                scene.add( gltf.scene );
-            }, undefined, function ( error ) {
-
-                console.error( error );
-
-            } );
-       // scene.add( cube );
-    //    scene.add( cube1);
-        var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
-        scene.add( light );
-        var light2 = new THREE.AmbientLight( 0xff0000 ); // soft white light
-        scene.add( light2 );
-        var spotLight = new THREE.SpotLight( 0xff0000 );
-        spotLight.position.set( 10, 10, 10 );
-
-        spotLight.castShadow = true;
-
-        spotLight.shadow.mapSize.width = 1024;
-        spotLight.shadow.mapSize.height = 1024;
-
-        spotLight.shadow.camera.near = 50;
-        spotLight.shadow.camera.far = 40;
-        spotLight.shadow.camera.fov = 30;
-
-        scene.add( spotLight );
-        camera.position.z = 8;
-        function animate() {
-            requestAnimationFrame( animate );
-        cube.rotation.x += 0.004;
-        cube.rotation.y += 0.004;
-        cube1.position.x -= 0.002;
-        cube1.rotation.x -=0.002;
-        if(dress1 !== null){
-                dress1.position.x >= 1 ? dress1.position.x -= 4:dress1.position.x += 0.01
-            
-        }
-            
-       // camera.rotation.z += 0.001;
-	    renderer.render( scene, camera );
-        }
-        animate(); 
-        console.log(scene)
-        
     }
+    init = ()=>{
+        const canvas = document.querySelector('#dressesSequence');
+        const backgroundColor = 0xf1f1f1;
+        //scene
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(backgroundColor);
+        this.scene.fog = new THREE.Fog(backgroundColor, 60, 100);
+        //renderer
+        this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(this.renderer.domElement);
+        //camera
+        this.camera = new THREE.PerspectiveCamera(
+            50,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+          );
+          this.camera.position.z = 30 
+          this.camera.position.x = 0;
+          this.camera.position.y = -3;
+          //lights
+          let hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.61);
+            hemiLight.position.set(0, 50, 0);
+            // Add hemisphere light to scene
+            this.scene.add(hemiLight);
+
+            let d = 8.25;
+            let dirLight = new THREE.DirectionalLight(0xffffff, 0.54);
+            dirLight.position.set(-8, 12, 8);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
+            dirLight.shadow.camera.near = 0.1;
+            dirLight.shadow.camera.far = 1500;
+            dirLight.shadow.camera.left = d * -1;
+            dirLight.shadow.camera.right = d;
+            dirLight.shadow.camera.top = d;
+            dirLight.shadow.camera.bottom = d * -1;
+            // Add directional Light to scene
+            this.scene.add(dirLight);
+            // Floor
+            let floorGeometry = new THREE.PlaneGeometry(5000, 5000, 1, 1);
+            let floorMaterial = new THREE.MeshPhongMaterial({
+            color: 0xeeeeee,
+            shininess: 0,
+            });
+
+            let floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.rotation.x = -0.5 * Math.PI; // This is 90 degrees by the way
+            floor.receiveShadow = true;
+            floor.position.y = -11;
+            this.scene.add(floor);
+            //upload the model
+            const modelPath = '../3d/models/dress1_model.fbx';
+            this.loader = new FBXLoader(); 
+            this.loader.load(
+                modelPath,
+                function(obj) {
+                    console.log(obj);
+                    // this.model = obj.scene;
+                    // this.scene.add(this.model);
+                },undefined,
+                function(error) {
+                    console.error(error);
+                }
+            );
+    }
+    update=()=>{
+        if (this.resizeRendererToDisplaySize(this.renderer)) {
+            const canvas = this.renderer.domElement;
+            this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
+            this.camera.updateProjectionMatrix();
+          }
+        this.renderer.render(this.scene, this.camera);
+        requestAnimationFrame(this.update);
+    }
+    resizeRendererToDisplaySize=(renderer)=> {
+        const canvas = renderer.domElement;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let canvasPixelWidth = canvas.width / window.devicePixelRatio;
+        let canvasPixelHeight = canvas.height / window.devicePixelRatio;
+      
+        const needResize =
+          canvasPixelWidth !== width || canvasPixelHeight !== height;
+        if (needResize) {
+          renderer.setSize(width, height, false);
+        }
+        return needResize;
+      }
     render () {
        return <div>
-
+           <canvas id="dressesSequence"></canvas>
         </div>
     }
 }
