@@ -1,5 +1,6 @@
-var THREE = require('three');
 
+import Zlib from 'react-zlib-js';
+var THREE = require('three');
 /**
  * @author Kyle-Larson https://github.com/Kyle-Larson
  * @author Takahiro https://github.com/takahirox

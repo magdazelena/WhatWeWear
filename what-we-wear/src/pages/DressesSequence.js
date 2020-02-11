@@ -21,14 +21,7 @@ class DressesSequence extends Component {
     componentDidMount(){
         this.init();
         this.update();
-        var material = new THREE.MeshPhysicalMaterial(
-            {
-            metalness: 0.7,
-            clearcoat: 0.9,
-            clearcoatRoughness: 0.3,
-            reflectivity: 0.8,
-            color: 0Xffffff
-            });
+        
     }
     init = ()=>{
         const canvas = document.querySelector('#dressesSequence');
@@ -84,19 +77,47 @@ class DressesSequence extends Component {
             floor.position.y = -11;
             this.scene.add(floor);
             //upload the model
-            const modelPath = '../3d/models/dress1_model.fbx';
-            this.loader = new FBXLoader(); 
+            const modelPath = '../3d/models/dress1_animations.glb';
+            this.loader = new THREE.GLTFLoader(); 
+            var creationFuntion=(function(obj){
+                console.log(obj);
+                this.model = obj.scene;
+                var material = new THREE.MeshPhysicalMaterial(
+                    {
+                    metalness: 0.7,
+                    clearcoat: 0.9,
+                    clearcoatRoughness: 0.3,
+                    reflectivity: 0.8,
+                    color: 0Xffffff
+                    });
+                this.model.traverse(o => {
+                    if (o.isMesh) {
+                        o.castShadow = true;
+                        o.receiveShadow = true;
+                        o.material = material;
+                    }
+                });
+                // Set the models initial scale
+                this.model.scale.set(31, 31, 31);
+                this.model.position.y = -11;
+                
+
+                this.scene.add(this.model);
+                this.mixer = new THREE.AnimationMixer(this.model);
+                let fileAnimations = obj.animations;
+                let idleAnim = THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
+                this.idle = this.mixer.clipAction(idleAnim);
+                this.idle.play();
+            }).bind(this);
             this.loader.load(
                 modelPath,
-                function(obj) {
-                    console.log(obj);
-                    // this.model = obj.scene;
-                    // this.scene.add(this.model);
-                },undefined,
+                obj => creationFuntion(obj)
+                ,undefined,
                 function(error) {
                     console.error(error);
                 }
             );
+            
     }
     update=()=>{
         if (this.resizeRendererToDisplaySize(this.renderer)) {
@@ -105,6 +126,9 @@ class DressesSequence extends Component {
             this.camera.updateProjectionMatrix();
           }
         this.renderer.render(this.scene, this.camera);
+        if (this.mixer) {
+            this.mixer.update(this.clock.getDelta());
+          }
         requestAnimationFrame(this.update);
     }
     resizeRendererToDisplaySize=(renderer)=> {
