@@ -8,6 +8,7 @@ require("../helpers/scrollmagicdebug.js");
 class DressesSequence extends Component {
     constructor(props){
         super(props);
+        this.canvasRef = React.createRef();
         this.scene = null; 
         this.renderer = null;
         this.camera = null;
@@ -24,7 +25,7 @@ class DressesSequence extends Component {
         
     }
     init = ()=>{
-        const canvas = document.querySelector('#dressesSequence');
+        const canvas = this.canvasRef.current;
         const backgroundColor = 0xf1f1f1;
         //scene
         this.scene = new THREE.Scene();
@@ -77,11 +78,11 @@ class DressesSequence extends Component {
             floor.position.y = -11;
             this.scene.add(floor);
             //upload the model
-            const modelPath = '../3d/models/dress1_animations.glb';
-            this.loader = new THREE.GLTFLoader(); 
+            const modelPath = '../3d/models/dress1_animations.fbx';
+            this.loader = new THREE.FBXLoader(); 
             var creationFuntion=(function(obj){
                 console.log(obj);
-                this.model = obj.scene;
+                this.model = obj;
                 var material = new THREE.MeshPhysicalMaterial(
                     {
                     metalness: 0.7,
@@ -98,14 +99,14 @@ class DressesSequence extends Component {
                     }
                 });
                 // Set the models initial scale
-                this.model.scale.set(31, 31, 31);
-                this.model.position.y = -11;
+                this.model.scale.set(.5, .5, .5);
+                this.model.position.y = -6;
                 
 
                 this.scene.add(this.model);
                 this.mixer = new THREE.AnimationMixer(this.model);
                 let fileAnimations = obj.animations;
-                let idleAnim = THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
+                let idleAnim = fileAnimations[0];//THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
                 this.idle = this.mixer.clipAction(idleAnim);
                 this.idle.play();
             }).bind(this);
@@ -147,7 +148,7 @@ class DressesSequence extends Component {
       }
     render () {
        return <div>
-           <canvas id="dressesSequence"></canvas>
+           <canvas id="dressesSequence" ref={ref=>this.canvasRef = ref}></canvas>
         </div>
     }
 }
