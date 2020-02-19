@@ -26,7 +26,7 @@ class DressesSequence extends Component {
     }
     init = ()=>{
         const canvas = this.canvasRef.current;
-        const backgroundColor = 0xf1f1f1;
+        const backgroundColor = 0x1d1c3a;
         //scene
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(backgroundColor);
@@ -47,14 +47,14 @@ class DressesSequence extends Component {
           this.camera.position.x = 0;
           this.camera.position.y = -3;
           //lights
-          let hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.61);
+          let hemiLight = new THREE.HemisphereLight(0xffffff, backgroundColor, 0.61);
             hemiLight.position.set(0, 50, 0);
             // Add hemisphere light to scene
             this.scene.add(hemiLight);
 
             let d = 8.25;
-            let dirLight = new THREE.DirectionalLight(0xffffff, 0.54);
-            dirLight.position.set(-8, 12, 8);
+            let dirLight = new THREE.DirectionalLight(0xffffff, 0.84);
+            dirLight.position.set(-8, 8, 8);
             dirLight.castShadow = true;
             dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
             dirLight.shadow.camera.near = 0.1;
@@ -68,8 +68,10 @@ class DressesSequence extends Component {
             // Floor
             let floorGeometry = new THREE.PlaneGeometry(5000, 5000, 1, 1);
             let floorMaterial = new THREE.MeshPhongMaterial({
-            color: 0xeeeeee,
-            shininess: 0,
+            color: 0x1d1c3a,
+            shininess: 200,
+            reflectivity: 0.8,
+            metalness: 0.2,
             });
 
             let floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -85,11 +87,11 @@ class DressesSequence extends Component {
                 this.model = obj;
                 var material = new THREE.MeshPhysicalMaterial(
                     {
-                    metalness: 0.7,
-                    clearcoat: 0.9,
+                    metalness: 0.2,
+                    clearcoat: 0.1,
                     clearcoatRoughness: 0.3,
-                    reflectivity: 0.8,
-                    color: 0Xffffff
+                    reflectivity: 0.2,
+                    color: 0XE29300
                     });
                 this.model.traverse(o => {
                     if (o.isMesh) {
@@ -99,16 +101,16 @@ class DressesSequence extends Component {
                     }
                 });
                 // Set the models initial scale
-                this.model.scale.set(.5, .5, .5);
-                this.model.position.y = -6;
-                
+                this.model.scale.set(.6, .6, .6);
+                this.model.position.y = -1;
+                this.model.position.x = 0;
 
                 this.scene.add(this.model);
-                this.mixer = new THREE.AnimationMixer(this.model);
-                let fileAnimations = obj.animations;
-                let idleAnim = fileAnimations[0];//THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
-                this.idle = this.mixer.clipAction(idleAnim);
-                this.idle.play();
+                // this.mixer = new THREE.AnimationMixer(this.model);
+                // let fileAnimations = obj.animations;
+                // let idleAnim = fileAnimations[0];//THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
+                // this.idle = this.mixer.clipAction(idleAnim);
+                // this.idle.play();
             }).bind(this);
             this.loader.load(
                 modelPath,
@@ -126,6 +128,8 @@ class DressesSequence extends Component {
             this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
             this.camera.updateProjectionMatrix();
           }
+          if(this.model)
+            this.model.rotation.y += .004 * Math.PI;
         this.renderer.render(this.scene, this.camera);
         if (this.mixer) {
             this.mixer.update(this.clock.getDelta());
