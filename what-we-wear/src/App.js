@@ -6,7 +6,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {/* <h1><LoadingApp loading="true"/></h1> */}
+        <LoadingApp loading="true"/>
         <DressesSequence />
       </div>
     );

@@ -3,6 +3,7 @@ import {TweenMax, Expo, TimelineMax} from 'gsap/all';
 import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 import {enableScroll, disableScroll} from "../helpers/cancelScrolling";
+import NextButton from '../objects/NextButton.js';
 require("../helpers/scrollmagicdebug.js");
 class LoadingApp extends Component{
     
@@ -11,7 +12,8 @@ class LoadingApp extends Component{
         this.state={
                 loaded: false,
                  counter: 0,
-                 animation :0
+                 animation :0,
+                 animationInProgress: true
             }
         this.headingRef = null;
         this.headingTopRef = null;
@@ -20,6 +22,9 @@ class LoadingApp extends Component{
         this.loader1Ref = null;
         this.loader2Ref = null;
         this.loader3Ref = null;
+        this.scene1 = null; 
+        this.scene2 = null;
+        this.scene3 = null;
         this.controller = new ScrollMagic.Controller();
     }
     
@@ -29,7 +34,7 @@ class LoadingApp extends Component{
             window.scrollTo(0, 0);
           }
         this.startAnimating();
-        let scene1 = new ScrollMagic.Scene({
+        this.scene1 = new ScrollMagic.Scene({
             duration: "50%"
         })
         .addIndicators()
@@ -62,7 +67,7 @@ class LoadingApp extends Component{
             }
             
         })
-        let scene2 = new ScrollMagic.Scene({
+        this.scene2 = new ScrollMagic.Scene({
             duration: "50%",
             offset: 100,
             triggerElement: this.headingRef
@@ -85,13 +90,13 @@ class LoadingApp extends Component{
                 )
                 
             }else{
-                this.setState({
-                    counter: "73%",
-                    animation : 2
-                })
-               TweenMax.to(this.counterRef, 1, {
-                   fontSize: 100
-               })
+            //     this.setState({
+            //         counter: "73%",
+            //         animation : 2
+            //     })
+            //    TweenMax.to(this.counterRef, 1, {
+            //        fontSize: 100
+            //    })
             }
         })
         .on('leave', ()=>{
@@ -101,10 +106,10 @@ class LoadingApp extends Component{
            })
         })
         .addIndicators();
-        let scene3 = new ScrollMagic.Scene({
-            duration: "10%",
+        this.scene3 = new ScrollMagic.Scene({
+            duration: "50%",
             offset: 100,
-            triggerElement: this.loader2Ref
+            triggerElement: this.loader3Ref
         })
         .on('enter', event => {
             if(event.scrollDirection === 'FORWARD'){
@@ -123,7 +128,7 @@ class LoadingApp extends Component{
             }
         })
         .addIndicators()
-        this.controller.addScene([scene1, scene2, scene3])
+        this.controller.addScene([this.scene1, this.scene2, this.scene3])
 
     }
     componentDidUpdate(prevProps, prevState){
@@ -199,7 +204,7 @@ class LoadingApp extends Component{
                     updateCounter("710 000 000")
                 },
                 onComplete: function(){
-                    enableScroll();
+                    toggleButton();
                 }
             })
             .to(this.counterRef, .5, {
@@ -214,9 +219,14 @@ class LoadingApp extends Component{
             })
         }
         var nextAnimation=()=>{
-            this.setState({
-                animation: this.state.animation+1
-            })
+            this.setState(prevState =>({
+                animation: prevState.animation+1
+            }))
+        }
+        var toggleButton=()=>{
+            this.setState(prevState=>({
+                animationInProgress: !prevState.animationInProgress
+            }))
         }
     }
     
@@ -261,6 +271,22 @@ class LoadingApp extends Component{
             marginLeft: "-90%"
         })
         return textAnimation;
+    }
+    nextButtonPressed = ()=>{
+        switch (this.state.animation){
+            case 1:
+                window.scrollTo(0,this.scene2.scrollOffset());
+                break;
+            case 2:
+                window.scrollTo(0,this.scene3.scrollOffset());
+                break;
+            default:
+                console.log('done');
+        }
+        this.setState(prevState=>({
+            animation: prevState.animation+1
+            //animationInProgress: true
+        }));
     }
     render(){
         return <div>
@@ -315,6 +341,7 @@ class LoadingApp extends Component{
                                     }
                                 </div>
                             </div>
+                            {!this.state.animationInProgress && (<NextButton onClick={this.nextButtonPressed}/>)}
                         </div>
         </div>
     }

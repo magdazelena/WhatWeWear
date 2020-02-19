@@ -4,8 +4,35 @@
 @import "./variables/typography";
 @import "./variables/mixins";
 body{
-    background-color: $dark;
     color: $three;
+    background-color: $dark;
+    padding: 0;
+    margin: 0;
+    background-image: url('../images/1003.png'), url('../images/5015.png');
+    background-color: $dark;
+    background-blend-mode: multiply;
+    animation: backgroundPulse 12s infinite;
+}
+// .App{
+//     //background-tiles.com
+//     background-image: url('../images/1003.png'), url('../images/5015.png');
+//     background-color: $dark;
+//     background-blend-mode: multiply;
+//     animation: backgroundPulse 12s infinite;
+// }
+@keyframes backgroundPulse{
+    0%{
+        background-color: $dark;
+    }
+    15%{
+        background-color: lighten($dark, 6);
+    }
+    60%{
+        background-color: darken($dark, 10);
+    }
+    100%{
+        background-color: $dark;
+    }
 }
 #loader{
     color: white;
@@ -45,7 +72,7 @@ body{
         position: absolute;
         text-align: center;
         
-        font-size: .7em;
+        font-size: 2em;
         
         span{
             display: inline-block;
@@ -69,10 +96,35 @@ body{
         height: 50vh;
     }
 }
+.nextButton{
+    color: $three;
+    width: 100px;
+    height: 100px;
+    position: fixed;
+    bottom: 300px;
+    left: 50%;
+    cursor: pointer;
+    z-index: 1000000;
+    svg{
+        fill: $three;
+    }
+    .animatedStroke{
+        transform-origin: center;
+        animation: spinningStroke 4s ease-in-out infinite;
+    }
+}
 #dressesSequence{
     position: absolute;
     width: 100vw;
     height: 100vh;
     top:0;
     left:0;
+}
+@keyframes spinningStroke{
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
 }
