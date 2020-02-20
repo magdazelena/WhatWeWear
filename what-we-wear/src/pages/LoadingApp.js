@@ -35,7 +35,7 @@ class LoadingApp extends Component{
           }
         this.startAnimating();
         this.scene1 = new ScrollMagic.Scene({
-            duration: "50%"
+            duration: 50
         })
         .addIndicators()
         .on('leave', () => {
@@ -68,9 +68,8 @@ class LoadingApp extends Component{
             
         })
         this.scene2 = new ScrollMagic.Scene({
-            duration: "50%",
-            offset: 100,
-            triggerElement: this.headingRef
+            duration: 50,
+            offset: 100
         })
         .on('enter', event => {
             if(event.scrollDirection === 'FORWARD'){
@@ -107,9 +106,8 @@ class LoadingApp extends Component{
         })
         .addIndicators();
         this.scene3 = new ScrollMagic.Scene({
-            duration: "50%",
-            offset: 100,
-            triggerElement: this.loader3Ref
+            duration: 50,
+            offset: 200
         })
         .on('enter', event => {
             if(event.scrollDirection === 'FORWARD'){
@@ -148,7 +146,6 @@ class LoadingApp extends Component{
     }
     
     startAnimating(){
-        disableScroll();
         let counter = {value:this.state.counter};
         let timeline = new TimelineMax();
         timeline.to(counter, 10, {
@@ -283,10 +280,10 @@ class LoadingApp extends Component{
             default:
                 console.log('done');
         }
-        this.setState(prevState=>({
-            animation: prevState.animation+1
-            //animationInProgress: true
-        }));
+        // this.setState(prevState=>({
+        //     animation: prevState.animation+1
+        //     //animationInProgress: true
+        // }));
     }
     render(){
         return <div>

@@ -69,7 +69,7 @@ body{
     width: 100%;
     position: relative;
     .introText, .introHeadline{
-        position: absolute;
+        position: fixed;
         text-align: center;
         
         font-size: 2em;
@@ -84,7 +84,7 @@ body{
     .introText{
         width: 80%;
         margin-left: 10%;
-        bottom: 10vh;
+        bottom: 20vh;
     }
     .introHeadline{
         position: fixed;
@@ -101,8 +101,9 @@ body{
     width: 100px;
     height: 100px;
     position: fixed;
-    bottom: 300px;
+    bottom: 50px;
     left: 50%;
+    margin-left: -50px;
     cursor: pointer;
     z-index: 1000000;
     svg{
