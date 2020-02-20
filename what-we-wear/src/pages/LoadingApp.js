@@ -278,12 +278,14 @@ class LoadingApp extends Component{
                 window.scrollTo(0,this.scene3.scrollOffset());
                 break;
             default:
-                console.log('done');
+                this.destroyIntro();
         }
-        // this.setState(prevState=>({
-        //     animation: prevState.animation+1
-        //     //animationInProgress: true
-        // }));
+    }
+    componentWillUnmount=()=>{
+        this.controller.destroy();
+    }
+    destroyIntro=()=>{
+        this.props.markIntroDone();
     }
     render(){
         return <div>
