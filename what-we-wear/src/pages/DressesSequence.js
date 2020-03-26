@@ -4,6 +4,8 @@ import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 import THREE from '../3d/three';
 import FBXLoader from '../3d/fbxloader';
+import dressFragmentShader from '../3d/shaders/dressFragmentShader';
+import dressVertexShader from '../3d/shaders/dressVertexShader';
 require("../helpers/scrollmagicdebug.js");
 class DressesSequence extends Component {
     constructor(props){
@@ -18,6 +20,7 @@ class DressesSequence extends Component {
         this.idle = null;  
         this.loader = null;                            // Idle, the default state our character returns to
         this.clock = new THREE.Clock();          // Used for anims, which run to a clock instead of frame rate 
+        this.t = 0;
     }
     componentDidMount(){
         this.init();
@@ -84,19 +87,28 @@ class DressesSequence extends Component {
             var creationFuntion=(function(obj){
                 console.log(obj);
                 this.model = obj;
-                var material = new THREE.MeshPhysicalMaterial(
-                    {
-                    clearcoat: 0.1,
-                    clearcoatRoughness: 0.3,
-                    reflectivity: 0.2,
-                    color: 0XE29300
-                    });
+                // var material = new THREE.ShaderMaterial( {
+
+                //     vertexShader: dressVertexShader,
+                //     fragmentShader: dressFragmentShader
+            
+                // } );
+                
+                // material.morphTargets = true;
+                // material.morphNormals = true;
+                // material.skinning = true;
+                var mat1 = new THREE.MeshPhongMaterial( 
+                    { 
+                        color: 0xAA4444, 
+                        skinning: true , 
+                        morphTargets :true,
+                        specular: 0x1d1c3a
+                    } );
                 this.model.traverse(o => {
                     if (o.isMesh) {
                         o.castShadow = true;
                         o.receiveShadow = true;
-                      //  o.material = material;
-                        o.material.morphtargets = true;
+                        o.material = mat1;
                     }
                 });
                 // Set the models initial scale
@@ -132,15 +144,20 @@ class DressesSequence extends Component {
             this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
             this.camera.updateProjectionMatrix();
           }
-        //   if(this.model){
-        //     this.model.rotation.y += .004 * Math.PI;
-        //   }
+          if(this.model){
+            // if(this.model.morphTargetInfluences){
+            //     this.t+=0.01
+            //     this.model.morphTargetInfluences[ 0 ] = Math.abs( Math.sin( this.t ) );
+            // }
+            
+          }
             
         this.renderer.render(this.scene, this.camera);
         if (this.mixer) {
             this.mixer.update(this.clock.getDelta());
           }
         requestAnimationFrame(this.update);
+       
     }
     resizeRendererToDisplaySize=(renderer)=> {
         const canvas = renderer.domElement;
