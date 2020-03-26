@@ -6,7 +6,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state ={
-      introIsDone: false
+      introIsDone: true
     }
     this.markIntroDone = this.markIntroDone.bind(this);
   }

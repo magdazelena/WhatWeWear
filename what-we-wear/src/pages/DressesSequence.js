@@ -71,7 +71,6 @@ class DressesSequence extends Component {
             color: 0x1d1c3a,
             shininess: 200,
             reflectivity: 0.8,
-            metalness: 0.2,
             });
 
             let floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -80,14 +79,13 @@ class DressesSequence extends Component {
             floor.position.y = -11;
             this.scene.add(floor);
             //upload the model
-            const modelPath = '../3d/models/dress1_animations.fbx';
+            const modelPath = '../3d/models/dress_slide.fbx';
             this.loader = new THREE.FBXLoader(); 
             var creationFuntion=(function(obj){
                 console.log(obj);
                 this.model = obj;
                 var material = new THREE.MeshPhysicalMaterial(
                     {
-                    metalness: 0.2,
                     clearcoat: 0.1,
                     clearcoatRoughness: 0.3,
                     reflectivity: 0.2,
@@ -97,20 +95,26 @@ class DressesSequence extends Component {
                     if (o.isMesh) {
                         o.castShadow = true;
                         o.receiveShadow = true;
-                        o.material = material;
+                      //  o.material = material;
+                        o.material.morphtargets = true;
                     }
                 });
                 // Set the models initial scale
-                this.model.scale.set(.6, .6, .6);
+                this.model.scale.set(.4, .4,  .4);
                 this.model.position.y = -1;
                 this.model.position.x = 0;
-
                 this.scene.add(this.model);
-                // this.mixer = new THREE.AnimationMixer(this.model);
-                // let fileAnimations = obj.animations;
-                // let idleAnim = fileAnimations[0];//THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
-                // this.idle = this.mixer.clipAction(idleAnim);
-                // this.idle.play();
+               
+                this.mixer = new THREE.AnimationMixer(this.model);
+                //const clips = this.model.animations;
+                let fileAnimations = obj.animations;
+                let idleAnim = fileAnimations[0];//THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
+                this.idle = this.mixer.clipAction(idleAnim);
+               this.idle.play();
+                // fileAnimations.forEach(clip =>{
+                //     this.mixer.clipAction(clip).play();
+                // })
+                
             }).bind(this);
             this.loader.load(
                 modelPath,
@@ -128,8 +132,10 @@ class DressesSequence extends Component {
             this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
             this.camera.updateProjectionMatrix();
           }
-          if(this.model)
-            this.model.rotation.y += .004 * Math.PI;
+        //   if(this.model){
+        //     this.model.rotation.y += .004 * Math.PI;
+        //   }
+            
         this.renderer.render(this.scene, this.camera);
         if (this.mixer) {
             this.mixer.update(this.clock.getDelta());
