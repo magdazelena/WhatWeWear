@@ -14,7 +14,8 @@ class DressesSequence extends Component {
         this.scene = null; 
         this.renderer = null;
         this.camera = null;
-        this.model = null;                              
+        this.model = null;
+        this.model2 = null;                              
         this.possibleAnims = null;                      // Animations found in our file
         this.mixer = null;                              // THREE.js animations mixer
         this.idle = null;  
@@ -37,7 +38,7 @@ class DressesSequence extends Component {
         //renderer
         this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
         this.renderer.shadowMap.enabled = true;
-        this.renderer.setPixelRatio(window.devicePixelRatio);
+        ///this.renderer.setPixelRatio(window.devicePixelRatio);
         document.body.appendChild(this.renderer.domElement);
         //camera
         this.camera = new THREE.PerspectiveCamera(
@@ -85,24 +86,16 @@ class DressesSequence extends Component {
             const modelPath = '../3d/models/dress_slide.fbx';
             this.loader = new THREE.FBXLoader(); 
             var creationFuntion=(function(obj){
-                console.log(obj);
                 this.model = obj;
-                // var material = new THREE.ShaderMaterial( {
-
-                //     vertexShader: dressVertexShader,
-                //     fragmentShader: dressFragmentShader
-            
-                // } );
-                
-                // material.morphTargets = true;
-                // material.morphNormals = true;
-                // material.skinning = true;
                 var mat1 = new THREE.MeshPhongMaterial( 
                     { 
                         color: 0xAA4444, 
                         skinning: true , 
                         morphTargets :true,
-                        specular: 0x1d1c3a
+                        specular: 0x1d1c3a,
+                        reflectivity: 0.8,
+                        shininess: 20,
+                       // shadowSide: THREE.BackSide
                     } );
                 this.model.traverse(o => {
                     if (o.isMesh) {
@@ -112,7 +105,7 @@ class DressesSequence extends Component {
                     }
                 });
                 // Set the models initial scale
-                this.model.scale.set(.4, .4,  .4);
+                this.model.scale.set(.2, .2,  .2);
                 this.model.position.y = -1;
                 this.model.position.x = 0;
                 this.scene.add(this.model);
@@ -121,12 +114,15 @@ class DressesSequence extends Component {
                 //const clips = this.model.animations;
                 let fileAnimations = obj.animations;
                 let idleAnim = fileAnimations[0];//THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
+                idleAnim.optimize();  
                 this.idle = this.mixer.clipAction(idleAnim);
-               this.idle.play();
+                this.idle.loop = THREE.LoopOnce;
+                this.idle.clampWhenFinished = true;
+                this.idle.timeScale = 4;
+                this.idle.play();
                 // fileAnimations.forEach(clip =>{
                 //     this.mixer.clipAction(clip).play();
                 // })
-                
             }).bind(this);
             this.loader.load(
                 modelPath,
@@ -175,7 +171,7 @@ class DressesSequence extends Component {
       }
     render () {
        return <div>
-           <canvas id="dressesSequence" ref={ref=>this.canvasRef = ref}></canvas>
+           <canvas id="dressesSequence" ref={ref=>this.canvasRef = ref} width={window.innerWidth} height={window.innerHeight}></canvas>
         </div>
     }
 }
