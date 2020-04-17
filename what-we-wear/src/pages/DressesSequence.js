@@ -15,7 +15,10 @@ class DressesSequence extends Component {
         this.renderer = null;
         this.camera = null;
         this.model = null;
-        this.model2 = null;                              
+        this.model2 = null;
+        this.mixer2 = null; 
+        this.mixers = [];
+        this.idle2 = null;                             
         this.possibleAnims = null;                      // Animations found in our file
         this.mixer = null;                              // THREE.js animations mixer
         this.idle = null;  
@@ -108,18 +111,33 @@ class DressesSequence extends Component {
                 this.model.scale.set(.2, .2,  .2);
                 this.model.position.y = -1;
                 this.model.position.x = 0;
+                this.model2 = this.model.clone();
+                this.model2.position.x = -4;
                 this.scene.add(this.model);
+                this.scene.add(this.model2);
                
                 this.mixer = new THREE.AnimationMixer(this.model);
+                this.mixers.push(this.mixer);
+                this.mixer2 = new THREE.AnimationMixer(this.model2);
+
+                this.mixers.push(this.mixer2);
                 //const clips = this.model.animations;
                 let fileAnimations = obj.animations;
                 let idleAnim = fileAnimations[0];//THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
                 idleAnim.optimize();  
-                this.idle = this.mixer.clipAction(idleAnim);
-                this.idle.loop = THREE.LoopOnce;
-                this.idle.clampWhenFinished = true;
-                this.idle.timeScale = 4;
+                let idCopy = idleAnim.clone()
+                let dle = this.mixer.clipAction(idleAnim);
+                let idle2 = this.mixer2.clipAction(idCopy);
+                
+                let modified = {
+                  loop : THREE.LoopOnce,
+                  clampWhenFinished : true,
+                  timeScale : 4
+                }
+                this.idle = overwriteProps(dle, modified); 
+                this.idle2 = overwriteProps(idle2, modified);            
                 this.idle.play();
+                this.idle2.play();
                 // fileAnimations.forEach(clip =>{
                 //     this.mixer.clipAction(clip).play();
                 // })
@@ -148,10 +166,13 @@ class DressesSequence extends Component {
             
           }
             
-        this.renderer.render(this.scene, this.camera);
-        if (this.mixer) {
-            this.mixer.update(this.clock.getDelta());
+        let delta = this.clock.getDelta();
+        if(this.mixers.length !== 0){
+          for ( let i = 0, l = this.mixers.length; i < l; i ++ ) {
+              this.mixers[ i ].update( delta );    
           }
+        }
+        this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.update);
        
     }
@@ -177,3 +198,10 @@ class DressesSequence extends Component {
 }
 
 export default DressesSequence;
+
+let overwriteProps = (proto, object) => {
+  Object.entries(object).map(entry => {
+    proto[entry[0]] = entry[1];
+  }) 
+  return proto;
+}
