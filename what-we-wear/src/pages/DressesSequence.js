@@ -14,16 +14,11 @@ class DressesSequence extends Component {
         this.scene = null; 
         this.renderer = null;
         this.camera = null;
-        this.model = null;
-        this.model2 = null;
-        this.mixer2 = null; 
         this.models = [];
-        this.mixers = [];
-        this.idle2 = null;                             
+        this.mixers = [];                        
         this.possibleAnims = null;                      // Animations found in our file
-        this.mixer = null;                              // THREE.js animations mixer
-        this.idle = null; 
         this.actions = []; 
+        this.dirLight = null;
         this.loader = null;                            // Idle, the default state our character returns to
         this.clock = new THREE.Clock();          // Used for anims, which run to a clock instead of frame rate 
         this.t = 0;
@@ -56,30 +51,30 @@ class DressesSequence extends Component {
           this.camera.position.x = 0;
           this.camera.position.y = -3;
           //lights
-          let hemiLight = new THREE.HemisphereLight(0xffffff, backgroundColor, 0.61);
+          let hemiLight = new THREE.HemisphereLight(0xffffff, backgroundColor, 0.91);
             hemiLight.position.set(0, 50, 0);
             // Add hemisphere light to scene
             this.scene.add(hemiLight);
 
             let d = 8.25;
-            let dirLight = new THREE.DirectionalLight(0xffffff, 0.84);
-            dirLight.position.set(-8, 8, 8);
-            dirLight.castShadow = true;
-            dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
-            dirLight.shadow.camera.near = 0.1;
-            dirLight.shadow.camera.far = 1500;
-            dirLight.shadow.camera.left = d * -1;
-            dirLight.shadow.camera.right = d;
-            dirLight.shadow.camera.top = d;
-            dirLight.shadow.camera.bottom = d * -1;
+            this.dirLight = new THREE.DirectionalLight(0xffffff, 0.84);
+            this.dirLight.position.set(8, 28, 18);
+            this.dirLight.castShadow = true;
+            this.dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
+            this.dirLight.shadow.camera.near = 0.1;
+            this.dirLight.shadow.camera.far = 1500;
+            this.dirLight.shadow.camera.left = d * -1;
+            this.dirLight.shadow.camera.right = d;
+            this.dirLight.shadow.camera.top = d;
+            this.dirLight.shadow.camera.bottom = d * -1;
             // Add directional Light to scene
-            this.scene.add(dirLight);
+            this.scene.add(this.dirLight);
             // Floor
             let floorGeometry = new THREE.PlaneGeometry(5000, 5000, 1, 1);
             let floorMaterial = new THREE.MeshPhongMaterial({
-            color: 0x1d1c3a,
-            shininess: 200,
-            reflectivity: 0.8,
+                color: 0x1d1c3a,
+                shininess: 200,
+                reflectivity: 0.8,
             });
 
             let floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -91,18 +86,25 @@ class DressesSequence extends Component {
             const modelPath = '../3d/models/dress_slide.fbx';
             this.loader = new THREE.FBXLoader(); 
             var creationFuntion=(function(obj){
-                this.model = obj;
+                let model = obj;
                 var mat1 = new THREE.MeshPhongMaterial( 
                     { 
-                        color: 0xAA4444, 
+                        color: 0xE29300, 
                         skinning: true , 
                         morphTargets :true,
-                        specular: 0x1d1c3a,
+                        specular: 0xE29380,
                         reflectivity: 0.8,
-                        shininess: 20,
-                       // shadowSide: THREE.BackSide
-                    } );
-                this.model.traverse(o => {
+                        shininess: 20,                   
+                 } );
+                 var mat2 = new THREE.MeshPhongMaterial( 
+                  { 
+                      color: 0x009300, 
+                      skinning: true , 
+                      morphTargets :true,
+                      specular: 0xE29380,
+                      reflectivity: 0                  
+               } );
+                model.traverse(o => {
                     if (o.isMesh) {
                         o.castShadow = true;
                         o.receiveShadow = true;
@@ -110,13 +112,13 @@ class DressesSequence extends Component {
                     }
                 });
                 // Set the models initial scale
-                this.model.scale.set(.2, .2,  .2);
-                this.model.position.y = -1;
-                this.model.position.x = -10;
-                this.models.push(this.model);
+                model.scale.set(.2, .2,  .2);
+                model.position.y = -1;
+                model.position.x = -10;
+                this.models.push(model);
                 for(let i =0; i<4; i++){
-                    let newModel = this.model.clone();
-                    newModel.position.x = this.model.position.x-4*(i+1);
+                    let newModel = model.clone();
+                    newModel.position.x = model.position.x-4*(i+1);
                     this.models.push(newModel);
                 }
                 this.models.forEach(model=>{
@@ -143,10 +145,18 @@ class DressesSequence extends Component {
                 })
                 this.actions.forEach(action=>{
                   action.play();
-                })
-                // this.idle.play();
-                // this.idle2.play();
-
+                });
+                this.mixers[0].addEventListener('finished', e => {
+                  this.models.forEach((model, index)=> {
+                    if(index != 2){
+                      model.traverse(o=>{
+                        if(o.isMesh){
+                          o.material = mat2;
+                        }
+                      })
+                    }
+                  })
+                });
             }).bind(this);
             this.loader.load(
                 modelPath,
@@ -164,12 +174,9 @@ class DressesSequence extends Component {
             this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
             this.camera.updateProjectionMatrix();
           }
-          if(this.model){
-            // if(this.model.morphTargetInfluences){
-            //     this.t+=0.01
-            //     this.model.morphTargetInfluences[ 0 ] = Math.abs( Math.sin( this.t ) );
-            // }
-            
+          if(this.dirLight){
+             this.dirLight.position.x = -5 * Math.cos(Date.now() / 6400);
+            this.dirLight.position.z = -30 * Math.sin(Date.now() / 5400);
           }
             
         let delta = this.clock.getDelta();
