@@ -17,11 +17,13 @@ class DressesSequence extends Component {
         this.model = null;
         this.model2 = null;
         this.mixer2 = null; 
+        this.models = [];
         this.mixers = [];
         this.idle2 = null;                             
         this.possibleAnims = null;                      // Animations found in our file
         this.mixer = null;                              // THREE.js animations mixer
-        this.idle = null;  
+        this.idle = null; 
+        this.actions = []; 
         this.loader = null;                            // Idle, the default state our character returns to
         this.clock = new THREE.Clock();          // Used for anims, which run to a clock instead of frame rate 
         this.t = 0;
@@ -110,37 +112,41 @@ class DressesSequence extends Component {
                 // Set the models initial scale
                 this.model.scale.set(.2, .2,  .2);
                 this.model.position.y = -1;
-                this.model.position.x = 0;
-                this.model2 = this.model.clone();
-                this.model2.position.x = -4;
-                this.scene.add(this.model);
-                this.scene.add(this.model2);
-               
-                this.mixer = new THREE.AnimationMixer(this.model);
-                this.mixers.push(this.mixer);
-                this.mixer2 = new THREE.AnimationMixer(this.model2);
-
-                this.mixers.push(this.mixer2);
-                //const clips = this.model.animations;
+                this.model.position.x = -10;
+                this.models.push(this.model);
+                for(let i =0; i<4; i++){
+                    let newModel = this.model.clone();
+                    newModel.position.x = this.model.position.x-4*(i+1);
+                    this.models.push(newModel);
+                }
+                this.models.forEach(model=>{
+                  this.scene.add(model);
+                  this.mixers.push(new THREE.AnimationMixer(model));
+                })
+ 
                 let fileAnimations = obj.animations;
-                let idleAnim = fileAnimations[0];//THREE.AnimationClip.findByName(fileAnimations, 'Take 001');
-                idleAnim.optimize();  
-                let idCopy = idleAnim.clone()
-                let dle = this.mixer.clipAction(idleAnim);
-                let idle2 = this.mixer2.clipAction(idCopy);
-                
+                let anim = fileAnimations[0];
+                anim.optimize();  
+
                 let modified = {
                   loop : THREE.LoopOnce,
                   clampWhenFinished : true,
                   timeScale : 4
                 }
-                this.idle = overwriteProps(dle, modified); 
-                this.idle2 = overwriteProps(idle2, modified);            
-                this.idle.play();
-                this.idle2.play();
-                // fileAnimations.forEach(clip =>{
-                //     this.mixer.clipAction(clip).play();
-                // })
+                this.mixers.forEach(mixer =>{
+                  this.actions.push(
+                    overwriteProps(
+                      mixer.clipAction(anim),
+                      modified
+                    )
+                  )
+                })
+                this.actions.forEach(action=>{
+                  action.play();
+                })
+                // this.idle.play();
+                // this.idle2.play();
+
             }).bind(this);
             this.loader.load(
                 modelPath,
