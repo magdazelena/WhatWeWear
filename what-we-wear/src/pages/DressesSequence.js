@@ -3,6 +3,7 @@ import {TweenMax, Expo, TimelineMax} from 'gsap/all';
 import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 import THREE from '../3d/three';
+import {animateText, reanimateText, generateTextForAnimation} from '../helpers/textAnimations';
 import FBXLoader from '../3d/fbxloader';
 import dressFragmentShader from '../3d/shaders/dressFragmentShader';
 import dressVertexShader from '../3d/shaders/dressVertexShader';
@@ -11,6 +12,9 @@ class DressesSequence extends Component {
     constructor(props){
         super(props);
         this.canvasRef = React.createRef();
+        this.twentyRef = React.createRef();
+        this.dressesDescRef = React.createRef();
+        this.dressesHeadRef = React.createRef();
         this.scene = null; 
         this.renderer = null;
         this.camera = null;
@@ -22,21 +26,96 @@ class DressesSequence extends Component {
         this.loader = null;                            // Idle, the default state our character returns to
         this.clock = new THREE.Clock();          // Used for anims, which run to a clock instead of frame rate 
         this.t = 0;
+        this.state ={
+          shouldAnimate: false,
+          shouldAnimateDesc: false
+        }
     }
     componentDidMount(){
-        this.init();
-        this.update();
+       
+      
         
+        let controller = new ScrollMagic.Controller();
+        let scene = new ScrollMagic.Scene({
+          duration: "50%"
+        })
+        .addIndicators()
+        .on('enter', ()=>{
+          this.init();
+          this.update();
+  
+                
+          
+            
+        })
+        .addTo(controller);
+        
+        
+    }
+    animateScene = ()=>{
+      const mat2 = new THREE.MeshPhongMaterial( 
+        { 
+            color: 0x1d1c3a, 
+            skinning: true , 
+            morphTargets :true,
+            specular: 0x009300,
+            reflectivity: 0                  
+        });
+      let timeline = new TimelineMax();
+      this.mixers[0].addEventListener('finished', e=>{
+        timeline.to(this.dressesHeadRef, 0.2, {
+          onComplete: ()=>{
+              this.setState({
+                shouldAnimate: true
+              }, ()=>{
+                [...this.dressesHeadRef.getElementsByTagName('span')].forEach((span, i)=>{
+                    animateText(span, i).play();
+                });
+              })
+          },
+        });
+        timeline.to(this.twentyRef, .3, {
+          opacity: 1,
+          onStart: ()=>{
+            this.models.forEach((model, index)=> {
+              
+              if(index != 2){
+                model.traverse(o=>{
+                  if(o.isMesh){
+                    o.material = mat2;
+                  }
+                })
+              }
+            })
+          }
+        }, "+=2");
+        timeline.to(this.dressesDescRef, 0.2, {
+          onComplete: ()=>{
+              this.setState({
+                shouldAnimateDesc: true
+              }, ()=>{
+                [...this.dressesDescRef.getElementsByTagName('span')].forEach((span, i)=>{
+                  animateText(span, i).play();
+              });
+              })
+          },
+        })
+        
+      })
+      
+                        
+      
     }
     init = ()=>{
         const canvas = this.canvasRef.current;
         const backgroundColor = 0x1d1c3a;
         //scene
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(backgroundColor);
-        this.scene.fog = new THREE.Fog(backgroundColor, 60, 100);
+        //this.scene.background = new THREE.Color(backgroundColor);
+        this.scene.fog = new THREE.Fog(0x000000, 80, 100);
         //renderer
-        this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        this.renderer.setClearColor(0x000000, 0);
         this.renderer.shadowMap.enabled = true;
         ///this.renderer.setPixelRatio(window.devicePixelRatio);
         document.body.appendChild(this.renderer.domElement);
@@ -51,7 +130,7 @@ class DressesSequence extends Component {
           this.camera.position.x = 0;
           this.camera.position.y = -3;
           //lights
-          let hemiLight = new THREE.HemisphereLight(0xffffff, backgroundColor, 0.91);
+          let hemiLight = new THREE.HemisphereLight(0xffffff,  0.91);
             hemiLight.position.set(0, 50, 0);
             // Add hemisphere light to scene
             this.scene.add(hemiLight);
@@ -72,11 +151,9 @@ class DressesSequence extends Component {
             // Floor
             let floorGeometry = new THREE.PlaneGeometry(5000, 5000, 1, 1);
             let floorMaterial = new THREE.MeshPhongMaterial({
-                color: 0x1d1c3a,
-                shininess: 200,
-                reflectivity: 0.8,
+                color: 0x000000
             });
-
+            floorMaterial.opacity = 0;
             let floor = new THREE.Mesh(floorGeometry, floorMaterial);
             floor.rotation.x = -0.5 * Math.PI; // This is 90 degrees by the way
             floor.receiveShadow = true;
@@ -96,14 +173,7 @@ class DressesSequence extends Component {
                         reflectivity: 0.8,
                         shininess: 20,                   
                  } );
-                 var mat2 = new THREE.MeshPhongMaterial( 
-                  { 
-                      color: 0x009300, 
-                      skinning: true , 
-                      morphTargets :true,
-                      specular: 0xE29380,
-                      reflectivity: 0                  
-               } );
+                 
                 model.traverse(o => {
                     if (o.isMesh) {
                         o.castShadow = true;
@@ -112,8 +182,8 @@ class DressesSequence extends Component {
                     }
                 });
                 // Set the models initial scale
-                model.scale.set(.2, .2,  .2);
-                model.position.y = -1;
+                model.scale.set(.5, .5,  .5);
+                model.position.y = -10;
                 model.position.x = -10;
                 this.models.push(model);
                 for(let i =0; i<4; i++){
@@ -146,17 +216,7 @@ class DressesSequence extends Component {
                 this.actions.forEach(action=>{
                   action.play();
                 });
-                this.mixers[0].addEventListener('finished', e => {
-                  this.models.forEach((model, index)=> {
-                    if(index != 2){
-                      model.traverse(o=>{
-                        if(o.isMesh){
-                          o.material = mat2;
-                        }
-                      })
-                    }
-                  })
-                });
+                this.animateScene();
             }).bind(this);
             this.loader.load(
                 modelPath,
@@ -175,8 +235,8 @@ class DressesSequence extends Component {
             this.camera.updateProjectionMatrix();
           }
           if(this.dirLight){
-             this.dirLight.position.x = -5 * Math.cos(Date.now() / 6400);
-            this.dirLight.position.z = -30 * Math.sin(Date.now() / 5400);
+             this.dirLight.position.x = -5 * Math.cos(Date.now() / 1400);
+            this.dirLight.position.z = -30 * Math.sin(Date.now() / 1400);
           }
             
         let delta = this.clock.getDelta();
@@ -206,6 +266,15 @@ class DressesSequence extends Component {
     render () {
        return <div>
            <canvas id="dressesSequence" ref={ref=>this.canvasRef = ref} width={window.innerWidth} height={window.innerHeight}></canvas>
+           <div id="dressesHeadline" ref={ref=>this.dressesHeadRef = ref}>
+             {this.state.shouldAnimate && (generateTextForAnimation(texts.dressesSequence.headline.split('')))}
+           </div>
+           <div id="twenty" ref={ref=>this.twentyRef = ref}>20%</div>
+            <div id="dressesDesc" ref={ref=>this.dressesDescRef=ref}>
+              { this.state.shouldAnimateDesc && (generateTextForAnimation(texts.dressesSequence.description.split('')))
+                
+              }
+            </div>
         </div>
     }
 }

@@ -124,6 +124,33 @@ body{
     left:0;
     overflow: hidden;
 }
+#dressesHeadline, #dressesDesc{
+    font-size: 2em;
+    position: absolute;
+   span{
+        display: inline-block;
+        position: relative;
+        min-width: .4em;
+        transform: translate3d(0px, 0px, 0px) scale(1, 1);
+   }
+}
+#dressesHeadline{
+    top: 10vh;
+    left: 30%;
+}
+#dressesDesc{
+    bottom: 20vw;
+    right: 10%;
+}
+#twenty{
+    font-family: $neon;
+    font-size: 30em;
+    position: absolute;
+    bottom: 30vh;
+    left: 45vw;
+    mix-blend-mode: difference;
+    opacity: 0;
+}
 @keyframes spinningStroke{
     from{
         transform: rotate(0deg);
