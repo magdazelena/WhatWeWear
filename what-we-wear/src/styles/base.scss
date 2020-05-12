@@ -15,6 +15,10 @@ body{
     width: 100vw;
     overflow-x: hidden;
 }
+a{
+    text-decoration: none;
+    color: unset;
+}
 // .App{
 //     //background-tiles.com
 //     background-image: url('../images/1003.png'), url('../images/5015.png');
@@ -130,5 +134,58 @@ body{
     }
     to{
         transform: rotate(360deg);
+    }
+}
+#findMore{
+    width: 100vw;
+    position: relative;
+    .dragg-area{
+        display: flex;
+        justify-content: flex-start;
+        position: relative;
+        cursor: move;
+        a{
+            margin: 20px;
+        }
+    div{
+        width: 15vw;
+        margin: 1em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .thumb{
+            width: 100%;
+            padding-top: 140%;
+            position: relative;
+            
+            span{
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                padding: .5em;
+                color: $dark;
+            }
+        }
+        .info{
+            font-family: $neon;
+            p{
+                margin: 0;
+                padding: 0;
+                &.author{
+                    font-size: 1.3em;
+                }
+            }
+        }
+        &.document{
+            .thumb{
+                background-color: $one;
+            }
+        }
+        &.video{
+            .thumb{
+                background-color: $three;
+            }
+        }
+    }
     }
 }
