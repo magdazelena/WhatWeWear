@@ -1,8 +1,8 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
 import {TweenMax, TimelineMax} from 'gsap';
+import {Elastic} from 'gsap/all';
 import list from '../helpers/resources.json';
-import { Timeline } from 'gsap/gsap-core';
 function FindOutMore(){
     let findRef = React.useRef(null);
     let targ, coordX, coordY, offsetX,  drag;
@@ -28,29 +28,40 @@ function FindOutMore(){
         coordX = parseInt(targ.style.left);
         coordY = parseInt(targ.style.top);
         drag = true;
-
+   
         // move div element
         document.onmousemove=dragDiv;
         playgrounds.map(item => {
-            TweenMax.to(item.displacementSprite.scale,{x:0.8+duration, y:0.8+duration}).duration(duration);
+            
+            TweenMax.to(item.displacementSprite.scale,{x:0.8, y:0.8, ease: ease}).duration(1);
         })
         return false;
 
     }
     let duration = 1;
+    let distance = 0;
+    let ease = Elastic.easeOut.config(1, 0.3);
+    var oldX = 0;
     let dragDiv = (e) => {
         if (!drag) {return};
         if (!e) { var e= window.event};
         targ.style.left=coordX+e.clientX-offsetX+'px';
-        duration+=.3;
-       
+        distance = coordX+e.clientX-offsetX;
+        let direction = oldX <e.pageX ? -20: 20;
+        playgrounds.map(item => {
+            TweenMax.to(item.renderer.view, .5, {skewX: direction});
+            TweenMax.to(item.displacementSprite.scale,2,{x:0.8+direction/distance, y:0.8+Math.sin(distance), ease: ease});
+        })
+        oldX = e.pageX;
         return false;
     }
     
     let stopDrag =() =>{
         playgrounds.map(item => {
-            TweenMax.to(item.displacementSprite.scale, 1, {x:2, y:2})
-        })
+            TweenMax.to(item.renderer.view, 1, {skewX: 0, ease: ease});
+            TweenMax.to(item.displacementSprite.scale, 2, {x:0, y:0})
+        });
+        duration = 1;
         drag=false;
     }
 
