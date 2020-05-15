@@ -33,7 +33,7 @@ function FindOutMore(){
         document.onmousemove=dragDiv;
         playgrounds.map(item => {
             
-            TweenMax.to(item.displacementSprite.scale,{x:1.8, y:1.8, ease: ease}).duration(1);
+            TweenMax.to(item.displacementSprite.scale,{x:1.8*Math.random(), y:1.8, ease: ease}).duration(1);
         })
         return false;
 
@@ -49,8 +49,8 @@ function FindOutMore(){
         let direction = oldX <e.pageX ? -20: 20;
         playgrounds.map(item => {
             TweenMax.to(item.renderer.view, .5, {skewX: direction});
-            TweenMax.to(item.displacementSprite, 3, {rotation: 90+10*direction/distance});
-            TweenMax.to(item.displacementSprite.scale,2,{x:1+direction/distance, y:1+direction/distance, ease: ease});
+            TweenMax.to(item.displacementSprite, 3, {rotation: 90+10*direction/distance*Math.random()});
+            TweenMax.to(item.displacementSprite.scale,2,{x:Math.random()+direction/distance*Math.random(), y:1+direction/distance*Math.random(), ease: ease});
         })
         oldX = e.pageX;
         return false;
