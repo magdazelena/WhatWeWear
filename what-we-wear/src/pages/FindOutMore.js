@@ -38,7 +38,6 @@ function FindOutMore(){
         return false;
 
     }
-    let duration = 1;
     let distance = 0;
     let ease = Elastic.easeOut.config(1, 0.3);
     var oldX = 0;
@@ -50,7 +49,7 @@ function FindOutMore(){
         let direction = oldX <e.pageX ? -20: 20;
         playgrounds.map(item => {
             TweenMax.to(item.renderer.view, .5, {skewX: direction});
-            TweenMax.to(item.displacementSprite.scale,2,{x:0.8+direction/distance, y:0.8+Math.sin(distance), ease: ease});
+            TweenMax.to(item.displacementSprite.scale,2,{x:0.8+direction/distance, y:0.8+direction/distance, ease: ease});
         })
         oldX = e.pageX;
         return false;
@@ -61,7 +60,6 @@ function FindOutMore(){
             TweenMax.to(item.renderer.view, 1, {skewX: 0, ease: ease});
             TweenMax.to(item.displacementSprite.scale, 2, {x:0, y:0})
         });
-        duration = 1;
         drag=false;
     }
 
@@ -92,13 +90,13 @@ function FindOutMore(){
             preview.x = playground.renderer.width / 2 -20;
             preview.y = playground.renderer.height / 2 -20; 
             playground.preview = preview;
-	        let displacementSprite = PIXI.Sprite.from('./images/ripple.jpg');
+	        let displacementSprite = PIXI.Sprite.from('./images/text1.png');
 	        displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
 
 	       	let displacementFilter = new PIXI.filters.DisplacementFilter(displacementSprite);
 
 	        displacementSprite.scale.y = 0;
-	        displacementSprite.scale.x = 0;
+            displacementSprite.scale.x = 0;
             let stage = new PIXI.Container();
 	        stage.addChild(displacementSprite);
 
@@ -119,6 +117,7 @@ function FindOutMore(){
         playgrounds.map(item => {
             // item.displacementSprite.scale.x += Math.sin(item.displacementSprite.scale.x);
             // item.displacementSprite.scale.y += Math.sin(item.displacementSprite.scale.y);
+            //item.displacementSprite.rotation += 0.02;
             item.stage.filters = [item.displacementFilter];
 
             item.renderer.render(item.stage);
