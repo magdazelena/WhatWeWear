@@ -33,7 +33,7 @@ function FindOutMore(){
         document.onmousemove=dragDiv;
         playgrounds.map(item => {
             
-            TweenMax.to(item.displacementSprite.scale,{x:0.8, y:0.8, ease: ease}).duration(1);
+            TweenMax.to(item.displacementSprite.scale,{x:1.8, y:1.8, ease: ease}).duration(1);
         })
         return false;
 
@@ -49,7 +49,8 @@ function FindOutMore(){
         let direction = oldX <e.pageX ? -20: 20;
         playgrounds.map(item => {
             TweenMax.to(item.renderer.view, .5, {skewX: direction});
-            TweenMax.to(item.displacementSprite.scale,2,{x:0.8+direction/distance, y:0.8+direction/distance, ease: ease});
+            TweenMax.to(item.displacementSprite, 3, {rotation: 90+10*direction/distance});
+            TweenMax.to(item.displacementSprite.scale,2,{x:1+direction/distance, y:1+direction/distance, ease: ease});
         })
         oldX = e.pageX;
         return false;
@@ -58,7 +59,7 @@ function FindOutMore(){
     let stopDrag =() =>{
         playgrounds.map(item => {
             TweenMax.to(item.renderer.view, 1, {skewX: 0, ease: ease});
-            TweenMax.to(item.displacementSprite.scale, 2, {x:0, y:0})
+            TweenMax.to(item.displacementSprite.scale, 2, {x:5, y:5})
         });
         drag=false;
     }
@@ -84,25 +85,27 @@ function FindOutMore(){
 	        let preview = new PIXI.Sprite(tp);
             
             
-            preview.anchor.set(0.4);
-            preview.width = playground.renderer.width-20;
-            preview.height = playground.renderer.height-20;
-            preview.x = playground.renderer.width / 2 -20;
-            preview.y = playground.renderer.height / 2 -20; 
+            preview.anchor.set(0.5);
+            preview.width = playground.renderer.width;
+            preview.height = playground.renderer.height;
+            preview.x = playground.renderer.width / 2 ;
+            preview.y = playground.renderer.height / 2; 
             playground.preview = preview;
-	        let displacementSprite = PIXI.Sprite.from('./images/text1.png');
+	        let displacementSprite = PIXI.Sprite.from('./images/wrinkles.jpg');
 	        displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
 
 	       	let displacementFilter = new PIXI.filters.DisplacementFilter(displacementSprite);
 
 	        displacementSprite.scale.y = 0;
             displacementSprite.scale.x = 0;
+            displacementSprite.rotation = 90;
             let stage = new PIXI.Container();
 	        stage.addChild(displacementSprite);
 
             stage.addChild(preview);
             playground.displacementSprite = displacementSprite;
-            displacementFilter.autoFit = false
+            displacementFilter.autoFit = false;
+            displacementFilter.padding = 50;
             playground.displacementFilter = displacementFilter;
             playground.stage = stage;
             
