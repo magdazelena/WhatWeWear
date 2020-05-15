@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "fbx2gltf": "^0.9.7-p1",
+    "gsap": "^3.2.6",
     "node-sass": "^4.13.0",
+    "pixi.js": "^5.2.4",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-scripts": "^3.3.0",
