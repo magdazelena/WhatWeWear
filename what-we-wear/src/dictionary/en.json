@@ -14,5 +14,19 @@
     "dressesSequence": {
         "headline": "an average person wears about",
         "description": "of garments they own"
-    }
+    },
+    "resources":[
+        {
+            "slug": "sustainability",
+            "title": "Shopping reasonably"
+        },
+        {
+            "slug": "hazard",
+            "title": "Environmental & work hazard of Fast Fashion"
+        },
+        {
+            "slug": "fastFashion",
+            "title": "What is Fast Fashion"
+        }
+    ]
 }

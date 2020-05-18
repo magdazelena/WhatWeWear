@@ -1,74 +1,66 @@
 [
     {
+        "category" : "fastFashion", 
         "type": "document",
-        "url": "",
-        "author": "Ala Makota",
-        "title": "How not to",
-        "thumb": "/images/document.jpg",
+        "url": "https://storage.googleapis.com/planet4-international-stateless/2017/05/2da03645-after-the-binge-the-hangover.pdf",
+        "author": "GreenPeace",
+        "title": "After the binge, the hangover",
+        "thumb": "/images/binge_hangover.jpg",
         "language": "EN"
     },
     {
+        "category" : "sustainability", 
         "type": "document",
-        "url": "",
-        "author": "Ala Makota",
-        "title": "How not to",
-        "thumb": "/images/document.jpg",
+        "url": "http://www.ecap.eu.com/wp-content/uploads/2018/07/ECAP-Textile-collection-in-European-cities_full-report_with-summary.pdf",
+        "author": "ECAP report",
+        "title": "Used textile collection in european cities",
+        "thumb": "/images/used_textiles.jpg",
         "language": "EN"
     },
     {
+        "category" : "hazard", 
         "type": "document",
-        "url": "",
-        "author": "Ala Makota",
-        "title": "How not to",
-        "thumb": "/images/document.jpg",
+        "url": "https://academic.oup.com/occmed/article/63/5/317/1451439",
+        "author": "John Hobson",
+        "title": "To die for? The health and safety of fast fashion",
+        "thumb": "/images/occupational_medicine.jpg",
         "language": "EN"
     },
     {
-        "type": "document",
-        "url": "",
-        "author": "Ala Makota",
-        "title": "How not to",
-        "thumb": "/images/document.jpg",
-        "language": "EN"
-    },
-    {
+        "category" : "fastFashion", 
         "type": "video",
-        "url": "",
-        "author": "Ala Makota",
-        "title": "How not to",
-        "thumb": "/images/video.jpg",
+        "url": "https://www.youtube.com/watch?v=mG_6yUtLZ4k",
+        "author": "Justine Leconte",
+        "title": "Which brands are fast fashion? How to tell..",
+        "thumb": "/images/which_brands.jpg",
         "language": "EN"
     },
     {
+        "category" : "sustainability", 
         "type": "video",
-        "url": "",
-        "author": "Ala Makota",
-        "title": "How not to",
-        "thumb": "/images/video.jpg",
+        "url": "https://youtu.be/F2X-Numjv_w",
+        "author": "Justine Leconte",
+        "title": "How to recognize good vs. bad quality shoes",
+        "thumb": "/images/quality_shoes.jpg",
         "language": "EN"
     },
     {
-        "type": "document",
-        "url": "",
-        "author": "Ala Makota",
-        "title": "How not to",
-        "thumb": "/images/document.jpg",
-        "language": "EN"
-    },
-    {
+        "category" : "sustainability", 
         "type": "video",
-        "url": "",
-        "author": "Ala Makota",
-        "title": "How not to",
-        "thumb": "/images/document.jpg",
+        "url": "https://www.youtube.com/watch?v=6a5lHAHf0Zk",
+        "author": "Justine Leconte",
+        "title": "How to recognize good vs. bad quality clothes",
+        "thumb": "/images/quality_clothes.jpg",
         "language": "EN"
     },
     {
-        "type": "document",
-        "url": "",
-        "author": "Ala Makota",
-        "title": "How not to",
-        "thumb": "/images/document.jpg",
+        "category" : "hazard", 
+        "type": "video",
+        "url": "https://truecostmovie.com/",
+        "author": "",
+        "title": "True Cost",
+        "thumb": "/images/true_cost.jpg",
         "language": "EN"
     }
+
 ]
