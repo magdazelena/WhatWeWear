@@ -137,7 +137,7 @@ function FindOutMore(){
         <div id="findMore" ref={findRef}>
             {dictionary.resources.map((title, index) => {
                 return <div key={index}>
-                    <h2>{title.title}</h2>
+                    <h1>{title.title}</h1>
                     <div className="dragg-area" id={title.slug}> {
                         list.map((item, index)=>{
                             if(item.category == title.slug)

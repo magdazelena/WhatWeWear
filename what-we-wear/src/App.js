@@ -23,7 +23,7 @@ class App extends Component {
         {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} loading="true"/>)}
         {/* {this.state.introIsDone && (<DressesSequence />)} */}
         <ExplosionsSequence />
-        <FindOutMore/>
+        {/* <FindOutMore/> */}
       </div>
     );
   }
