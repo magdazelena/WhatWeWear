@@ -5,13 +5,13 @@
 @import "./variables/mixins";
 body{
     color: $three;
-    // background-color: $dark;
-    // padding: 0;
-    // margin: 0;
-    // background-image: url('../images/1003.png'), url('../images/5015.png');
-    // background-color: $dark;
-    // background-blend-mode: multiply;
-    // animation: backgroundPulse 12s infinite;
+    background-color: $dark;
+    padding: 0;
+    margin: 0;
+    background-image: url('../images/1003.png'), url('../images/5015.png');
+    background-color: $dark;
+    background-blend-mode: multiply;
+    animation: backgroundPulse 12s infinite;
     width: 100vw;
     overflow-x: hidden;
 }
