@@ -163,6 +163,9 @@ a{
         transform: rotate(360deg);
     }
 }
+#video{
+    display: none;
+}
 #findMore{
     width: 100vw;
     position: relative;
@@ -223,4 +226,5 @@ a{
         // }
     }
     }
+
 }

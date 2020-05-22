@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import THREE from '../3d/three';
 import SimplexNoise from 'simplex-noise';
-import AxisHelper from '../3d/axis';
+import ScrollMagic from 'scrollmagic';
 import particlesFragmentShader from '../3d/shaders/particlesFragmentShader';
 import particlesVertexShader from '../3d/shaders/particlesVertexShader';
 class ExplosionsSequence extends Component{
@@ -18,14 +18,28 @@ class ExplosionsSequence extends Component{
         this.setState({
             videoRef : node
         }, 
-        //()=>this.createVideoTexture()
+         ()=>{
+            this.generateParticles();
+            this.createVideoTexture();
+        }
         )
     }
     componentDidMount = () => {
         this.init();
+        let controller = new ScrollMagic.Controller();
+        let scene = new ScrollMagic.Scene({
+          duration: "50%"
+        })
+        .addIndicators()
+        .on('enter', ()=>{
+            if(this.video)
+                this.video.play();
+            
+        })
+        .addTo(controller);
     }
     init = () => {
-        const rand = (min,max) => min + Math.random()*(max-min);
+     
         const canvas = this.canvasRef.current;
         this.color = new THREE.Color();
         //scene
@@ -52,6 +66,13 @@ class ExplosionsSequence extends Component{
             this.scene.add(hemiLight);
   
   
+           
+            window.addEventListener( 'resize', this.onWindowResize, false );
+            
+
+    }
+    generateParticles = () => {
+        
             // geometry
             this.geometry = new THREE.BufferGeometry();
             this.particles = 10000;
@@ -67,8 +88,8 @@ class ExplosionsSequence extends Component{
             this.geometry.setAttribute( 'size', new THREE.Float32BufferAttribute( this.sizes, 1 ));
        
             for ( var i = 0; i < this.particles; i ++ ) {
-                let size = rand(10, 80);
-                this.color.setHSL( i / this.particles, 1.0, 0.5 );
+                let size = rand(2, 30);
+                this.color.setHex(0xffffff);
                 let part = {
                     offset: 0,
                     position: new THREE.Vector3(
@@ -81,7 +102,7 @@ class ExplosionsSequence extends Component{
                     r: this.color.r,
                     g: this.color.g,
                     b: this.color.b,
-                    a: 0.6,
+                    a: 0.3,
                     life: 2,
                     decay: rand(0.05, 0.15),
                     firstRun: true
@@ -106,12 +127,8 @@ class ExplosionsSequence extends Component{
 
             this.scene.add(this.particleSystem);
             this.updateParticleAttributes(true, true, true);
-           
-            window.addEventListener( 'resize', this.onWindowResize, false );
             this.update();
-
     }
-
     updateParticleAttributes=(color, position, size) =>{
 		let i = 0;
 		while(i<this.particles) {
@@ -149,12 +166,11 @@ class ExplosionsSequence extends Component{
     }
     createVideoTexture = ()=> {
         const video = this.state.videoRef;
+        if(!video) return;
         video.currentTime = 1;
-        video.width = window.innerWidth;
-        video.height = window.innerHeight;
         video.mute = true;
-        video.play();
         video.loop = true;
+        this.video = video;
         const videoTexture = new THREE.VideoTexture( video );
         videoTexture.minFilter = THREE.LinearFilter;
         videoTexture.magFilter = THREE.LinearFilter;
@@ -182,7 +198,7 @@ class ExplosionsSequence extends Component{
             varying vec2 vUv;\
             void main(){\
                 vec3 tColor = texture2D( texture, vUv).rgb;\
-                float a = (length(tColor - color) - 0.2) * 0.9;\
+                float a = (length(tColor - color) - 0.1) * 0.9;\
                 gl_FragColor = vec4(tColor, a);}',
             transparent: true
         })
@@ -190,15 +206,14 @@ class ExplosionsSequence extends Component{
         this.plane.position.x = 0;
         this.plane.position.y = 0;
         this.scene.add(this.plane);
-        //this.scene.background = videoTexture;
     }
     update=()=>{
         requestAnimationFrame(this.update);
-        const rand = (min,max) => min + Math.random()*(max-min);
-          let noiseTime = this.clock.getElapsedTime() * 0.0008;
-          let noiseVelocity = rand(280,80);
+        const delta = this.clock.getDelta();
+        let noiseTime = this.clock.getElapsedTime() * 0.0008;
+        let noiseVelocity = this.simplex.noise2D(rand(200,300), delta);
          const noiseScale = 0.001;
-         const delta = this.clock.getDelta();
+        
         for ( var i = 0; i < this.particles; i ++ ) {
             let part = this.parts[i];
             let xScaled = part.position.x * noiseScale;
@@ -209,7 +224,7 @@ class ExplosionsSequence extends Component{
 				yScaled,
 				zScaled,
 				50 + noiseTime
-            )* 0.5 + 0.5;
+            )* 0.5;
             let noise2 = this.simplex.noise4D(
                 xScaled +100,
 				yScaled+100,
@@ -222,37 +237,29 @@ class ExplosionsSequence extends Component{
 				zScaled+200,
 				50 + noiseTime
             )* 0.5 + 0.5;
-            part.position.x -= Math.sin(noise1 * Math.PI * 2) - delta * noiseVelocity;
-            part.position.y -= Math.sin(noise2 * Math.PI * 2) - delta * noiseVelocity;
-            part.position.z -= Math.sin(noise3 * Math.PI * 2) - delta * noiseVelocity;
-            if(part.position.x < -window.innerWidth/2-20)
-                part.position.x = window.innerWidth;
-            if(part.position.y < -window.innerHeight/2-20)
-                part.position.y = window.innerHeight;
-            if(part.position.x > window.innerWidth/2+20)
-                part.position.x = 0;
-            if(part.position.y > window.innerHeight/2+20)
-                part.position.y = 0;
+            part.position.x -= Math.sin(noise1 *Math.PI *2) + noiseVelocity * delta ;
+            part.position.y -= Math.sin(noise2 *Math.PI *2) * noiseVelocity * delta ;
+            part.position.z += Math.sin(noise3 *Math.PI*1.3)  +noiseVelocity * delta ;
+           
+
+            if(part.position.x -100 < -window.innerWidth/2)
+                part.position.x = window.innerWidth+20;
+            if(part.position.y -100 < -window.innerHeight/2)
+                part.position.y  = window.innerHeight+20;
+            if(part.position.x +100 > window.innerWidth/2)
+                part.position.x = 20;
+            if(part.position.y +100 > window.innerHeight/2)
+                part.position.y = 20;
 
             if(part.life > 0 ) {
-				part.life -= part.decay * delta;
+                part.life -= part.decay * delta;
+                part.a -= part.decay * delta;
 			}
             if(part.life <= 0 || part.firstRun) {
 				part.life = 2;
-				part.position.x = rand(-this.size / 2, this.size / 2);
-				part.position.y = rand(-this.size / 2, this.size / 2);
-				part.position.z = rand(-this.size / 2, this.size / 2);
-
-				
-                let hue = (this.clock.elapsedTime / 25 + rand(190,200)) % 360 + 110;
-                let lightness = Math.round(rand(90, 100));
-                this.color.set(`hsl(${hue}, 95%, 100%)`);
-
-
-				part.r = parseInt(this.color.r);
-				part.g = parseInt(this.color.g);
-				part.b = parseInt(this.color.b);
-
+				part.position.x = rand(-this.size/2, this.size/2);
+				part.position.y = rand(-this.size/2, this.size/2);
+				part.position.z = rand(-this.size/2, this.size/2);
                 part.firstRun = false;
             }
             this.parts[i] = part;
@@ -274,9 +281,9 @@ class ExplosionsSequence extends Component{
     render=()=>{
         return <div>
             <canvas ref={ref=>{this.canvasRef = ref}}></canvas>
-            <video src="../images/color_web1_.mp4" id="video" ref={this.onVideoUpload}></video>
+            <video src="../images/Untitled.mp4" id="video" ref={this.onVideoUpload}></video>
         </div>
     }
 }
-
+const rand = (min,max) => min + Math.random()*(max-min);
 export default ExplosionsSequence;
