@@ -15,6 +15,10 @@
         "headline": "an average person wears about",
         "description": "of garments they own"
     },
+    "explosionsSequence": {
+        "headline": "To trick you into buying more and more things you don't need, fast fashion brands produce new collections every 2 weeks. That is up to",
+        "description": "collections per year" 
+    },
     "resources":[
         {
             "slug": "sustainability",

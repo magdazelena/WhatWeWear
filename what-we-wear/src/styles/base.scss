@@ -14,6 +14,7 @@ body{
     animation: backgroundPulse 12s infinite;
     width: 100vw;
     overflow-x: hidden;
+    font-family: $titleFont;
 }
 a{
     text-decoration: none;
@@ -163,6 +164,31 @@ a{
     to{
         transform: rotate(360deg);
     }
+}
+#explosionsHeadline, #explosionsDescription, #explosionsNumber{
+    position: absolute;
+    right: 2em;
+    width: 30vw;
+    
+    font-size: 4em;
+    // span{
+    //     display: inline-block;
+    //     position: relative;
+    //     min-width: .4em;
+    //     transform: translate3d(0px, 0px, 0px) scale(1, 1);
+    // }
+}
+#explosionsHeadline{
+    top: 2em;
+}
+#explosionsDescription{
+    bottom: 2em;
+}
+#explosionsNumber{
+    opacity: 0;
+    font-family: $neon;
+    font-size: 10em;
+    bottom: 1.5em;
 }
 #video{
     display: none;

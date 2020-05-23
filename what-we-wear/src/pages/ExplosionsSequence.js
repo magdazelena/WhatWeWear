@@ -4,14 +4,23 @@ import SimplexNoise from 'simplex-noise';
 import ScrollMagic from 'scrollmagic';
 import particlesFragmentShader from '../3d/shaders/particlesFragmentShader';
 import particlesVertexShader from '../3d/shaders/particlesVertexShader';
+import texts from '../dictionary/en.json';
+import {animateText,  generateTextForAnimation} from '../helpers/textAnimations';
+import {TimelineMax} from 'gsap';
 class ExplosionsSequence extends Component{
     constructor(props){
         super(props);
         this.state= {
             videoRef : null,
-            sequenceRef: null
+            sequenceRef: null,
+            shouldAnimate: false,
+            shouldAnimateDesc: false, 
+            counter: 1
         }
         this.canvasRef = React.createRef();
+        this.headlineRef = React.createRef();
+        this.numberRef = React.createRef();
+        this.descriptionRef = React.createRef();
         this.clock = new THREE.Clock();
         this.simplex = new SimplexNoise();
     }
@@ -23,6 +32,7 @@ class ExplosionsSequence extends Component{
            
            
            this.onScroll();
+           this.animateInfo();
         }
         )
     }
@@ -35,6 +45,47 @@ class ExplosionsSequence extends Component{
             this.createVideoTexture();
         }
         )
+    }
+    animateInfo = () => {
+        let counter = {value:this.state.counter};
+        let timeline = new TimelineMax();
+        timeline.to(this.headlineRef, 0.2, {
+          onComplete: ()=>{
+              this.setState({
+                shouldAnimate: true
+              }, ()=>{
+                [...this.headlineRef.getElementsByTagName('span')].forEach((span, i)=>{
+                    animateText(span, i).play();
+                });
+              })
+          },
+        });
+        timeline.to(this.numberRef, 3, {
+            opacity: 1, 
+            color: 'red'
+        }, '+=2')
+        timeline.to(counter, 3, {
+          value: 52,
+          roundProps: 'value',
+          onUpdate: () => updateCounter(counter.value)
+        }, "-=3") ;
+        timeline.to(this.descriptionRef, 0.2, {
+          onComplete: ()=>{
+              this.setState({
+                shouldAnimateDesc: true
+              }, ()=>{
+                [...this.descriptionRef.getElementsByTagName('span')].forEach((span, i)=>{
+                  animateText(span, i).play();
+              });
+              })
+          },
+        }, "-=2");
+        let updateCounter = value=>{
+            this.setState({
+                counter: value
+            })
+        }
+        
     }
     onScroll = ()=>{
         let controller = new ScrollMagic.Controller();
@@ -294,6 +345,13 @@ class ExplosionsSequence extends Component{
         return <div id="explosionsSequence" ref={this.onSequenceLoad}> 
             <canvas ref={ref=>{this.canvasRef = ref}}></canvas>
             <video src="../images/Untitled.mp4" id="video" ref={this.onVideoUpload}></video>
+            <div id="explosionsHeadline" ref={ref=>{this.headlineRef = ref}}>
+                {this.state.shouldAnimate && (generateTextForAnimation(texts.explosionsSequence.headline.split('')))}
+            </div>
+            <div id="explosionsNumber" ref={ref=>{this.numberRef = ref}}>{this.state.counter}</div>
+            <div id="explosionsDescription" ref={ref=>{this.descriptionRef = ref}}>
+                {this.state.shouldAnimateDesc && (generateTextForAnimation(texts.explosionsSequence.description.split('')))}
+            </div>
         </div>
     }
 }
