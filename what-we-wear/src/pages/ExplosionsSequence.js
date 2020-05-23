@@ -8,7 +8,8 @@ class ExplosionsSequence extends Component{
     constructor(props){
         super(props);
         this.state= {
-            videoRef : null
+            videoRef : null,
+            sequenceRef: null
         }
         this.canvasRef = React.createRef();
         this.clock = new THREE.Clock();
@@ -19,25 +20,36 @@ class ExplosionsSequence extends Component{
             videoRef : node
         }, 
          ()=>{
+           
+           
+           this.onScroll();
+        }
+        )
+    }
+    onSequenceLoad = node => {
+        this.setState({
+            sequenceRef: node
+        }, 
+        ()=> {this.init();
             this.generateParticles();
             this.createVideoTexture();
         }
         )
     }
-    componentDidMount = () => {
-        this.init();
+    onScroll = ()=>{
         let controller = new ScrollMagic.Controller();
-        let scene = new ScrollMagic.Scene({
-          duration: "50%"
-        })
-        .addIndicators()
-        .on('enter', ()=>{
-            if(this.video)
-                this.video.play();
-            
-        })
-        .addTo(controller);
+            let scene = new ScrollMagic.Scene({
+              duration: "50%"
+            })
+            .addIndicators()
+            .on('enter', ()=>{
+                if(this.video)
+                    this.video.play();
+                
+            })
+            .addTo(controller);
     }
+
     init = () => {
      
         const canvas = this.canvasRef.current;
@@ -47,7 +59,7 @@ class ExplosionsSequence extends Component{
         //renderer
         this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         this.renderer.setSize( window.innerWidth, window.innerHeight )
-        document.body.appendChild(this.renderer.domElement);
+        this.state.sequenceRef.replaceChild(this.renderer.domElement, this.state.sequenceRef.getElementsByTagName('canvas')[0]);
         //camera
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 10000);
           this.camera.position.z = 1000; 
@@ -279,7 +291,7 @@ class ExplosionsSequence extends Component{
 
     }
     render=()=>{
-        return <div>
+        return <div id="explosionsSequence" ref={this.onSequenceLoad}> 
             <canvas ref={ref=>{this.canvasRef = ref}}></canvas>
             <video src="../images/Untitled.mp4" id="video" ref={this.onVideoUpload}></video>
         </div>

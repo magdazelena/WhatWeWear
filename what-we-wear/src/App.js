@@ -21,7 +21,7 @@ class App extends Component {
     return (
       <div className="App">
         {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} loading="true"/>)}
-        {/* {this.state.introIsDone && (<DressesSequence />)}  */}
+        {this.state.introIsDone && (<DressesSequence />)} 
         <ExplosionsSequence />
         {/* <FindOutMore/> */}
       </div>

@@ -28,27 +28,36 @@ class DressesSequence extends Component {
         this.t = 0;
         this.state ={
           shouldAnimate: false,
-          shouldAnimateDesc: false
+          shouldAnimateDesc: false,
+          sectionRef: null
         }
+    }
+    onSectionLoad = node => {
+      this.setState({
+        sectionRef: node
+      }, () => this.runScene())
+    }
+    runScene = () => {
+      this.init();
+      this.update();
     }
     componentDidMount(){
        
       
         
-        let controller = new ScrollMagic.Controller();
-        let scene = new ScrollMagic.Scene({
-          duration: "50%"
-        })
-        .addIndicators()
-        .on('enter', ()=>{
-          this.init();
-          this.update();
+        // let controller = new ScrollMagic.Controller();
+        // let scene = new ScrollMagic.Scene({
+        //   duration: "50%"
+        // })
+        // .on('enter', ()=>{
+        //   this.init();
+        //   this.update();
   
                 
           
             
-        })
-        .addTo(controller);
+        // })
+        // .addTo(controller);
         
         
     }
@@ -118,7 +127,7 @@ class DressesSequence extends Component {
         this.renderer.setClearColor(0x000000, 0);
         this.renderer.shadowMap.enabled = true;
         ///this.renderer.setPixelRatio(window.devicePixelRatio);
-        document.body.appendChild(this.renderer.domElement);
+        this.state.sectionRef.replaceChild(this.renderer.domElement, this.state.sectionRef.getElementsByTagName('canvas')[0]);
         //camera
         this.camera = new THREE.PerspectiveCamera(
             50,
@@ -264,16 +273,16 @@ class DressesSequence extends Component {
         return needResize;
       }
     render () {
-       return <div>
-           <canvas id="dressesSequence" ref={ref=>this.canvasRef = ref} width={window.innerWidth} height={window.innerHeight}></canvas>
-           <div id="dressesHeadline" ref={ref=>this.dressesHeadRef = ref}>
-             {this.state.shouldAnimate && (generateTextForAnimation(texts.dressesSequence.headline.split('')))}
-           </div>
-           <div id="twenty" ref={ref=>this.twentyRef = ref}>20%</div>
-            <div id="dressesDesc" ref={ref=>this.dressesDescRef=ref}>
-              { this.state.shouldAnimateDesc && (generateTextForAnimation(texts.dressesSequence.description.split('')))
-                
-              }
+       return <div id="dressesSequence" ref={this.onSectionLoad}>
+              <canvas  ref={ref=>this.canvasRef = ref} width={window.innerWidth} height={window.innerHeight}></canvas>
+              <div id="dressesHeadline" ref={ref=>this.dressesHeadRef = ref}>
+                {this.state.shouldAnimate && (generateTextForAnimation(texts.dressesSequence.headline.split('')))}
+              </div>
+              <div id="twenty" ref={ref=>this.twentyRef = ref}>20%</div>
+                <div id="dressesDesc" ref={ref=>this.dressesDescRef=ref}>
+                  { this.state.shouldAnimateDesc && (generateTextForAnimation(texts.dressesSequence.description.split('')))
+                    
+                  }
             </div>
         </div>
     }

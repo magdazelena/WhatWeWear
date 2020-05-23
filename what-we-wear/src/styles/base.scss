@@ -120,13 +120,14 @@ a{
         animation: spinningStroke 4s ease-in-out infinite;
     }
 }
-#dressesSequence{
-    position: absolute;
+#dressesSequence, #explosionsSequence{
+    position: relative;
     max-width: 100vw;
-    max-height: 100vh;
-    top:0;
-    left:0;
+    height: 100vh;
     overflow: hidden;
+    canvas{
+        position: absolute;
+    }
 }
 #dressesHeadline, #dressesDesc{
     font-size: 2em;
