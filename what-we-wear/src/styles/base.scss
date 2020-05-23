@@ -193,6 +193,18 @@ a{
 #video{
     display: none;
 }
+#lastSeason{
+    height: 60vh;
+    position: relative;
+    p{
+        font-family: $neon;
+        white-space: nowrap;
+        font-size: 10em;
+        color: $one;
+        transform: translateX(100%);
+        margin-top: 30vh;
+    }
+}
 #findMore{
     width: 100vw;
     position: relative;

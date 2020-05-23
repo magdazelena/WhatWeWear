@@ -15,11 +15,13 @@ class ExplosionsSequence extends Component{
             sequenceRef: null,
             shouldAnimate: false,
             shouldAnimateDesc: false, 
+            shouldAnimateSeason: false,
             counter: 1
         }
         this.canvasRef = React.createRef();
         this.headlineRef = React.createRef();
         this.numberRef = React.createRef();
+        this.pRef = React.createRef();
         this.descriptionRef = React.createRef();
         this.clock = new THREE.Clock();
         this.simplex = new SimplexNoise();
@@ -88,17 +90,36 @@ class ExplosionsSequence extends Component{
         
     }
     onScroll = ()=>{
-        let controller = new ScrollMagic.Controller();
             let scene = new ScrollMagic.Scene({
-              duration: "50%"
+              duration: "80%",
+              offset: 50,
+              triggerElement: this.state.sequenceRef
             })
             .addIndicators()
             .on('enter', ()=>{
                 if(this.video)
                     this.video.play();
-                
             })
-            .addTo(controller);
+            .on('leave', () => {
+                if(this.video)
+                    this.video.pause();
+                let timeline = new TimelineMax();
+                timeline.to(this.pRef, .2, {
+                    onComplete: ()=>{
+                        this.setState({
+                          shouldAnimateSeason: true
+                        }, ()=>{
+                          [...this.pRef.getElementsByTagName('span')].forEach((span, i)=>{
+                            animateText(span, i).play();
+                        });
+                        })
+                    },
+                });
+                timeline.to(this.pRef, 4, {
+                    x: '-100%'
+                })
+            })
+            .addTo(this.props.controller);
     }
 
     init = () => {
@@ -342,17 +363,22 @@ class ExplosionsSequence extends Component{
 
     }
     render=()=>{
-        return <div id="explosionsSequence" ref={this.onSequenceLoad}> 
-            <canvas ref={ref=>{this.canvasRef = ref}}></canvas>
-            <video src="../images/Untitled.mp4" id="video" ref={this.onVideoUpload}></video>
-            <div id="explosionsHeadline" ref={ref=>{this.headlineRef = ref}}>
-                {this.state.shouldAnimate && (generateTextForAnimation(texts.explosionsSequence.headline.split('')))}
+        return <div id="explosionsContainer">
+                <div id="explosionsSequence" ref={this.onSequenceLoad}> 
+                    <canvas ref={ref=>{this.canvasRef = ref}}></canvas>
+                    <video src="../images/Untitled.mp4" id="video" ref={this.onVideoUpload}></video>
+                    <div id="explosionsHeadline" ref={ref=>{this.headlineRef = ref}}>
+                        {this.state.shouldAnimate && (generateTextForAnimation(texts.explosionsSequence.headline.split('')))}
+                    </div>
+                    <div id="explosionsNumber" ref={ref=>{this.numberRef = ref}}>{this.state.counter}</div>
+                    <div id="explosionsDescription" ref={ref=>{this.descriptionRef = ref}}>
+                        {this.state.shouldAnimateDesc && (generateTextForAnimation(texts.explosionsSequence.description.split('')))}
+                    </div>
+                </div>
+                <div id="lastSeason">
+                    <p ref={ref=> this.pRef = ref}>{this.state.shouldAnimateSeason && (generateTextForAnimation('This is sooooooooooooooooooooooooooooooo last season...'.split('')))}</p>
+                </div>
             </div>
-            <div id="explosionsNumber" ref={ref=>{this.numberRef = ref}}>{this.state.counter}</div>
-            <div id="explosionsDescription" ref={ref=>{this.descriptionRef = ref}}>
-                {this.state.shouldAnimateDesc && (generateTextForAnimation(texts.explosionsSequence.description.split('')))}
-            </div>
-        </div>
     }
 }
 const rand = (min,max) => min + Math.random()*(max-min);

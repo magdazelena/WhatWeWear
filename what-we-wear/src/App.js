@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import './styles/base.scss';
+import ScrollMagic from 'scrollmagic';
 import LoadingApp from './pages/LoadingApp';
 import DressesSequence from './pages/DressesSequence';
 import ExplosionsSequence from './pages/ExplosionsSequence';
 import FindOutMore from './pages/FindOutMore';
+
 class App extends Component {
   constructor(props){
     super(props);
     this.state ={
       introIsDone: true
     }
+    this.controller = new ScrollMagic.Controller();
     this.markIntroDone = this.markIntroDone.bind(this);
   }
   markIntroDone=()=>{
@@ -21,8 +24,8 @@ class App extends Component {
     return (
       <div className="App">
         {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} loading="true"/>)}
-        {this.state.introIsDone && (<DressesSequence />)} 
-        <ExplosionsSequence />
+        {this.state.introIsDone && (<DressesSequence controller={this.controller}/>)} 
+        <ExplosionsSequence controller={this.controller}/>
         {/* <FindOutMore/> */}
       </div>
     );
