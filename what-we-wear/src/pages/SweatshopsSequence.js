@@ -11,24 +11,28 @@ class SweatshopsSequence extends Component{
         super(props);
         this.state = {
             sectionRef : null,
-            count: 1000
+            count: 10
         }
         this.canvasRef = React.createRef();
         this.clock = new THREE.Clock();
         this._position = new THREE.Vector3();
         this._normal = new THREE.Vector3();
         this._scale = new THREE.Vector3();
+        this.dummy = new THREE.Object3D();
+        this.sampler = null;
         this.loader = new THREE.FBXLoader(); 
+        this.machine = null;
+        this.surface = null;
+        this.ages = new Float32Array(this.state.count);
+        this.scales = new Float32Array(this.state.count);
+        this.modelMesh = null;
     }
     onSectionLoad = node => {
         this.setState({
             sectionRef : node
         },
         ()=>{
-            this.ages = new Float32Array(this.state.count);
-            this.scales = new Float32Array(this.state.count);
             this.init();
-            this.createInstancing();
             this.update();
         })
     }
@@ -48,15 +52,15 @@ class SweatshopsSequence extends Component{
             1000
           );
           var axesHelper = new THREE.AxesHelper( 5 );
-this.scene.add( axesHelper );
+          this.scene.add( axesHelper );
           this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
 
             //controls.update() must be called after any manual changes to the camera's transform
             this.camera.position.set( 0, 20, 100 );
             this.controls.update();
           //lights
-          let hemiLight = new THREE.HemisphereLight(0xffffff,  0.91);
-            hemiLight.position.set(0, 50, 0);
+          let hemiLight = new THREE.HemisphereLight(0xE29300,  0.99);
+            hemiLight.position.set(100, 50, 100);
             // Add hemisphere light to scene
             this.scene.add(hemiLight);
 
@@ -74,7 +78,7 @@ this.scene.add( axesHelper );
             // Add directional Light to scene
             this.scene.add(this.dirLight);
             const modelPath = '../3d/models/dress_float.fbx';
-           
+            const machinePath = '../3d/models/machine.fbx';
             var creationFuntion=(function(obj){
                 let model = obj;
                 var mat1 = new THREE.MeshPhongMaterial( 
@@ -89,21 +93,16 @@ this.scene.add( axesHelper );
                     if (o.isMesh) {
                         o.castShadow = true;
                         o.receiveShadow = true;
+                        o.material.side = THREE.DoubleSide;
+                        o.material.shadowSide = THREE.DoubleSide;
                     }
                 });
-                // Set the models initial scale
-                //model.scale.set(.2, .2,  .2);
-                model.position.set(0,-12,0);
+                
+                model.position.set(10,-20,0);
                 this.surface = model;
-                  this.scene.add(this.surface);
-                  this.mixer = new THREE.AnimationMixer(this.surface);
- 
-                let fileAnimations = obj.animations;
-                let anim = fileAnimations[0];
-                //anim.optimize();  
-                this.action = this.mixer.clipAction(anim);
-               this.action.play();
-               
+                console.log(this.surface)
+                this.scene.add(this.surface);
+                
             }).bind(this);
             this.loader.load(
                 modelPath,
@@ -113,53 +112,55 @@ this.scene.add( axesHelper );
                     console.error(error);
                 }
             );
+            var machinecreationFuntion=(function(obj){
+                obj.name = "maszyna";
+                this.machine = obj;
+                this.createInstancing(this.machine.children[0]);
+                this.resample();
+            }).bind(this);
+            this.loader.load(
+                machinePath,
+                obj => {machinecreationFuntion(obj);
+                }
+                ,undefined,
+                function(error) {
+                    console.error(error);
+                }
+            );
           
     }
-    createInstancing = () => {
-        const machinePath = '../3d/models/maszyna.fbx';
-        var creationFuntion=(function(obj){
-            obj.name = "maszyna";
-            let model = obj;
-            console.log(model);
-            this.modelGeometry = new THREE.InstancedBufferGeometry();
-            THREE.BufferGeometry.prototype.copy.call( this.modelGeometry, obj.geometry );
-            var defaultTransform = new THREE.Matrix4()
-            .makeRotationX( Math.PI )
-            .multiply( new THREE.Matrix4().makeScale( 7, 7, 7 ) );
-            this.modelGeometry.applyMatrix4(defaultTransform);
-            this.modelMaterial = model.material;
-            // Assign random colors to the blossoms.
-				var _color = new THREE.Color();
-				var color = new Float32Array( this.state.count * 3 );
-				var blossomPalette = [ 0xF20587, 0xF2D479, 0xF2C879, 0xF2B077, 0xF24405 ];
+    createInstancing = (machine) => {
+                this.modelGeometry = new THREE.InstancedBufferGeometry();
+                THREE.BufferGeometry.prototype.copy.call(  this.modelGeometry , machine.geometry );
+                var defaultTransform = new THREE.Matrix4()
+                .makeRotationX( Math.PI )
+                .multiply( new THREE.Matrix4().makeScale( 5, 5, 5 ) );
+                this.modelGeometry.applyMatrix4(defaultTransform);
+                
+                this.modelMaterial = new THREE.MeshBasicMaterial({color: 'red'})
+                // Assign random colors to the blossoms.
+                var _color = new THREE.Color();
+                var color = new Float32Array( this.state.count * 3 );
+                var blossomPalette = [ 0xF20587, 0xF2D479, 0xF2C879, 0xF2B077, 0xF24405 ];
 
-				for ( var i = 0; i < this.state.count; i ++ ) {
-
-					_color.setHex( blossomPalette[ Math.floor( Math.random() * blossomPalette.length ) ] );
-					_color.toArray( color, i * 3 );
+                for ( var i = 0; i < this.state.count; i ++ ) {
+                    
+                    _color.setHex( blossomPalette[ Math.floor( Math.random() * blossomPalette.length ) ] );
+                    _color.toArray( color, i * 3 );
 
                 }
-                this.modelGeometry.setAttribute('color', new THREE.InstancedBufferAttribute(color, 3));
-                this.modelMaterial.vertexColors = true;
+               this.modelGeometry.setAttribute('color', new THREE.InstancedBufferAttribute(color, 3));
+               this.modelMaterial.vertexColors = true;
 
                 this.modelMesh = new THREE.InstancedMesh(this.modelGeometry, this.modelMaterial, this.state.count);
                 this.modelMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        }).bind(this);
-        this.loader.load(
-            machinePath,
-            obj => creationFuntion(obj)
-            ,undefined,
-            function(error) {
-                console.error(error);
-            }
-        );
+       
     }
     resample = () => {
-        const vertexCount = this.surface.geometry.getAttribute('position').count;
-        this.sampler = new MeshSurfaceSampler(this.surface)
-                        .setWeightAttribute(null)
-                        .build();
+        this.sampler = new MeshSurfaceSampler(this.surface.children[0]).setWeightAttribute('uv').build();
+        
         for( let i =0; i< this.state.count; i++){
+            
             this.ages[i] = Math.random();
             this.scales[i] = scaleCurve(this.ages[i]);
             this.resampleParticle(i);
@@ -180,6 +181,7 @@ this.scene.add( axesHelper );
     updateParticle = i => {
         this.ages[i] += 0.005;
         if(this.ages[i] >= 1){
+     
             this.ages[i] = 0.001;
             this.scales[i] = scaleCurve( this.ages[i]);
             this.resampleParticle(i);
@@ -205,9 +207,7 @@ this.scene.add( axesHelper );
         //   }
             
         let delta = this.clock.getDelta();
-        if(this.mixer){
-         this.mixer.update(delta);
-        }
+
         this.controls.update();
         if(this.modelMesh){
             for(let i =0; i< this.state.count; i++){
