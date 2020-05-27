@@ -5,13 +5,12 @@ import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 import {animateText,  generateTextForAnimation} from '../helpers/textAnimations';
 import {TimelineMax} from 'gsap';
-
 class SweatshopsSequence extends Component{
     constructor(props){
         super(props);
         this.state = {
             sectionRef : null,
-            count: 10
+            count: 10000
         }
         this.canvasRef = React.createRef();
         this.clock = new THREE.Clock();
@@ -33,6 +32,7 @@ class SweatshopsSequence extends Component{
         },
         ()=>{
             this.init();
+            
             this.update();
         })
     }
@@ -98,11 +98,11 @@ class SweatshopsSequence extends Component{
                     }
                 });
                 
-                model.position.set(10,-20,0);
+          //      model.position.set(10,-20,0);
                 this.surface = model;
-                console.log(this.surface)
+
                 this.scene.add(this.surface);
-                
+                this.createInstancing();
             }).bind(this);
             this.loader.load(
                 modelPath,
@@ -113,31 +113,31 @@ class SweatshopsSequence extends Component{
                 }
             );
             var machinecreationFuntion=(function(obj){
-                obj.name = "maszyna";
                 this.machine = obj;
-                this.createInstancing(this.machine.children[0]);
-                this.resample();
+                
             }).bind(this);
             this.loader.load(
                 machinePath,
                 obj => {machinecreationFuntion(obj);
+                    
                 }
                 ,undefined,
                 function(error) {
                     console.error(error);
                 }
             );
-          
+       
     }
-    createInstancing = (machine) => {
+    createInstancing = () => {
                 this.modelGeometry = new THREE.InstancedBufferGeometry();
-                THREE.BufferGeometry.prototype.copy.call(  this.modelGeometry , machine.geometry );
+                this.machine.children[4].frustumCulled = false;
+                THREE.BufferGeometry.prototype.copy.call(  this.modelGeometry , this.machine.children[4].geometry );
                 var defaultTransform = new THREE.Matrix4()
                 .makeRotationX( Math.PI )
-                .multiply( new THREE.Matrix4().makeScale( 5, 5, 5 ) );
+                .multiply( new THREE.Matrix4().makeScale( 1, 1, 1 ) )
+                .makeTranslation(81,-1000,0);
                 this.modelGeometry.applyMatrix4(defaultTransform);
-                
-                this.modelMaterial = new THREE.MeshBasicMaterial({color: 'red'})
+                this.modelMaterial = new THREE.MeshLambertMaterial()
                 // Assign random colors to the blossoms.
                 var _color = new THREE.Color();
                 var color = new Float32Array( this.state.count * 3 );
@@ -154,37 +154,43 @@ class SweatshopsSequence extends Component{
 
                 this.modelMesh = new THREE.InstancedMesh(this.modelGeometry, this.modelMaterial, this.state.count);
                 this.modelMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+                this.modelMesh.instanceMatrix.needsUpdate = true;
+                this.resample();
+                
        
     }
     resample = () => {
-        this.sampler = new MeshSurfaceSampler(this.surface.children[0]).setWeightAttribute('uv').build();
+        this.sampler = new MeshSurfaceSampler(this.surface.children[0]).build();
         
         for( let i =0; i< this.state.count; i++){
             
             this.ages[i] = Math.random();
             this.scales[i] = scaleCurve(this.ages[i]);
             this.resampleParticle(i);
+            
         }
         this.modelMesh.instanceMatrix.needsUpdate = true;
+        this.scene.add(this.modelMesh);
     }
     resampleParticle = i => {
         this.sampler.sample(this._position, this._normal);
         this._normal.add(this._position);
         this.dummy.position.copy(this._position);
+         
         this.dummy.scale.set( this.scales[ i ], this.scales[ i ], this.scales[ i ] );
         this.dummy.lookAt( this._normal );
         this.dummy.updateMatrix();
-
         this.modelMesh.setMatrixAt(i, this.dummy.matrix);
 
     }
     updateParticle = i => {
-        this.ages[i] += 0.005;
+        this.ages[i] += 0.00005;
         if(this.ages[i] >= 1){
      
             this.ages[i] = 0.001;
-            this.scales[i] = scaleCurve( this.ages[i]);
-            this.resampleParticle(i);
+           this.scales[i] = scaleCurve( this.ages[i]);
+       
+                this.resampleParticle(i);
             return;
         }
         let prevScale = this.scales[i];
