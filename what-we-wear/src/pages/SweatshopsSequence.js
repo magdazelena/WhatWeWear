@@ -10,7 +10,7 @@ class SweatshopsSequence extends Component{
         super(props);
         this.state = {
             sectionRef : null,
-            count: 10000
+            count: 100000
         }
         this.canvasRef = React.createRef();
         this.clock = new THREE.Clock();
@@ -59,7 +59,7 @@ class SweatshopsSequence extends Component{
             this.camera.position.set( 0, 20, 100 );
             this.controls.update();
           //lights
-          let hemiLight = new THREE.HemisphereLight(0xE29300,  0.99);
+          let hemiLight = new THREE.HemisphereLight(0xffffff,  0.99);
             hemiLight.position.set(100, 50, 100);
             // Add hemisphere light to scene
             this.scene.add(hemiLight);
@@ -84,8 +84,6 @@ class SweatshopsSequence extends Component{
                 var mat1 = new THREE.MeshPhongMaterial( 
                     { 
                         color: 0xE29300, 
-                        skinning: true , 
-                        morphTargets :true,
                         specular: 0xE29380     
                  } );
                  let basic = new THREE.MeshBasicMaterial({color: 'red'})
@@ -93,6 +91,7 @@ class SweatshopsSequence extends Component{
                     if (o.isMesh) {
                         o.castShadow = true;
                         o.receiveShadow = true;
+                        o.material = mat1;
                         o.material.side = THREE.DoubleSide;
                         o.material.shadowSide = THREE.DoubleSide;
                     }
@@ -141,7 +140,7 @@ class SweatshopsSequence extends Component{
                 // Assign random colors to the blossoms.
                 var _color = new THREE.Color();
                 var color = new Float32Array( this.state.count * 3 );
-                var blossomPalette = [ 0xF20587, 0xF2D479, 0xF2C879, 0xF2B077, 0xF24405 ];
+                var blossomPalette = [ 0xDBBCBD, 0xA89797, 0xC44C4E, 0xEA3336, 0xC15557 ];
 
                 for ( var i = 0; i < this.state.count; i ++ ) {
                     
