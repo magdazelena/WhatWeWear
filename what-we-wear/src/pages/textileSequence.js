@@ -42,7 +42,7 @@ class TextileSequence extends Component{
           this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
         this.count = Math.pow(this.amount, 2);
             //controls.update() must be called after any manual changes to the camera's transform
-            this.camera.position.set( 0 , 10, 20 );
+            this.camera.position.set( 0 , 0, 10 );
             this.controls.update();
           //lights
           let hemiLight = new THREE.HemisphereLight(0xffffff,  0.99);
@@ -75,6 +75,7 @@ class TextileSequence extends Component{
          } );
         this.mesh = new THREE.InstancedMesh(geometry, mat1, this.count);
         this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this.mesh.position.set(7,5,0)
         this.scene.add(this.mesh);
     }
     update=()=>{
@@ -83,10 +84,7 @@ class TextileSequence extends Component{
             this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
             this.camera.updateProjectionMatrix();
           }
-        //   if(this.dirLight){
-        //      this.dirLight.position.x = -5 * Math.cos(Date.now() / 1400);
-        //     this.dirLight.position.z = -30 * Math.sin(Date.now() / 1400);
-        //   }
+
             
         let delta = this.clock.getDelta();
 
@@ -105,22 +103,12 @@ class TextileSequence extends Component{
                     
                     if(i % 2 === 0){
                         this.dummy.rotation.z = Math.PI/2;
-                        this.dummy.position.set(2, offset-y/2, 0);
+                        this.dummy.position.set(2+ Math.sin(y/2+ delta ) , offset-y/2, 0);
                     }else{
                         this.dummy.rotation.z = 0;
                         this.dummy.position.set(offset - x/1.5, -15, 0);
                     }
-                        // if(y % 2 == 0){
-                        //   //  this.dummy.rotation.x = Math.PI/2
-                        //    // this.dummy.rotation.y = 180;
-                        //     this.dummy.position.set( 0, offset - y, 0 );
-                        // }else{
-                            
-                        // }
                        
-                        //this.dummy.rotation.y = ( Math.sin( x / 4 + delta ) + Math.sin( y / 4 + delta )  );
-                       // this.dummy.rotation.z = this.dummy.rotation.y * 2;
-
                         this.dummy.updateMatrix();
 
                         this.mesh.setMatrixAt( i ++, this.dummy.matrix );

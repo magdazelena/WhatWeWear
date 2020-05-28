@@ -7,7 +7,7 @@ import ExplosionsSequence from './pages/ExplosionsSequence';
 import SweatshopsSequence from './pages/SweatshopsSequence';
 import TextileSequence from './pages/TextileSequence';
 import FindOutMore from './pages/FindOutMore';
-
+import TrashSequence from './pages/TrashSequence';
 class App extends Component {
   constructor(props){
     super(props);
@@ -29,7 +29,8 @@ class App extends Component {
         {/* {this.state.introIsDone && (<DressesSequence controller={this.controller}/>)}  */}
         {/* <ExplosionsSequence controller={this.controller}/> */}
         {/* <SweatshopsSequence /> */}
-        <TextileSequence />
+        {/* <TextileSequence /> */}
+        <TrashSequence />
         {/* <FindOutMore/> */}
       </div>
     );
