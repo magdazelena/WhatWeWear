@@ -7,4 +7,5 @@ window.Zlib = Zlib;
 require('three/examples/js/controls/OrbitControls');
 require('three/examples/js/loaders/GLTFLoader');
 require('three/examples/js/loaders/FBXLoader');
-export default {...THREE, OrbitControls: window.THREE.OrbitControls, GLTFLoader: window.THREE.GLTFLoader, FBXLoader: window.THREE.FBXLoader};
+require('three/examples/js/loaders/OBJLoader');
+export default {...THREE, OrbitControls: window.THREE.OrbitControls, GLTFLoader: window.THREE.GLTFLoader, FBXLoader: window.THREE.FBXLoader, OBJLoader: window.THREE.OBJLoader};

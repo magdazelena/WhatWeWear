@@ -5,6 +5,7 @@ import LoadingApp from './pages/LoadingApp';
 import DressesSequence from './pages/DressesSequence';
 import ExplosionsSequence from './pages/ExplosionsSequence';
 import SweatshopsSequence from './pages/SweatshopsSequence';
+import TextileSequence from './pages/TextileSequence';
 import FindOutMore from './pages/FindOutMore';
 
 class App extends Component {
@@ -27,7 +28,8 @@ class App extends Component {
         {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} loading="true"/>)}
         {/* {this.state.introIsDone && (<DressesSequence controller={this.controller}/>)}  */}
         {/* <ExplosionsSequence controller={this.controller}/> */}
-        <SweatshopsSequence />
+        {/* <SweatshopsSequence /> */}
+        <TextileSequence />
         {/* <FindOutMore/> */}
       </div>
     );
