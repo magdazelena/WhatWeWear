@@ -13,7 +13,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state ={
-      introIsDone: true
+      introIsDone: false
     }
     this.controller = new ScrollMagic.Controller();
     this.markIntroDone = this.markIntroDone.bind(this);
@@ -27,13 +27,13 @@ class App extends Component {
     return (
       <div className="App">
         {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} loading="true"/>)}
-        {/* {this.state.introIsDone && (<DressesSequence controller={this.controller}/>)}  */}
-        {/* <ExplosionsSequence controller={this.controller}/> */}
-        {/* <SweatshopsSequence /> */}
-        {/* <TextileSequence /> */}
+        {this.state.introIsDone && (<DressesSequence controller={this.controller}/>)} 
+        <ExplosionsSequence controller={this.controller}/>
+        <SweatshopsSequence />
+        <TextileSequence />
         <SubstanceSequence controller={this.controller} />
-        {/* <TrashSequence /> */}
-        {/* <FindOutMore/> */}
+        <TrashSequence />
+        <FindOutMore/>
       </div>
     );
   }

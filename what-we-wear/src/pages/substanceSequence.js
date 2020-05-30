@@ -99,7 +99,7 @@ class SubstanceSequence extends Component{
                 },
                 color: {
                     type: 'c',
-                    value: new THREE.Color(0x652121)
+                    value: new THREE.Color(0xffff00)
                 }
             },
             vertexShader: 'varying vec2 vUv;\
@@ -112,7 +112,7 @@ class SubstanceSequence extends Component{
             varying vec2 vUv;\
             void main(){\
                 vec3 tColor = texture2D( texture, vUv).rgb;\
-                float a = (length(tColor - color) - 0.1) * 0.9;\
+                float a = (length(tColor - color) ) * 0.9;\
                 gl_FragColor = vec4(tColor, a);}',
             transparent: true
         })
