@@ -38,7 +38,7 @@ class ExplosionsSequence extends Component{
         }
         )
     }
-    onSequenceLoad = node => {
+    onSequenceLoad = node => { 
         this.setState({
             sequenceRef: node
         }, 
