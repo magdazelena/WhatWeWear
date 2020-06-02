@@ -105,7 +105,7 @@ class TrashSequence extends Component{
         let obj = this.scene.children[1];
         obj.rotation.y = delta * 0.0005;
         obj.material.uniforms["time"].value = delta * 0.005;
-     //   obj.material.uniforms["sineTime"].value = Math.sin( obj.material.uniforms[ "time" ].value * 0.05 );
+        obj.material.uniforms["sineTime"].value = Math.sin( obj.material.uniforms[ "time" ].value * 0.05 );
         
         
 

@@ -90,37 +90,22 @@ class TextileSequence extends Component{
 
         this.controls.update();
         if ( this.mesh ) {
-
-
             var i = 0;
             var offset = ( this.amount - 1 ) / 20;
-
             for ( var x = 0; x < this.amount; x ++ ) {
-
                 for ( var y = 0; y < this.amount; y ++ ) {
-
-                    
-                    
                     if(i % 2 === 0){
                         this.dummy.rotation.z = Math.PI/2;
                         this.dummy.position.set(2+ Math.sin(y/2+ delta ) , offset-y/2, 0);
                     }else{
                         this.dummy.rotation.z = 0;
                         this.dummy.position.set(offset - x/1.5, -15, 0);
-                    }
-                       
+                    }                      
                         this.dummy.updateMatrix();
-
                         this.mesh.setMatrixAt( i ++, this.dummy.matrix );
-
-                    
-
                 }
-
             }
-
             this.mesh.instanceMatrix.needsUpdate = true;
-
         }
 
         this.renderer.render(this.scene, this.camera);

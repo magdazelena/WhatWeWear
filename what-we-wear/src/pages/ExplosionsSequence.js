@@ -7,6 +7,7 @@ import particlesVertexShader from '../3d/shaders/particlesVertexShader';
 import texts from '../dictionary/en.json';
 import {animateText,  generateTextForAnimation} from '../helpers/textAnimations';
 import {TimelineMax} from 'gsap';
+//particle system by example of Rugile, Jack: https://github.com/jackrugile/3d-particle-explorations/blob/master/js/demo-8/system.js
 class ExplosionsSequence extends Component{
     constructor(props){
         super(props);
