@@ -34,7 +34,7 @@ class ExplosionsSequence extends Component{
          ()=>{
            
            
-           this.onScroll();
+           
            this.animateInfo();
         }
         )
@@ -44,8 +44,10 @@ class ExplosionsSequence extends Component{
             sequenceRef: node
         }, 
         ()=> {this.init();
+            window.scrollTo({top: 0, behavior: 'smooth'});
             this.generateParticles();
             this.createVideoTexture();
+            this.onScroll();
         }
         )
     }
@@ -117,7 +119,11 @@ class ExplosionsSequence extends Component{
                     },
                 });
                 timeline.to(this.pRef, 4, {
-                    x: '-100%'
+                    x: '-100%',
+                    onComplete: ()=>{
+                        this.props.nextScene();
+                        scene.remove();
+                    }
                 })
             })
             .addTo(this.props.controller);

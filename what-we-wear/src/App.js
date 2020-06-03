@@ -13,7 +13,8 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state ={
-      introIsDone: false
+      introIsDone: true,
+      sceneId: 4
     }
     this.controller = new ScrollMagic.Controller();
     this.markIntroDone = this.markIntroDone.bind(this);
@@ -23,17 +24,34 @@ class App extends Component {
       introIsDone: true
     })
   }
+  setSceneID=id=>{
+    this.setState({
+      sceneId: id
+    })
+  }
+  nextScene= ()=>{
+    this.setState({
+      sceneId: this.state.sceneId+1
+    }, ()=> {
+      console.log(this.state.sceneId)
+    })
+  }
+  prevScene=()=>{
+    this.setState({
+      sceneId: this.state.sceneId-1
+    })
+  }
   render() {
     return (
       <div className="App">
         {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} loading="true"/>)}
-        {this.state.introIsDone && (<DressesSequence controller={this.controller}/>)} 
-        <ExplosionsSequence controller={this.controller}/>
-        <SweatshopsSequence />
-        <TextileSequence />
-        <SubstanceSequence controller={this.controller} />
-        <TrashSequence />
-        <FindOutMore/>
+        {this.state.introIsDone && this.state.sceneId==1 &&(<DressesSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="1" />)} 
+        {this.state.introIsDone && this.state.sceneId==2 && (<ExplosionsSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="2"/>)}
+        {this.state.introIsDone && this.state.sceneId==3 && (<SweatshopsSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="3"/>)}
+        {this.state.introIsDone && this.state.sceneId==4 && (<TextileSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="4"/>)}
+        {this.state.introIsDone && this.state.sceneId==5 &&(<SubstanceSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="5"/>)}
+        {this.state.introIsDone && this.state.sceneId==6 &&(<TrashSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="6"/>)}
+       {this.state.introIsDone && ( <FindOutMore/>) }
       </div>
     );
   }

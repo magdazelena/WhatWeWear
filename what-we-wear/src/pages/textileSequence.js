@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import THREE from '../3d/three';
+import { MeshToonMaterial } from 'three';
 class TextileSequence extends Component{
     constructor(props){
         super(props);
@@ -11,7 +12,8 @@ class TextileSequence extends Component{
         this.loader = new THREE.FBXLoader();
         this.mesh = null;
         this.dummy = new THREE.Object3D();
-        this.amount = 30;
+        this.amount = 15;
+        this.isOver = false;
     }
     onSectionLoad = node => {
         this.setState({
@@ -32,17 +34,20 @@ class TextileSequence extends Component{
      this.state.sectionRef.replaceChild(this.renderer.domElement, this.state.sectionRef.getElementsByTagName('canvas')[0]);
         //camera
         this.camera = new THREE.PerspectiveCamera(
-            60,
+            30,
             window.innerWidth / window.innerHeight,
             0.1,
             1000
           );
-          var axesHelper = new THREE.AxesHelper( 5 );
-          this.scene.add( axesHelper );
+
           this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-        this.count = Math.pow(this.amount, 2);
+      
+            this.count = Math.pow(this.amount, 2);
             //controls.update() must be called after any manual changes to the camera's transform
             this.camera.position.set( 0 , 0, 10 );
+            this.controls.maxDistance = 20;
+            this.controls.maxZoom = 200;
+            this.controls.minDistance = 2;
             this.controls.update();
           //lights
           let hemiLight = new THREE.HemisphereLight(0xffffff,  0.99);
@@ -75,7 +80,8 @@ class TextileSequence extends Component{
          } );
         this.mesh = new THREE.InstancedMesh(geometry, mat1, this.count);
         this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.mesh.position.set(7,5,0)
+        this.mesh.position.set(7,5,0);
+    
         this.scene.add(this.mesh);
     }
     update=()=>{
@@ -86,28 +92,34 @@ class TextileSequence extends Component{
           }
 
             
-        let delta = this.clock.getDelta();
-
+          let delta = performance.now();
         this.controls.update();
-        if ( this.mesh ) {
+         if ( this.mesh ) {
             var i = 0;
-            var offset = ( this.amount - 1 ) / 20;
+            var offset = ( this.amount - 2 ) / 10;
             for ( var x = 0; x < this.amount; x ++ ) {
                 for ( var y = 0; y < this.amount; y ++ ) {
                     if(i % 2 === 0){
                         this.dummy.rotation.z = Math.PI/2;
-                        this.dummy.position.set(2+ Math.sin(y/2+ delta ) , offset-y/2, 0);
+                        this.dummy.position.set(2+ Math.sin(delta * 0.00005 + Math.random()/100)  , Math.sin(offset*delta*0.0005)-y, 0);
                     }else{
                         this.dummy.rotation.z = 0;
-                        this.dummy.position.set(offset - x/1.5, -15, 0);
+                        this.dummy.position.set(offset *Math.sin(delta * 0.0005 + Math.random()/100) - x, -20, 0);
                     }                      
                         this.dummy.updateMatrix();
                         this.mesh.setMatrixAt( i ++, this.dummy.matrix );
                 }
             }
             this.mesh.instanceMatrix.needsUpdate = true;
-        }
+       }
+       this.zoom = this.controls.target.distanceTo( this.controls.object.position )
 
+       if(Math.round(this.zoom) == this.controls.minDistance ){
+          if(!this.isOver){
+              this.props.nextScene();
+          }
+          this.isOver=true;
+       }
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.update);
        

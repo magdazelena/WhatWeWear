@@ -40,26 +40,20 @@ class DressesSequence extends Component {
     runScene = () => {
       this.init();
       this.update();
+      this.onScroll();
     }
-    componentDidMount(){
-       
-      
-        
-        // let controller = new ScrollMagic.Controller();
-        // let scene = new ScrollMagic.Scene({
-        //   duration: "50%"
-        // })
-        // .on('enter', ()=>{
-        //   this.init();
-        //   this.update();
-  
-                
-          
-            
-        // })
-        // .addTo(controller);
-        
-        
+   onScroll = () => {
+    let scene = new ScrollMagic.Scene({
+      duration: "60%",
+      triggerElement: this.state.sectionRef
+    })
+    .addIndicators()
+    .on('leave', () => {
+      if(this.props.id =="1")
+      this.props.nextScene();
+      scene.remove();
+    })
+    .addTo(this.props.controller);
     }
     animateScene = ()=>{
       const mat2 = new THREE.MeshPhongMaterial( 

@@ -10,7 +10,9 @@ class SweatshopsSequence extends Component{
         super(props);
         this.state = {
             sectionRef : null,
-            count: 100000
+            count: 10000,
+            outAnimation: false,
+            inAnimation: true
         }
         this.canvasRef = React.createRef();
         this.clock = new THREE.Clock();
@@ -25,18 +27,23 @@ class SweatshopsSequence extends Component{
         this.ages = new Float32Array(this.state.count);
         this.scales = new Float32Array(this.state.count);
         this.modelMesh = null;
+        this.zoom = 100;
+        this.isOver = false;
     }
     onSectionLoad = node => {
         this.setState({
             sectionRef : node
         },
         ()=>{
+            window.scrollTo({top: 0, behavior: 'smooth'})
             this.init();
-            
             this.update();
         })
+        
     }
+ 
     init = () => {
+        
         const canvas = this.canvasRef.current;
         //scene
         this.scene = new THREE.Scene();
@@ -51,11 +58,10 @@ class SweatshopsSequence extends Component{
             0.1,
             1000
           );
-          var axesHelper = new THREE.AxesHelper( 5 );
-          this.scene.add( axesHelper );
-          this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
 
-            //controls.update() must be called after any manual changes to the camera's transform
+          this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+          this.controls.maxDistance = 1000;
+          this.controls.minDistance = 2;
             this.camera.position.set( 0, 20, 100 );
             this.controls.update();
           //lights
@@ -134,7 +140,7 @@ class SweatshopsSequence extends Component{
                 var defaultTransform = new THREE.Matrix4()
                 .makeRotationX( Math.PI )
                 .multiply( new THREE.Matrix4().makeScale( 1, 1, 1 ) )
-                .makeTranslation(81,-1000,0);
+                .makeTranslation(-51,-1000,-50);
                 this.modelGeometry.applyMatrix4(defaultTransform);
                 this.modelMaterial = new THREE.MeshLambertMaterial()
                 // Assign random colors to the blossoms.
@@ -212,13 +218,27 @@ class SweatshopsSequence extends Component{
         //   }
             
         let delta = this.clock.getDelta();
-
         this.controls.update();
+        this.zoom = this.controls.target.distanceTo( this.controls.object.position )
         if(this.modelMesh){
+            if(this.zoom > 200 && this.zoom < 1000){
+                if(!this.state.outAnimation){
+                    this.setState({
+                        outAnimation: true,
+                        inAnimation: false
+                    })
+                }
+            }
             for(let i =0; i< this.state.count; i++){
                 this.updateParticle(i);
             }
             this.modelMesh.instanceMatrix.needsUpdate = true;
+        }
+        if(Math.round(this.zoom) == this.controls.minDistance ){
+           if(!this.isOver){
+               this.props.nextScene();
+           }
+           this.isOver=true;
         }
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.update);
