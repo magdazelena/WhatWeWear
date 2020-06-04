@@ -32,5 +32,12 @@
             "slug": "fastFashion",
             "title": "What is Fast Fashion"
         }
-    ]
+    ],
+    "buttons": {
+        "click": "click me",
+        "zoomIn": "zoom in using scroll",
+        "zoomOut": "zoom out using scroll",
+        "scroll": "scroll down",
+        "drag": "drag the slider to the side"
+    }
 }

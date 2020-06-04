@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import THREE from '../3d/three';
-import { MeshToonMaterial } from 'three';
+import {TimelineMax, TweenLite} from 'gsap';
+import ZoomInButton from '../objects/ZoomInButton';
+import ZoomOutButton from '../objects/ZoomOutButton';
 class TextileSequence extends Component{
     constructor(props){
         super(props);
@@ -8,6 +10,8 @@ class TextileSequence extends Component{
             sectionRef: false
         }
         this.canvasRef = React.createRef();
+        this.inRef = React.createRef();
+        this.outRef = React.createRef();
         this.clock = new THREE.Clock();
         this.loader = new THREE.FBXLoader();
         this.mesh = null;
@@ -21,6 +25,9 @@ class TextileSequence extends Component{
         }, ()=> {
             this.init();
             this.update();
+            TweenLite.to(this.outRef, 1, {
+                opacity: 1
+            })
         }
         );
     }
@@ -113,7 +120,14 @@ class TextileSequence extends Component{
             this.mesh.instanceMatrix.needsUpdate = true;
        }
        this.zoom = this.controls.target.distanceTo( this.controls.object.position )
-
+       if(Math.round(this.zoom) == this.controls.maxDistance){
+        TweenLite.to(this.outRef, 1, {
+            opacity: 0
+        })
+        TweenLite.to(this.inRef, 1, {
+            opacity: 1
+        })
+    }
        if(Math.round(this.zoom) == this.controls.minDistance ){
           if(!this.isOver){
               this.props.nextScene();
@@ -141,6 +155,12 @@ class TextileSequence extends Component{
     render = () => {
         return <div id="textileSequence" ref={this.onSectionLoad}>
             <canvas ref={ref=>this.canvasRef = ref}></canvas>
+            <div ref={ref=>this.inRef = ref} className="show-up">
+                <ZoomInButton />
+            </div>
+            <div ref={ref=>this.outRef = ref} className="show-up">
+                 <ZoomOutButton />
+            </div>
         </div>;
     }
 }

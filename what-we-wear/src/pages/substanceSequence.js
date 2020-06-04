@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import THREE from '../3d/three';
 import ScrollMagic from 'scrollmagic';
+import {TweenLite} from 'gsap';
+import ScrollDown from '../objects/ScrollDown';
 class SubstanceSequence extends Component{
     constructor(props){
         super(props);
@@ -13,6 +15,7 @@ class SubstanceSequence extends Component{
             counter: 1
         }
         this.canvasRef = React.createRef();
+        this.buttonRef = React.createRef();
         this.headlineRef = React.createRef();
         this.numberRef = React.createRef();
         this.pRef = React.createRef();
@@ -23,7 +26,7 @@ class SubstanceSequence extends Component{
             videoRef : node
         }, 
          ()=>{
-           
+           this.onScroll();
         }
         )
     }
@@ -38,19 +41,17 @@ class SubstanceSequence extends Component{
         )
     }
 
-    // onScroll = ()=>{
-    //         let scene = new ScrollMagic.Scene({
-    //           duration: "80%",
-    //           offset: 50,
-    //           triggerElement: this.state.sequenceRef
-    //         })
-    //         .addIndicators()
-    //         .on('enter', ()=>{
-    //             if(this.video)
-    //                 this.video.play();
-    //         })
-    //         .addTo(this.props.controller);
-    // }
+    onScroll = ()=>{
+            let scene = new ScrollMagic.Scene({
+              duration: "60%",
+              triggerElement: this.state.sequenceRef
+            })
+            .addIndicators()
+            .on('leave', ()=>{
+                this.props.nextScene();
+            })
+            .addTo(this.props.controller);
+    }
 
     init = () => {
      
@@ -82,9 +83,13 @@ class SubstanceSequence extends Component{
         if(!video) return;
         video.currentTime = 1;
         video.mute = true;
-        video.loop = true;
         this.video = video;
         this.video.play();
+        this.video.addEventListener('ended', () => {
+            TweenLite.to(this.buttonRef, 1, {
+                opacity: 1
+            })
+        })
         const videoTexture = new THREE.VideoTexture( video );
         videoTexture.minFilter = THREE.LinearFilter;
         videoTexture.magFilter = THREE.LinearFilter;
@@ -141,6 +146,9 @@ class SubstanceSequence extends Component{
                 <div ref={this.onSequenceLoad}> 
                     <canvas ref={ref=>{this.canvasRef = ref}}></canvas>
                     <video src="../images/bawelna.mp4" id="video" ref={this.onVideoUpload}></video>
+                    <div ref={ref=>this.buttonRef = ref} className="show-up">
+                <ScrollDown  />
+            </div>
                 </div>
             </div>
     }

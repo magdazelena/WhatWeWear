@@ -103,23 +103,47 @@ a{
         height: 50vh;
     }
 }
-.nextButton{
+.nextButton, .informativeButton{
     color: $three;
-    width: 100px;
+    width: 200px;
     height: 100px;
     position: fixed;
-    bottom: 50px;
+    bottom: 80px;
     left: 50%;
     margin-left: -50px;
     cursor: pointer;
     z-index: 1000000;
+    text-align: center;
     svg{
+        width: 100px;
         fill: $three;
     }
     .animatedStroke{
         transform-origin: center;
         animation: spinningStroke 4s ease-in-out infinite;
     }
+}
+.informativeButton{
+    color: $two;
+    font-family: $regularFont;
+    cursor: default;
+    svg{
+        fill: $two;
+        #hand{
+            transform-origin: center;
+            transform: scale(.8);
+        }
+        #rotateDown{
+            transform-origin: center;
+            transform: rotate(90deg)
+        }
+    }
+}
+#drag-info{
+    position: absolute;
+}
+.show-up{
+    opacity: 0;
 }
 #dressesSequence, #explosionsSequence{
     position: relative;

@@ -4,7 +4,8 @@ import {TweenMax, TimelineMax} from 'gsap';
 import {Elastic} from 'gsap/all';
 import list from '../helpers/resources.json';
 import dictionary from '../dictionary/en.json';
-function FindOutMore(){
+import DragButton from '../objects/DragButton';
+function FindOutMore(props){
     let findRef = React.useRef(null);
     let targ, coordX, coordY, offsetX,  drag;
     let startDrag = (e) => {
@@ -132,9 +133,10 @@ function FindOutMore(){
             item.renderer.render(item.stage);
         });
     }
-    
+
     return (
         <div id="findMore" ref={findRef}>
+            {/* <div onClick={()=>props.setScene(1)}>Start from the beginning</div> */}
             {dictionary.resources.map((title, index) => {
                 return <div key={index}>
                     <h1>{title.title}</h1>
@@ -158,6 +160,7 @@ function FindOutMore(){
                     </div>
                 </div>
             })}
+            <DragButton buttonId="drag-info"/>
       
         </div>
     );

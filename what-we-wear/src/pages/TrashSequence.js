@@ -16,6 +16,7 @@ class TrashSequence extends Component{
         this.setState({
             sectionRef: node
         }, () => {
+            window.scrollTo({top:0, behavior: 'smooth'})
             this.init();
             this.update();
         })
@@ -91,7 +92,6 @@ class TrashSequence extends Component{
 
         const mesh = new THREE.Mesh(geometry, material);
         this.scene.add(mesh);
-        console.log(this.scene)
     }
     update=()=>{
         if (this.resizeRendererToDisplaySize(this.renderer)) {

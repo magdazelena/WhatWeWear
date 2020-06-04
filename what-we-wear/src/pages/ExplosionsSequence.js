@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import THREE from '../3d/three';
 import SimplexNoise from 'simplex-noise';
+import ScrollDown from '../objects/ScrollDown';
 import ScrollMagic from 'scrollmagic';
 import particlesFragmentShader from '../3d/shaders/particlesFragmentShader';
 import particlesVertexShader from '../3d/shaders/particlesVertexShader';
@@ -24,6 +25,7 @@ class ExplosionsSequence extends Component{
         this.numberRef = React.createRef();
         this.pRef = React.createRef();
         this.descriptionRef = React.createRef();
+        this.buttonRef = React.createRef();
         this.clock = new THREE.Clock();
         this.simplex = new SimplexNoise();
     }
@@ -85,6 +87,9 @@ class ExplosionsSequence extends Component{
               })
           },
         }, "-=2");
+        timeline.to(this.buttonRef, 1, {
+            opacity: 1
+        })
         let updateCounter = value=>{
             this.setState({
                 counter: value
@@ -380,6 +385,9 @@ class ExplosionsSequence extends Component{
                     <div id="explosionsNumber" ref={ref=>{this.numberRef = ref}}>{this.state.counter}</div>
                     <div id="explosionsDescription" ref={ref=>{this.descriptionRef = ref}}>
                         {this.state.shouldAnimateDesc && (generateTextForAnimation(texts.explosionsSequence.description.split('')))}
+                    </div>
+                    <div ref={ref=>this.buttonRef = ref} className="show-up">
+                        <ScrollDown  />
                     </div>
                 </div>
                 <div id="lastSeason">

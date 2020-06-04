@@ -7,6 +7,7 @@ import {animateText, reanimateText, generateTextForAnimation} from '../helpers/t
 import FBXLoader from '../3d/fbxloader';
 import dressFragmentShader from '../3d/shaders/dressFragmentShader';
 import dressVertexShader from '../3d/shaders/dressVertexShader';
+import ScrollDown from '../objects/ScrollDown';
 require("../helpers/scrollmagicdebug.js");
 class DressesSequence extends Component {
     constructor(props){
@@ -15,6 +16,7 @@ class DressesSequence extends Component {
         this.twentyRef = React.createRef();
         this.dressesDescRef = React.createRef();
         this.dressesHeadRef = React.createRef();
+        this.buttonRef = React.createRef();
         this.scene = null; 
         this.renderer = null;
         this.camera = null;
@@ -102,9 +104,13 @@ class DressesSequence extends Component {
               });
               })
           },
-        })
+        });
+        timeline.to(this.buttonRef, 1,{
+          opacity: 1
+        });
         
       })
+      
       
                         
       
@@ -278,6 +284,10 @@ class DressesSequence extends Component {
                     
                   }
             </div>
+            <div ref={ref=>this.buttonRef = ref} className="show-up">
+                <ScrollDown  />
+            </div>
+            
         </div>
     }
 }

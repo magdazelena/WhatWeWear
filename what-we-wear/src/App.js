@@ -14,7 +14,7 @@ class App extends Component {
     super(props);
     this.state ={
       introIsDone: true,
-      sceneId: 4
+      sceneId: 3
     }
     this.controller = new ScrollMagic.Controller();
     this.markIntroDone = this.markIntroDone.bind(this);
@@ -51,7 +51,7 @@ class App extends Component {
         {this.state.introIsDone && this.state.sceneId==4 && (<TextileSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="4"/>)}
         {this.state.introIsDone && this.state.sceneId==5 &&(<SubstanceSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="5"/>)}
         {this.state.introIsDone && this.state.sceneId==6 &&(<TrashSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="6"/>)}
-       {this.state.introIsDone && ( <FindOutMore/>) }
+       {this.state.introIsDone && ( <FindOutMore setScene={this.setSceneID}/>) }
       </div>
     );
   }

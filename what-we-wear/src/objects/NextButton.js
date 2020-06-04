@@ -1,7 +1,8 @@
 import React from 'react';
+import text from "../dictionary/en.json";
 export default function NextButton(props){
-    return (<div className="nextButton" id={props.buttonId} onClick={props.onClick} alt="see next section">
-
+    return (<div className="nextButton button" id={props.buttonId} onClick={props.onClick} alt="see next section">
+                <p>{text.buttons.click}</p>
                 <svg version="1.1" x="0px" y="0px"
                     viewBox="0 0 512 512"  >
                 <g>

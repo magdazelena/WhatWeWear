@@ -4,7 +4,9 @@ import {MeshSurfaceSampler} from '../3d/meshSurfaceSampler';
 import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 import {animateText,  generateTextForAnimation} from '../helpers/textAnimations';
-import {TimelineMax} from 'gsap';
+import {TimelineMax, TweenLite} from 'gsap';
+import ZoomInButton from '../objects/ZoomInButton';
+import ZoomOutButton from '../objects/ZoomOutButton';
 class SweatshopsSequence extends Component{
     constructor(props){
         super(props);
@@ -15,6 +17,8 @@ class SweatshopsSequence extends Component{
             inAnimation: true
         }
         this.canvasRef = React.createRef();
+        this.inRef = React.createRef();
+        this.outRef = React.createRef();
         this.clock = new THREE.Clock();
         this._position = new THREE.Vector3();
         this._normal = new THREE.Vector3();
@@ -38,6 +42,9 @@ class SweatshopsSequence extends Component{
             window.scrollTo({top: 0, behavior: 'smooth'})
             this.init();
             this.update();
+            TweenLite.to(this.outRef, 1, {
+                opacity: 1
+            })
         })
         
     }
@@ -234,6 +241,14 @@ class SweatshopsSequence extends Component{
             }
             this.modelMesh.instanceMatrix.needsUpdate = true;
         }
+        if(Math.round(this.zoom) == this.controls.maxDistance){
+            TweenLite.to(this.outRef, 1, {
+                opacity: 0
+            })
+            TweenLite.to(this.inRef, 1, {
+                opacity: 1
+            })
+        }
         if(Math.round(this.zoom) == this.controls.minDistance ){
            if(!this.isOver){
                this.props.nextScene();
@@ -261,6 +276,13 @@ class SweatshopsSequence extends Component{
     render(){
         return <div id="sweatshopsContainer" ref={this.onSectionLoad}>
             <canvas ref={ref=>this.canvasRef = ref}></canvas>
+            <div ref={ref=>this.inRef = ref} className="show-up">
+                <ZoomInButton />
+            </div>
+            <div ref={ref=>this.outRef = ref} className="show-up">
+                 <ZoomOutButton />
+            </div>
+            
         </div>
     }
 }
