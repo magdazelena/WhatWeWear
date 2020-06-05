@@ -14,10 +14,15 @@ class App extends Component {
     super(props);
     this.state ={
       introIsDone: true,
-      sceneId: 3
+      sceneId: 1
     }
     this.controller = new ScrollMagic.Controller();
     this.markIntroDone = this.markIntroDone.bind(this);
+    window.scrollBy({ 
+      top: 10, // could be negative value
+      left: 0, 
+      behavior: 'smooth' 
+    });
   }
   markIntroDone=()=>{
     this.setState({

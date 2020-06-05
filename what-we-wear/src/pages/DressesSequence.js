@@ -42,7 +42,7 @@ class DressesSequence extends Component {
     runScene = () => {
       this.init();
       this.update();
-      this.onScroll();
+     this.onScroll();
     }
    onScroll = () => {
     let scene = new ScrollMagic.Scene({
