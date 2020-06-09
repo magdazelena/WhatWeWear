@@ -61,6 +61,96 @@
         "title": "True Cost",
         "thumb": "/images/true_cost.jpg",
         "language": "EN"
+    },
+    {
+        "category" : "fastFashion", 
+        "type": "document",
+        "url": "https://www.fashionrevolution.org/resources/free-downloads/",
+        "author": "Fashion Revolution",
+        "title": "Resources",
+        "thumb": "/images/fashion_revolution.jpg",
+        "language": "EN"
+    },
+    {
+        "category" : "fastFashion", 
+        "type": "document",
+        "url": "http://www.ethicalcorp.com/millions-garment-workers-face-destitution-fashion-brands-cancel-orders",
+        "author": "Ethical Corporation",
+        "title": "Destitution for garment workers among COVID-19",
+        "thumb": "/images/ec.jpg",
+        "language": "EN"
+    },
+    {
+        "category" : "sustainability", 
+        "type": "document",
+        "url": "https://thecircle.ngo/blog/",
+        "author": "The Circle",
+        "title": "Information and action",
+        "thumb": "/images/the_circle.jpg",
+        "language": "EN"
+    },
+    {
+        "category" : "hazard", 
+        "type": "document",
+        "url": "https://7billionfor7seas.com/fast-fashion-facts/",
+        "author": "7 billion for 7 seas",
+        "title": "Fast Fashion Facts",
+        "thumb": "/images/77.jpg",
+        "language": "EN"
+    },
+    {
+        "category" : "fastFashion", 
+        "type": "video",
+        "url": "https://www.youtube.com/watch?time_continue=1&v=BiSYoeqb_VY&feature=emb_title",
+        "author": "Angel Chang",
+        "title": "Life cycle of a t-shirt",
+        "thumb": "/images/video.jpg",
+        "language": "EN"
+    },
+    {
+        "category" : "hazard", 
+        "type": "document",
+        "url": "https://www.businessinsider.com/fast-fashion-environmental-impact-pollution-emissions-waste-water-2019-10?IR=T#fashion-causes-water-pollution-problems-too-textile-dyeing-is-the-worlds-second-largest-polluter-of-water-since-the-water-leftover-from-the-dyeing-process-is-often-dumped-into-ditches-streams-or-rivers-19",
+        "author": "Business Insider",
+        "title": "Fast Fashion environmental impact",
+        "thumb": "/images/77.jpg",
+        "language": "EN"
+    },
+    {
+        "category" : "hazard", 
+        "type": "document",
+        "url": "https://medium.com/@chelseawebster_2492/rana-plaza-and-fast-fashion-50ad86d2b699",
+        "author": "Chelsea Webster",
+        "title": "Rana Plaza and Fast Fashion",
+        "thumb": "/images/77.jpg",
+        "language": "EN"
+    },
+    {
+        "category" : "hazard", 
+        "type": "document",
+        "url": "https://www.vogue.in/fashion/content/7-years-on-from-the-rana-plaza-disaster-heres-how-we-can-protect-the-people-who-make-our-clothes",
+        "author": "Emily Chan for Vogue",
+        "title": "7 years on from Rana Plaza disaster",
+        "thumb": "/images/rana.jpg",
+        "language": "EN"
+    },
+    {
+        "category" : "fastFashion", 
+        "type": "document",
+        "url": "https://cleanclothes.org/file-repository/ccc_dec2019_luginbuhl_lw_gender.pdf/view",
+        "author": "Clean Clothes Campaign",
+        "title": "Will women workers benefit from living wages?",
+        "thumb": "/images/women_workers.jpg",
+        "language": "EN"
+    },
+    {
+        "category" : "fastFashion", 
+        "type": "document",
+        "url": "https://workerdiaries.org/garment-worker-diaries-reports/",
+        "author": "Fashion Revolution",
+        "title": "Garment workers diaries reports",
+        "thumb": "/images/fashion_revolution.jpg",
+        "language": "EN"
     }
 
 ]
