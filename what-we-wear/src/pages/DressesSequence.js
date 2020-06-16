@@ -1,14 +1,10 @@
 import React, {Component} from 'react';
-import {TweenMax, Expo, TimelineMax} from 'gsap/all';
+import {TimelineMax} from 'gsap/all';
 import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 import THREE from '../3d/three';
-import {animateText, reanimateText, generateTextForAnimation} from '../helpers/textAnimations';
-import FBXLoader from '../3d/fbxloader';
-import dressFragmentShader from '../3d/shaders/dressFragmentShader';
-import dressVertexShader from '../3d/shaders/dressVertexShader';
+import {animateText, generateTextForAnimation} from '../helpers/textAnimations';
 import ScrollDown from '../objects/ScrollDown';
-require("../helpers/scrollmagicdebug.js");
 class DressesSequence extends Component {
     constructor(props){
         super(props);
@@ -51,7 +47,7 @@ class DressesSequence extends Component {
     })
     .addIndicators()
     .on('leave', () => {
-      if(this.props.id =="1")
+      if(this.props.id ==="1")
       this.props.nextScene();
       scene.remove();
     })
@@ -84,7 +80,7 @@ class DressesSequence extends Component {
           onStart: ()=>{
             this.models.forEach((model, index)=> {
               
-              if(index != 2){
+              if(index !== 2){
                 model.traverse(o=>{
                   if(o.isMesh){
                     o.material = mat2;
@@ -116,8 +112,7 @@ class DressesSequence extends Component {
       
     }
     init = ()=>{
-        const canvas = this.canvasRef.current;
-        const backgroundColor = 0x1d1c3a;
+        const canvas = document.createElement('canvas');
         //scene
         this.scene = new THREE.Scene();
         //this.scene.background = new THREE.Color(backgroundColor);
@@ -126,8 +121,8 @@ class DressesSequence extends Component {
         this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         this.renderer.setClearColor(0x000000, 0);
         this.renderer.shadowMap.enabled = true;
-        ///this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.state.sectionRef.replaceChild(this.renderer.domElement, this.state.sectionRef.getElementsByTagName('canvas')[0]);
+        this.state.sectionRef.appendChild(this.renderer.domElement, this.state.sectionRef.getElementsByTagName('canvas')[0]);
+    
         //camera
         this.camera = new THREE.PerspectiveCamera(
             50,
@@ -296,7 +291,7 @@ export default DressesSequence;
 
 let overwriteProps = (proto, object) => {
   Object.entries(object).map(entry => {
-    proto[entry[0]] = entry[1];
+    return proto[entry[0]] = entry[1];
   }) 
   return proto;
 }

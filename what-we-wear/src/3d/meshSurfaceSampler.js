@@ -96,7 +96,7 @@ var MeshSurfaceSampler = ( function () {
 
 			var cumulativeTotal = 0;
 
-			for ( var i = 0; i < faceWeights.length; i ++ ) {
+			for ( i = 0; i < faceWeights.length; i ++ ) {
 
 				cumulativeTotal += faceWeights[ i ];
 
@@ -129,7 +129,7 @@ var MeshSurfaceSampler = ( function () {
 			while ( start <= end ) {
 
 				var mid = Math.floor( ( start + end ) / 2 );
-
+				// eslint-disable-next-line
 				if ( mid === 0 || dist[ mid - 1 ] <= x && dist[ mid ] > x ) {
 
 					index = mid;

@@ -3,9 +3,7 @@ import {TweenMax, Expo, TimelineMax} from 'gsap/all';
 import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 import {animateText, reanimateText, generateTextForAnimation} from '../helpers/textAnimations';
-import {enableScroll, disableScroll} from "../helpers/cancelScrolling";
 import NextButton from '../objects/NextButton.js';
-require("../helpers/scrollmagicdebug.js");
 class LoadingApp extends Component{
     
     constructor(props){
@@ -30,6 +28,11 @@ class LoadingApp extends Component{
     }
     
     promiseState = async state => new Promise(resolve => this.setState(state, resolve));
+    componentWillUnmount(){
+        this.scene1.remove();
+        this.scene2.remove();
+        this.scene3.remove();
+    }
     componentDidMount(){
         window.onbeforeunload = function () {
             window.scrollTo(0, 0);

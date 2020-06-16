@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import THREE from '../3d/three';
 import {MeshSurfaceSampler} from '../3d/meshSurfaceSampler';
-import ScrollMagic from 'scrollmagic';
 import texts from '../dictionary/en.json';
 import {animateText,  generateTextForAnimation} from '../helpers/textAnimations';
 import {TimelineMax, TweenLite} from 'gsap';
@@ -99,7 +98,6 @@ class SweatshopsSequence extends Component{
                         color: 0xE29300, 
                         specular: 0xE29380     
                  } );
-                 let basic = new THREE.MeshBasicMaterial({color: 'red'})
                 model.traverse(o => {
                     if (o.isMesh) {
                         o.castShadow = true;
@@ -219,12 +217,7 @@ class SweatshopsSequence extends Component{
             this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
             this.camera.updateProjectionMatrix();
           }
-        //   if(this.dirLight){
-        //      this.dirLight.position.x = -5 * Math.cos(Date.now() / 1400);
-        //     this.dirLight.position.z = -30 * Math.sin(Date.now() / 1400);
-        //   }
-            
-        let delta = this.clock.getDelta();
+
         this.controls.update();
         this.zoom = this.controls.target.distanceTo( this.controls.object.position )
         if(this.modelMesh){
@@ -241,7 +234,7 @@ class SweatshopsSequence extends Component{
             }
             this.modelMesh.instanceMatrix.needsUpdate = true;
         }
-        if(Math.round(this.zoom) == this.controls.maxDistance){
+        if(Math.round(this.zoom) === this.controls.maxDistance-200){
             TweenLite.to(this.outRef, 1, {
                 opacity: 0
             })
@@ -249,12 +242,18 @@ class SweatshopsSequence extends Component{
                 opacity: 1
             })
         }
-        if(Math.round(this.zoom) == this.controls.minDistance ){
+        if(Math.round(this.zoom) === this.controls.minDistance ){
            if(!this.isOver){
                this.props.nextScene();
            }
            this.isOver=true;
         }
+        if(Math.round(this.zoom) === this.controls.maxDistance ){
+            if(!this.isOver){
+                this.props.prevScene();
+            }
+            this.isOver=true;
+         }
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.update);
        

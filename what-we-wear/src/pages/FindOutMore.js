@@ -7,6 +7,9 @@ import dictionary from '../dictionary/en.json';
 import DragButton from '../objects/DragButton';
 function FindOutMore(props){
     let findRef = React.useRef(null);
+    let canvasRef = React.useRef(null);
+    let renderer = null;
+   // let buttonRef = React.useRef(null);
     let targ, coordX, coordY, offsetX,  drag;
     let startDrag = (e) => {
         // determine event object
@@ -56,7 +59,7 @@ function FindOutMore(props){
     let mouseoverAnimation = (targ, direction, distance) => {
         playgrounds.map(item => {
             if(item.category == targ.id){
-                TweenMax.to(item.renderer.view, .5, 
+                TweenMax.to(item.parent, .5, 
                     {skewX: direction}); //skew in direction of the movement
                 TweenMax.to(item.displacementSprite, 3, 
                     {rotation: 90+10*direction/distance*Math.random()}); //rotate texture slightly in direction of the movement
@@ -70,7 +73,7 @@ function FindOutMore(props){
     }
     let stopDrag =() =>{
         playgrounds.map(item => {
-            TweenMax.to(item.renderer.view, 1, {skewX: 0, ease: ease});
+            TweenMax.to(item.preview, 1, {skewX: 0, ease: ease});
             TweenMax.to(item.displacementSprite.scale, 2, {x:5, y:5})
         });
         drag=false;
@@ -81,27 +84,27 @@ function FindOutMore(props){
         document.onmouseup = stopDrag;
         if(findRef.current){
             displacements();
-          
+            
         }    
             
     }
-    const playgrounds = [];
-    let displacements = () =>{
+    const playgrounds = [];;
+    let globalStage = new PIXI.Container();
+    let displacements = function(){
         const thumbs = findRef.current.getElementsByClassName('thumb');
-            
+        renderer =  PIXI.autoDetectRenderer({width: window.innerWidth, height: window.innerHeight, transparent:true, view: canvasRef.current})
         Array.from(thumbs).map((item, index) => {
             let playground = {}; //create an object for all the PIXI properties
-            playground.renderer = PIXI.autoDetectRenderer({width: thumbs[index].offsetWidth, height: thumbs[index].offsetHeight, transparent:true}); //set up the renderer
+            playground.renderer = renderer; //set up the renderer
             playground.renderer.autoResize = true;
-            item.appendChild(playground.renderer.view); //append the renderer to a thumbnail - this will add the canvas element
             let tp = PIXI.Texture.from(item.dataset.path);  //get thumbnail texture path from list json object based on index of iteration
             
 	        let preview = new PIXI.Sprite(tp); //create the main sprite
             preview.anchor.set(0.5);
-            preview.width = playground.renderer.width;
-            preview.height = playground.renderer.height;
-            preview.x = playground.renderer.width / 2 ;
-            preview.y = playground.renderer.height /2; 
+            preview.width = thumbs[index].offsetWidth;
+            preview.height = thumbs[index].offsetHeight;
+            preview.x = thumbs[index].getBoundingClientRect().left + thumbs[index].offsetWidth/2;
+            preview.y = thumbs[index].getBoundingClientRect().top +thumbs[index].offsetHeight/2; 
             playground.preview = preview;
 
 	        let displacementSprite = PIXI.Sprite.from('./images/wrinkles.jpg');
@@ -112,7 +115,6 @@ function FindOutMore(props){
             displacementSprite.rotation = 90;
             let stage = new PIXI.Container();
 	        stage.addChild(displacementSprite);
-
             stage.addChild(preview);
             playground.displacementSprite = displacementSprite;
             displacementFilter.autoFit = false;
@@ -120,6 +122,8 @@ function FindOutMore(props){
             playground.displacementFilter = displacementFilter;
             playground.stage = stage;
             playground.category = item.dataset.category;
+            globalStage.addChild(stage);
+            playground.parent = thumbs[index];
             playgrounds.push(playground);
             animate();
         })
@@ -130,12 +134,15 @@ function FindOutMore(props){
         requestAnimationFrame(animate);
         playgrounds.map(item => {
             item.stage.filters = [item.displacementFilter];
-            item.renderer.render(item.stage);
+            item.preview.x = item.parent.getBoundingClientRect().left +item.parent.offsetWidth/2;
         });
+        if(renderer)
+            renderer.render(globalStage);
     }
 
     return (
         <div id="findMore" ref={findRef}>
+            <canvas ref={canvasRef} className="dummy-canvas"></canvas>
             {/* <div onClick={()=>props.setScene(1)}>Start from the beginning</div> */}
             {dictionary.resources.map((title, index) => {
                 return <div key={index}>
@@ -159,8 +166,10 @@ function FindOutMore(props){
                     }
                     </div>
                 </div>
+                
             })}
-            <DragButton buttonId="drag-info"/>
+            
+            <DragButton  buttonId="drag-info"/>
       
         </div>
     );

@@ -47,8 +47,15 @@ class SubstanceSequence extends Component{
               triggerElement: this.state.sequenceRef
             })
             .addIndicators()
-            .on('leave', ()=>{
-                this.props.nextScene();
+            .on('leave', e=>{
+                if(e.scrollDirection === "FORWARD"){
+                    this.props.nextScene();
+                    
+                }else{
+                    this.props.prevScene();
+                }
+                scene.remove();
+                
             })
             .addTo(this.props.controller);
     }
@@ -107,18 +114,8 @@ class SubstanceSequence extends Component{
                     value: new THREE.Color(0xffff00)
                 }
             },
-            vertexShader: 'varying vec2 vUv;\
-            void main(){\
-                vUv = uv;\
-                vec4 mvPosition = modelViewMatrix * vec4 (position, 1.0);\
-                gl_Position = projectionMatrix * mvPosition;}',
-            fragmentShader: 'uniform sampler2D texture;\
-            uniform vec3 color;\
-            varying vec2 vUv;\
-            void main(){\
-                vec3 tColor = texture2D( texture, vUv).rgb;\
-                float a = (length(tColor - color) ) * 0.9;\
-                gl_FragColor = vec4(tColor, a);}',
+            vertexShader: 'varying vec2 vUv;void main(){ vUv = uv;vec4 mvPosition = modelViewMatrix * vec4 (position, 1.0);gl_Position = projectionMatrix * mvPosition;}',
+            fragmentShader: 'uniform sampler2D texture;uniform vec3 color;varying vec2 vUv;void main(){vec3 tColor = texture2D( texture, vUv).rgb;float a = (length(tColor - color) ) * 0.9;gl_FragColor = vec4(tColor, a);}',
             transparent: true
         })
         this.plane = new THREE.Mesh(planeGeo, planeMaterial);

@@ -120,7 +120,7 @@ class TextileSequence extends Component{
             this.mesh.instanceMatrix.needsUpdate = true;
        }
        this.zoom = this.controls.target.distanceTo( this.controls.object.position )
-       if(Math.round(this.zoom) == this.controls.maxDistance){
+       if(Math.round(this.zoom) === this.controls.maxDistance){
         TweenLite.to(this.outRef, 1, {
             opacity: 0
         })
@@ -128,12 +128,18 @@ class TextileSequence extends Component{
             opacity: 1
         })
     }
-       if(Math.round(this.zoom) == this.controls.minDistance ){
+       if(Math.round(this.zoom) === this.controls.minDistance ){
           if(!this.isOver){
               this.props.nextScene();
           }
           this.isOver=true;
        }
+       if(Math.round(this.zoom) === this.controls.maxDistance ){
+        if(!this.isOver){
+            this.props.prevScene();
+        }
+        this.isOver=true;
+     }
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.update);
        

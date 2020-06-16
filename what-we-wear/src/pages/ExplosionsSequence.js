@@ -99,8 +99,8 @@ class ExplosionsSequence extends Component{
     }
     onScroll = ()=>{
             let scene = new ScrollMagic.Scene({
-              duration: "80%",
-              offset: 50,
+              duration: "70%",
+              offset: 500,
               triggerElement: this.state.sequenceRef
             })
             .addIndicators()
@@ -108,7 +108,7 @@ class ExplosionsSequence extends Component{
                 if(this.video)
                     this.video.play();
             })
-            .on('leave', () => {
+            .on('leave', e => {
                 if(this.video)
                     this.video.pause();
                 let timeline = new TimelineMax();
@@ -126,8 +126,13 @@ class ExplosionsSequence extends Component{
                 timeline.to(this.pRef, 4, {
                     x: '-100%',
                     onComplete: ()=>{
-                        this.props.nextScene();
                         scene.remove();
+                        if(e.scrollDirection == "FORWARD"){
+                            this.props.nextScene();
+                            
+                        }else{
+                            this.props.prevScene();
+                        }
                     }
                 })
             })
