@@ -1,6 +1,6 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
-import {TweenMax, TimelineMax} from 'gsap';
+import {TweenMax} from 'gsap';
 import {Elastic} from 'gsap/all';
 import list from '../helpers/resources.json';
 import dictionary from '../dictionary/en.json';
@@ -10,11 +10,11 @@ function FindOutMore(props){
     let canvasRef = React.useRef(null);
     let renderer = null;
    // let buttonRef = React.useRef(null);
-    let targ, coordX, coordY, offsetX,  drag;
+    let targ, coordX, offsetX,  drag;
     let startDrag = (e) => {
         // determine event object
         if (!e) {
-            var e = window.event;
+            e = window.event;
         }
         if(e.preventDefault) e.preventDefault();
 
@@ -31,14 +31,14 @@ function FindOutMore(props){
         // calculate integer values for top and left 
         // properties
         coordX = parseInt(targ.style.left);
-        coordY = parseInt(targ.style.top);
         drag = true;
    
         // move div element
         document.onmousemove=dragDiv;
         playgrounds.map(item => {
-            if(item.category == targ.id)
-            TweenMax.to(item.displacementSprite.scale,{x:1.8*Math.random(), y:1.8, ease: ease}).duration(1);
+            if(item.category === targ.id)
+                TweenMax.to(item.displacementSprite.scale,{x:1.8*Math.random(), y:1.8, ease: ease}).duration(1);
+            return false;
         })
         return false;
 
@@ -48,7 +48,7 @@ function FindOutMore(props){
     var oldX = 0;
     let dragDiv = (e) => {
         if (!drag) {return};
-        if (!e) { var e= window.event};
+        if (!e) {  e= window.event};
         distance = coordX+e.clientX-offsetX;
         targ.style.left=distance+'px';
         let direction = oldX <e.pageX ? -20: 20; //compare old X with new x to get direction
@@ -58,7 +58,7 @@ function FindOutMore(props){
     }
     let mouseoverAnimation = (targ, direction, distance) => {
         playgrounds.map(item => {
-            if(item.category == targ.id){
+            if(item.category === targ.id){
                 TweenMax.to(item.parent, .5, 
                     {skewX: direction}); //skew in direction of the movement
                 TweenMax.to(item.displacementSprite, 3, 
@@ -68,13 +68,14 @@ function FindOutMore(props){
                     y:1+direction/distance*Math.random(), //both values need to oscilate between 0 and 2 with some randomness
                      ease: ease});
             }
-            
+            return false;
         })
     }
     let stopDrag =() =>{
         playgrounds.map(item => {
             TweenMax.to(item.preview, 1, {skewX: 0, ease: ease});
             TweenMax.to(item.displacementSprite.scale, 2, {x:5, y:5})
+            return false;
         });
         drag=false;
     }
@@ -84,7 +85,6 @@ function FindOutMore(props){
         document.onmouseup = stopDrag;
         if(findRef.current){
             displacements();
-            
         }    
             
     }
@@ -126,6 +126,7 @@ function FindOutMore(props){
             playground.parent = thumbs[index];
             playgrounds.push(playground);
             animate();
+            return false;
         })
     }
 
@@ -135,6 +136,7 @@ function FindOutMore(props){
         playgrounds.map(item => {
             item.stage.filters = [item.displacementFilter];
             item.preview.x = item.parent.getBoundingClientRect().left +item.parent.offsetWidth/2;
+            return false;
         });
         if(renderer)
             renderer.render(globalStage);
@@ -149,7 +151,7 @@ function FindOutMore(props){
                     <h1>{title.title}</h1>
                     <div className="dragg-area" id={title.slug}> {
                         list.map((item, index)=>{
-                            if(item.category == title.slug)
+                            if(item.category === title.slug)
                                 return <a href={item.url} key={index}>
                                     <div className={item.type}>
                                         <div className="thumb" data-path={item.thumb} data-category={item.category}>

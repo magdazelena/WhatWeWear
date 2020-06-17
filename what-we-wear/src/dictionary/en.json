@@ -19,6 +19,32 @@
         "headline": "To trick you into buying more and more things you don't need, fast fashion brands produce new collections every 2 weeks. That is up to",
         "description": "collections per year" 
     },
+    "sweatshopsSequence": {
+        "headline": "You can afford to follow those trends",
+        "description": "but have you wondered why clothes in the markets are so cheap?",
+        "zoomOutheadline": "Millions of people are exploited every day to make that happen",
+        "zoomOutdescription": "In Bangladesh, China, Turkey and your own country possibly too.",
+        "zoomInheadline": "For a garment that cost you ",
+        "zoomIndescription": "will be payed to the worker on the other side of the globe."
+    },
+    "textileSequence": {
+        "headline": "Production costs are cut in textiles too",
+        "description": "mostly by switching to artificial, oil-derived materials like polyester.",
+        "zoomInheadline": "Dying the textiles for mass production",
+        "zoomIndescription": "is a lethal hazard to environment and people, including children."
+    },
+    "substanceSequence": {
+        "headline": "Unfortunately natural fibers grooming is exploited as well",
+        "description": "by modifying the plants to be immune to toxic repellents",
+        "description2": "which destroy natural ecosystem and are responsible for ",
+        "description3": "of farmers dying every year."
+    },
+    "trashSequence": {
+        "headline": "Having the clothes made so cheaply drasticaly shortens their lifespan",
+        "description": "and encourages you to buy new and get rid of the old.",
+        "description2": "This approach leads to ",
+        "description3": " tons of unrecyclable waste every year"
+    },
     "resources":[
         {
             "slug": "sustainability",

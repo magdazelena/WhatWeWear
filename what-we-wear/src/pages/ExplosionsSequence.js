@@ -103,7 +103,6 @@ class ExplosionsSequence extends Component{
               offset: 500,
               triggerElement: this.state.sequenceRef
             })
-            .addIndicators()
             .on('enter', ()=>{
                 if(this.video)
                     this.video.play();
@@ -127,7 +126,7 @@ class ExplosionsSequence extends Component{
                     x: '-100%',
                     onComplete: ()=>{
                         scene.remove();
-                        if(e.scrollDirection == "FORWARD"){
+                        if(e.scrollDirection === "FORWARD"){
                             this.props.nextScene();
                             
                         }else{
@@ -177,7 +176,6 @@ class ExplosionsSequence extends Component{
             // geometry
             this.geometry = new THREE.BufferGeometry();
             this.particles = 10000;
-            const radius = 200;
             this.positions = new Float32Array(this.particles * 3);
 			this.colors = new Float32Array(this.particles * 4);
             this.sizes = new Float32Array(this.particles);
@@ -289,18 +287,8 @@ class ExplosionsSequence extends Component{
                     value: new THREE.Color(0x000000)
                 }
             },
-            vertexShader: 'varying vec2 vUv;\
-            void main(){\
-                vUv = uv;\
-                vec4 mvPosition = modelViewMatrix * vec4 (position, 1.0);\
-                gl_Position = projectionMatrix * mvPosition;}',
-            fragmentShader: 'uniform sampler2D texture;\
-            uniform vec3 color;\
-            varying vec2 vUv;\
-            void main(){\
-                vec3 tColor = texture2D( texture, vUv).rgb;\
-                float a = (length(tColor - color) - 0.1) * 0.9;\
-                gl_FragColor = vec4(tColor, a);}',
+            vertexShader: 'varying vec2 vUv;void main(){vUv = uv;vec4 mvPosition = modelViewMatrix * vec4 (position, 1.0);gl_Position = projectionMatrix * mvPosition;}',
+            fragmentShader: 'uniform sampler2D texture;uniform vec3 color;varying vec2 vUv;void main(){vec3 tColor = texture2D( texture, vUv).rgb;float a = (length(tColor - color) - 0.1) * 0.9;gl_FragColor = vec4(tColor, a);}',
             transparent: true
         })
         this.plane = new THREE.Mesh(planeGeo, planeMaterial);

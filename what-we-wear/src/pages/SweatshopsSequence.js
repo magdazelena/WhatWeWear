@@ -12,12 +12,18 @@ class SweatshopsSequence extends Component{
         this.state = {
             sectionRef : null,
             count: 10000,
+            sixtyCounter: 1,
+            centsCounter: 60,
             outAnimation: false,
-            inAnimation: true
+            inAnimation: false,
+            shouldAnimate: false,
+            shouldAnimateDesc: false
         }
         this.canvasRef = React.createRef();
         this.inRef = React.createRef();
         this.outRef = React.createRef();
+        this.headlineRef = React.createRef();
+        this.descRef = React.createRef();
         this.clock = new THREE.Clock();
         this._position = new THREE.Vector3();
         this._normal = new THREE.Vector3();
@@ -32,6 +38,7 @@ class SweatshopsSequence extends Component{
         this.modelMesh = null;
         this.zoom = 100;
         this.isOver = false;
+        this.tl = new TimelineMax();
     }
     onSectionLoad = node => {
         this.setState({
@@ -44,6 +51,28 @@ class SweatshopsSequence extends Component{
             TweenLite.to(this.outRef, 1, {
                 opacity: 1
             })
+            this.tl.to(this.headlineRef, .5, {
+                onComplete: ()=>{
+                    this.setState({
+                      shouldAnimate: true
+                    }, ()=>{
+                      [...this.headlineRef.getElementsByTagName('span')].forEach((span, i)=>{
+                          animateText(span, i).play();
+                      });
+                    })
+                },
+            });
+            this.tl.to(this.descRef, .5, {
+                onComplete: ()=>{
+                    this.setState({
+                      shouldAnimateDesc: true
+                    }, ()=>{
+                      [...this.descRef.getElementsByTagName('span')].forEach((span, i)=>{
+                          animateText(span, i).play();
+                      });
+                    })
+                },
+            });
         })
         
     }
@@ -211,6 +240,126 @@ class SweatshopsSequence extends Component{
         this.dummy.matrix.scale(this._scale);
         this.modelMesh.setMatrixAt(i, this.dummy.matrix);
     }
+    outUnanimated = true;
+    outAnimated = false;
+    inUnanimated = true;
+    animateZoomOut = function(){
+        if(this.outUnanimated){
+            this.tl.to(this.headlineRef, .1, {
+                onComplete: ()=> {
+                    [...this.headlineRef.getElementsByTagName('span')].forEach((span, i)=>{
+                        animateText(span, i).reverse(0);
+                    });
+                }
+            });
+            this.tl.to(this.descRef, .1, {
+                onComplete: ()=> {
+                    [...this.descRef.getElementsByTagName('span')].forEach((span, i)=>{
+                        animateText(span, i).reverse(0);
+                    });
+                }
+            });
+            this.tl.to(this.headlineRef, .5, { 
+                onComplete: () => {
+                    this.setState({
+                        outAnimation: true,
+                        inAnimation: false,
+                        shouldAnimate: false,
+                        shouldAnimateDesc: false
+                    }, ()=> {
+                        [...this.headlineRef.getElementsByTagName('span')].forEach((span, i)=>{
+                            animateText(span, i).play();
+                        });
+                        [...this.descRef.getElementsByTagName('span')].forEach((span, i)=>{
+                            animateText(span, i).play();
+                        });
+                    })
+                }
+            });
+
+        }
+        this.outUnanimated = false;
+        this.outAnimated = true;
+    }
+    animateOut = function (){
+        if(this.outAnimated){
+            TweenLite.to(this.outRef, 1, {
+                opacity: 0
+            })
+            TweenLite.to(this.inRef, 1, {
+                opacity: 1
+            })
+            this.tl.to(this.headlineRef, .1, {
+                onComplete: ()=> {
+                    [...this.headlineRef.getElementsByTagName('span')].forEach((span, i)=>{
+                        animateText(span, i).reverse(0);
+                    });
+                }
+            });
+            this.tl.to(this.descRef, .1, {
+                onComplete: ()=> {
+                    [...this.descRef.getElementsByTagName('span')].forEach((span, i)=>{
+                        animateText(span, i).reverse(0);
+                    });
+                }
+            });
+        }
+        this.outAnimated = false;
+    }
+    animateZoomIn = function(){
+        if(this.inUnanimated){
+            let counter = {value: this.state.sixtyCounter};
+            let ccounter = {value: this.state.centsCounter};
+            var updateCounter=(value)=>{
+                this.setState({
+                    sixtyCounter: value
+                })
+            }
+            var updatecCounter=(value)=>{
+                this.setState({
+                    centsCounter: value
+                })
+            }
+            this.tl.to(this.headlineRef, .5, { 
+                onComplete: () => {
+                    this.setState({
+                        outAnimation: false,
+                        inAnimation: true,
+                        shouldAnimateDesc: false,
+                        shouldAnimate: false
+                    }, ()=> {
+                        [...this.headlineRef.getElementsByTagName('span')].forEach((span, i)=>{
+                            animateText(span, i).play();
+                        });
+                        [...this.descRef.getElementsByTagName('span')].forEach((span, i)=>{
+                            animateText(span, i).play();
+                        });
+                    })
+                }
+            });
+            this.tl.to('.dollars-cents', 2, {
+                fontSize: '8em',
+                opacity: 1
+            })
+            this.tl.to(counter, 1, {
+                delay: 1,
+                value: 60,
+                roundProps: 'value',
+                onUpdate: function(){
+                    updateCounter(counter.value)
+                }
+            }, "-=1")
+            this.tl.to(ccounter, 1, {
+                value: 10,
+                roundProps: 'value',
+                onUpdate: function(){
+                    updatecCounter(ccounter.value)
+                }
+            })
+            
+        }
+        this.inUnanimated=false;
+    }
     update=()=>{
         if (this.resizeRendererToDisplaySize(this.renderer)) {
             const canvas = this.renderer.domElement;
@@ -222,11 +371,8 @@ class SweatshopsSequence extends Component{
         this.zoom = this.controls.target.distanceTo( this.controls.object.position )
         if(this.modelMesh){
             if(this.zoom > 200 && this.zoom < 1000){
-                if(!this.state.outAnimation){
-                    this.setState({
-                        outAnimation: true,
-                        inAnimation: false
-                    })
+                if(!this.state.outAnimation && this.headlineRef){                   
+                    this.animateZoomOut();
                 }
             }
             for(let i =0; i< this.state.count; i++){
@@ -234,13 +380,16 @@ class SweatshopsSequence extends Component{
             }
             this.modelMesh.instanceMatrix.needsUpdate = true;
         }
-        if(Math.round(this.zoom) === this.controls.maxDistance-200){
-            TweenLite.to(this.outRef, 1, {
-                opacity: 0
-            })
-            TweenLite.to(this.inRef, 1, {
-                opacity: 1
-            })
+
+        if(Math.round(this.zoom) >= this.controls.maxDistance-400 && Math.round(this.zoom) < this.controls.maxDistance){
+            if(this.headlineRef)
+             this.animateOut();
+        }
+        if(Math.round(this.zoom) > this.controls.minDistance && Math.round(this.zoom) <= 100){
+            if(!this.state.inAnimation && this.headlineRef){
+                this.animateZoomIn();
+            }
+            
         }
         if(Math.round(this.zoom) === this.controls.minDistance ){
            if(!this.isOver){
@@ -281,6 +430,22 @@ class SweatshopsSequence extends Component{
             <div ref={ref=>this.outRef = ref} className="show-up">
                  <ZoomOutButton />
             </div>
+            <div id="sweatshopsHeadline" ref={ref=>{this.headlineRef = ref}}>
+                {this.state.shouldAnimate && (generateTextForAnimation(texts.sweatshopsSequence.headline.split('')))}
+                {this.state.outAnimation && (generateTextForAnimation(texts.sweatshopsSequence.zoomOutheadline.split('')))}
+                {this.state.inAnimation && (generateTextForAnimation(texts.sweatshopsSequence.zoomInheadline.split('')))}
+             </div>
+             <div id="sixty" class="dollars-cents">
+                 {this.state.inAnimation && (<span><span ref={ref=>this.sixtyRef=ref}>{this.state.sixtyCounter}</span>$</span>)}
+             </div>
+             <div id="ten" class="dollars-cents">
+                 {this.state.inAnimation && (<span><span ref={ref=>this.tenRef=ref}>{this.state.centsCounter}</span>c</span>)}
+             </div>
+             <div id="sweatshopsDesc" ref={ref=>{this.descRef = ref}}>
+                {this.state.shouldAnimateDesc && (generateTextForAnimation(texts.sweatshopsSequence.description.split('')))}
+                {this.state.outAnimation && (generateTextForAnimation(texts.sweatshopsSequence.zoomOutdescription.split('')))}
+                {this.state.inAnimation && (generateTextForAnimation(texts.sweatshopsSequence.zoomIndescription.split('')))}
+             </div>
             
         </div>
     }
