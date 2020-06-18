@@ -14,7 +14,7 @@ class App extends Component {
     super(props);
     this.state ={
       introIsDone: true,
-      sceneId:5
+      sceneId:6
     }
     this.controller = new ScrollMagic.Controller();
     this.markIntroDone = this.markIntroDone.bind(this);

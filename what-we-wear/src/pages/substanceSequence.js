@@ -21,8 +21,6 @@ class SubstanceSequence extends Component{
         this.canvasRef = React.createRef();
         this.buttonRef = React.createRef();
         this.headlineRef = React.createRef();
-        this.numberRef = React.createRef();
-        this.pRef = React.createRef();
         this.descRef = React.createRef();
         this.desc2Ref = React.createRef();
         this.desc3Ref = React.createRef();
@@ -103,6 +101,9 @@ class SubstanceSequence extends Component{
             })
             .on('leave', e=>{
                 if(e.scrollDirection === "FORWARD"){
+                    TweenLite.to(this.plane.position, .5, {
+                        z: -200
+                    })
                     this.props.nextScene();
                     
                 }else{
