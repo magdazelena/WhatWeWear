@@ -24,15 +24,10 @@ class LoadingApp extends Component{
         this.scene1 = null; 
         this.scene2 = null;
         this.scene3 = null;
-        this.controller = new ScrollMagic.Controller();
     }
     
     promiseState = async state => new Promise(resolve => this.setState(state, resolve));
-    componentWillUnmount(){
-        this.scene1.remove();
-        this.scene2.remove();
-        this.scene3.remove();
-    }
+
     componentDidMount(){
         window.onbeforeunload = function () {
             window.scrollTo(0, 0);
@@ -41,7 +36,6 @@ class LoadingApp extends Component{
         this.scene1 = new ScrollMagic.Scene({
             duration: 50
         })
-        .addIndicators()
         .on('leave', () => {
             let requests = [...this.headingRef.getElementsByTagName('span')].map(item =>{
                 return new Promise(resolve => {
@@ -108,7 +102,6 @@ class LoadingApp extends Component{
                fontSize: 400
            })
         })
-        .addIndicators();
         this.scene3 = new ScrollMagic.Scene({
             duration: 50,
             offset: 200
@@ -129,8 +122,7 @@ class LoadingApp extends Component{
                 
             }
         })
-        .addIndicators()
-        this.controller.addScene([this.scene1, this.scene2, this.scene3])
+        this.props.controller.addScene([this.scene1, this.scene2, this.scene3])
 
     }
     componentDidUpdate(prevProps, prevState){
@@ -254,10 +246,13 @@ class LoadingApp extends Component{
                 this.destroyIntro();
         }
     }
-    componentWillUnmount=()=>{
-        this.controller.destroy();
-    }
+    // componentWillUnmount=()=>{
+    //     this.props.controller.destroy();
+    // }
     destroyIntro=()=>{
+        this.scene1.remove();
+        this.scene2.remove();
+        this.scene3.remove();
         this.props.markIntroDone();
     }
     render(){

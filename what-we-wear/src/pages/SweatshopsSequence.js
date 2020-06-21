@@ -382,7 +382,7 @@ class SweatshopsSequence extends Component{
         }
 
         if(Math.round(this.zoom) >= this.controls.maxDistance-400 && Math.round(this.zoom) < this.controls.maxDistance){
-            if(this.headlineRef)
+            if(this.headlineRef && this.descRef)
              this.animateOut();
         }
         if(Math.round(this.zoom) > this.controls.minDistance && Math.round(this.zoom) <= 100){

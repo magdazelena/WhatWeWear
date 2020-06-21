@@ -59,8 +59,8 @@ function FindOutMore(props){
     let mouseoverAnimation = (targ, direction, distance) => {
         playgrounds.map(item => {
             if(item.category === targ.id){
-                TweenMax.to(item.parent, .5, 
-                    {skewX: direction}); //skew in direction of the movement
+                // TweenMax.to(item.parent, .5, 
+                //     {skewX: direction}); //skew in direction of the movement
                 TweenMax.to(item.displacementSprite, 3, 
                     {rotation: 90+10*direction/distance*Math.random()}); //rotate texture slightly in direction of the movement
                 TweenMax.to(item.displacementSprite.scale,2,
@@ -73,7 +73,7 @@ function FindOutMore(props){
     }
     let stopDrag =() =>{
         playgrounds.map(item => {
-            TweenMax.to(item.preview, 1, {skewX: 0, ease: ease});
+          //  TweenMax.to(item.preview, 1, {skewX: 0, ease: ease});
             TweenMax.to(item.displacementSprite.scale, 2, {x:5, y:5})
             return false;
         });
@@ -154,8 +154,9 @@ function FindOutMore(props){
                             if(item.category === title.slug)
                                 return <a href={item.url} key={index}>
                                     <div className={item.type}>
-                                        <div className="thumb" data-path={item.thumb} data-category={item.category}>
-                                            <span>{item.language}</span>
+                                        <div className="thumb" data-path={item.thumb} data-category={item.category} style={{backgroundImage:"url('"+item.thumb+"')"}}>
+    
+                                            {/* <span>{item.language}</span> */}
                                         </div>
                                         <div className="info">
                                             <p className="author">{item.author}</p>

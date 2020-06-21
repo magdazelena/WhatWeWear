@@ -72,7 +72,7 @@ class ExplosionsSequence extends Component{
             color: 'red'
         }, '+=2')
         timeline.to(counter, 3, {
-          value: 52,
+          value: 26,
           roundProps: 'value',
           onUpdate: () => updateCounter(counter.value)
         }, "-=3") ;
@@ -201,7 +201,7 @@ class ExplosionsSequence extends Component{
                     r: this.color.r,
                     g: this.color.g,
                     b: this.color.b,
-                    a: 0.3,
+                    a: 0.6,
                     life: 2,
                     decay: rand(0.05, 0.15),
                     firstRun: true

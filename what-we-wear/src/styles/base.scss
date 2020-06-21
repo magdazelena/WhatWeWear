@@ -8,10 +8,10 @@ body{
     background-color: $dark;
     padding: 0;
     margin: 0;
-    // background-image: url('../images/1003.png'), url('../images/5015.png');
-    // background-color: $dark;
-    // background-blend-mode: multiply;
-    // animation: backgroundPulse 12s infinite;
+    background-image: url('../images/1003.png'), url('../images/5015.png');
+    background-color: $dark;
+    background-blend-mode: multiply;
+    animation: backgroundPulse 12s infinite;
     width: 100vw;
     overflow-x: hidden;
     font-family: $titleFont;
@@ -19,6 +19,9 @@ body{
 a{
     text-decoration: none;
     color: unset;
+}
+.breaker{
+    height: 60vh;
 }
 // .App{
 //     //background-tiles.com
@@ -285,6 +288,12 @@ a{
 }
 #findMore{
     width: 100vw;
+    height: 100vh;
+    canvas{
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
     position: relative;
     text-align: center;
     .dragg-area{

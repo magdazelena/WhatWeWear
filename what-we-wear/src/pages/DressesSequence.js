@@ -41,13 +41,13 @@ class DressesSequence extends Component {
      this.onScroll();
     }
    onScroll = () => {
+     window.scrollTo({top: 0, behavior: 'smooth'})
     let scene = new ScrollMagic.Scene({
       duration: "60%",
+      offset: 100,
       triggerElement: this.state.sectionRef
     })
-    .addIndicators()
     .on('leave', () => {
-      if(this.props.id ==="1")
       this.props.nextScene();
       scene.remove();
     })
@@ -267,6 +267,7 @@ class DressesSequence extends Component {
         }
         return needResize;
       }
+
     render () {
        return <div id="dressesSequence" ref={this.onSectionLoad}>
               <canvas  ref={ref=>this.canvasRef = ref} width={window.innerWidth} height={window.innerHeight}></canvas>
@@ -279,7 +280,7 @@ class DressesSequence extends Component {
                     
                   }
             </div>
-            <div ref={ref=>this.buttonRef = ref} className="show-up">
+            <div ref={ref=>this.buttonRef = ref} className="show-up" >
                 <ScrollDown  />
             </div>
             

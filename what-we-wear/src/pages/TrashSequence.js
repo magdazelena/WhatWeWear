@@ -85,7 +85,7 @@ class TrashSequence extends Component{
                     });
                 })
             }
-        })
+        }, "-=3")
     }
     init = () => {
         const canvas = this.canvasRef.current;

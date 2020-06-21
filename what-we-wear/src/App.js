@@ -14,19 +14,20 @@ class App extends Component {
     super(props);
     this.state ={
       introIsDone: true,
-      sceneId:6
+      sceneId:1
     }
     this.controller = new ScrollMagic.Controller();
     this.markIntroDone = this.markIntroDone.bind(this);
     window.scrollBy({ 
-      top: 10, // could be negative value
+      top: -10, // could be negative value
       left: 0, 
       behavior: 'smooth' 
     });
   }
   markIntroDone=()=>{
     this.setState({
-      introIsDone: true
+      introIsDone: true,
+      sceneId: 1
     })
   }
   setSceneID=id=>{
@@ -49,7 +50,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} loading="true"/>)}
+        {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} controller={this.controller} loading="true"/>)}
         {this.state.introIsDone && this.state.sceneId===1 &&(<DressesSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="1" />)} 
         {this.state.introIsDone && this.state.sceneId===2 && (<ExplosionsSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="2"/>)}
         {this.state.introIsDone && this.state.sceneId===3 && (<SweatshopsSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="3"/>)}
