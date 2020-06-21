@@ -180,7 +180,7 @@ class SweatshopsSequence extends Component{
                 // Assign random colors to the blossoms.
                 var _color = new THREE.Color();
                 var color = new Float32Array( this.state.count * 3 );
-                var blossomPalette = [ 0xDBBCBD, 0xA89797, 0xC44C4E, 0xEA3336, 0xC15557 ];
+                var blossomPalette = [  0x62C1EA, 0x0a71e6, 0xf54983, 0xB5154A ];
 
                 for ( var i = 0; i < this.state.count; i ++ ) {
                     

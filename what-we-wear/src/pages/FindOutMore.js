@@ -8,6 +8,7 @@ import DragButton from '../objects/DragButton';
 function FindOutMore(props){
     let findRef = React.useRef(null);
     let canvasRef = React.useRef(null);
+    let buttonRef = React.useRef(null);
     let renderer = null;
    // let buttonRef = React.useRef(null);
     let targ, coordX, offsetX,  drag;
@@ -103,10 +104,9 @@ function FindOutMore(props){
             preview.anchor.set(0.5);
             preview.width = thumbs[index].offsetWidth;
             preview.height = thumbs[index].offsetHeight;
-            preview.x = thumbs[index].getBoundingClientRect().left + thumbs[index].offsetWidth/2;
-            preview.y = thumbs[index].getBoundingClientRect().top +thumbs[index].offsetHeight/2; 
+            preview.x = thumbs[index].getBoundingClientRect().left //+ thumbs[index].offsetWidth/2;
+            preview.y = thumbs[index].getBoundingClientRect().top - findRef.current.getBoundingClientRect().top + thumbs[0].offsetHeight/2; 
             playground.preview = preview;
-
 	        let displacementSprite = PIXI.Sprite.from('./images/wrinkles.jpg');
 	        displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
 	       	let displacementFilter = new PIXI.filters.DisplacementFilter(displacementSprite);
@@ -140,6 +140,13 @@ function FindOutMore(props){
         });
         if(renderer)
             renderer.render(globalStage);
+        if(findRef){
+            if(findRef.current.getBoundingClientRect().top > window.innerHeight){
+                buttonRef.current.style.display = "none";
+            }else{
+                buttonRef.current.style.display = "block";
+            }
+        }
     }
 
     return (
@@ -154,9 +161,9 @@ function FindOutMore(props){
                             if(item.category === title.slug)
                                 return <a href={item.url} key={index}>
                                     <div className={item.type}>
-                                        <div className="thumb" data-path={item.thumb} data-category={item.category} style={{backgroundImage:"url('"+item.thumb+"')"}}>
+                                        <div className="thumb" data-path={item.thumb} data-category={item.category} >
     
-                                            {/* <span>{item.language}</span> */}
+                                            <span>{item.language}</span>
                                         </div>
                                         <div className="info">
                                             <p className="author">{item.author}</p>
@@ -171,9 +178,9 @@ function FindOutMore(props){
                 </div>
                 
             })}
-            
-            <DragButton  buttonId="drag-info"/>
-      
+            <div ref={buttonRef}>
+                <DragButton  buttonId="drag-info"/>
+            </div>
         </div>
     );
 };

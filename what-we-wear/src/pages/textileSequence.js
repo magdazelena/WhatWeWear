@@ -150,7 +150,6 @@ class TextileSequence extends Component{
                 }
             });
             this.tl.to(this.headlineRef, 1, { 
-                backgroundColor: 'rgba(255,255,255,1)',
                 onComplete: () => {
                     this.setState({
                         inAnimation: true,
@@ -166,9 +165,6 @@ class TextileSequence extends Component{
                     })
                 }
             });
-            this.tl.to(this.descRef, 1, {
-                backgroundColor: 'rgba(255,255,255,1)'
-            })
         }
         this.outUnanimated = false;
     }

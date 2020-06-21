@@ -169,7 +169,7 @@ class SubstanceSequence extends Component{
                 },
                 color: {
                     type: 'c',
-                    value: new THREE.Color(0xffff00)
+                    value: new THREE.Color(0x000000)
                 }
             },
             vertexShader: 'varying vec2 vUv;void main(){ vUv = uv;vec4 mvPosition = modelViewMatrix * vec4 (position, 1.0);gl_Position = projectionMatrix * mvPosition;}',
@@ -200,7 +200,7 @@ class SubstanceSequence extends Component{
         return <div>
                 <div id="substanceSection" ref={this.onSequenceLoad}> 
                     <canvas ref={ref=>{this.canvasRef = ref}}></canvas>
-                    <video src="../images/bawelna23.mp4" id="video" ref={this.onVideoUpload}></video>
+                    <video src="../images/cotton3_.mp4" id="video" ref={this.onVideoUpload}></video>
                     <div id="substanceHeadline" ref={ref=>{this.headlineRef = ref}}>
                         {this.state.shouldAnimate && (generateTextForAnimation(texts.substanceSequence.headline.split('')))}
                     </div>

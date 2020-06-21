@@ -56,11 +56,11 @@ class DressesSequence extends Component {
     animateScene = ()=>{
       const mat2 = new THREE.MeshPhongMaterial( 
         { 
-            color: 0x1d1c3a, 
+            color: 0x62C1EA, 
             skinning: true , 
             morphTargets :true,
             specular: 0x009300,
-            reflectivity: 0                  
+            reflectivity: 1                 
         });
       let timeline = new TimelineMax();
       this.mixers[0].addEventListener('finished', e=>{
@@ -83,7 +83,7 @@ class DressesSequence extends Component {
               if(index !== 2){
                 model.traverse(o=>{
                   if(o.isMesh){
-                    o.material = mat2;
+                    o.material = mat2
                   }
                 })
               }

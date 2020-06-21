@@ -68,8 +68,7 @@ class ExplosionsSequence extends Component{
           },
         });
         timeline.to(this.numberRef, 3, {
-            opacity: 1, 
-            color: 'red'
+            opacity: 1
         }, '+=2')
         timeline.to(counter, 3, {
           value: 26,
