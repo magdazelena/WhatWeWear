@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import THREE from '../3d/three';
 import ScrollMagic from 'scrollmagic';
 import {TimelineMax, TweenLite} from 'gsap';
 import texts from '../dictionary/en.json';
@@ -18,7 +17,6 @@ class SubstanceSequence extends Component{
             shouldAnimateSeason: false,
             counter: 1
         }
-        this.canvasRef = React.createRef();
         this.buttonRef = React.createRef();
         this.headlineRef = React.createRef();
         this.descRef = React.createRef();
@@ -39,14 +37,13 @@ class SubstanceSequence extends Component{
         this.setState({
             sequenceRef: node
         }, 
-        ()=> {this.init();
+        ()=> {
             this.createVideoTexture();
-            this.update();
         }
         )
     }
     animateTexts = function(){
-        this.tl.to('canvas', .5, {
+        this.tl.to('video', .5, {
             opacity: .4
         })
         this.tl.to(this.headlineRef, .3, {
@@ -101,9 +98,6 @@ class SubstanceSequence extends Component{
             })
             .on('leave', e=>{
                 if(e.scrollDirection === "FORWARD"){
-                    TweenLite.to(this.plane.position, .5, {
-                        z: -200
-                    })
                     this.props.nextScene();
                     
                 }else{
@@ -115,30 +109,6 @@ class SubstanceSequence extends Component{
             .addTo(this.props.controller);
     }
 
-    init = () => {
-     
-        const canvas = this.canvasRef.current;
-        this.color = new THREE.Color();
-        //scene
-        this.scene = new THREE.Scene();
-        //renderer
-        this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        this.renderer.setSize( window.innerWidth, window.innerHeight )
-        this.state.sequenceRef.replaceChild(this.renderer.domElement, this.state.sequenceRef.getElementsByTagName('canvas')[0]);
-        //camera
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 10000);
-          this.camera.position.z = 1000; 
-          this.camera.position.x = 0;
-          this.camera.position.y = 100;
-          this.camera.updateProjectionMatrix();
-
-
-  
-           
-            window.addEventListener( 'resize', this.onWindowResize, false );
-            
-
-    }
 
     createVideoTexture = ()=> {
         const video = this.state.videoRef;
@@ -155,51 +125,12 @@ class SubstanceSequence extends Component{
             video.loop = true;
             video.play();
         })
-        const videoTexture = new THREE.VideoTexture( video );
-        videoTexture.minFilter = THREE.LinearFilter;
-        videoTexture.magFilter = THREE.LinearFilter;
-        videoTexture.format = THREE.RGBFormat;
-    
-        let planeGeo = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
-        let planeMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                texture : {
-                    type: 't',
-                    value: videoTexture
-                },
-                color: {
-                    type: 'c',
-                    value: new THREE.Color(0x000000)
-                }
-            },
-            vertexShader: 'varying vec2 vUv;void main(){ vUv = uv;vec4 mvPosition = modelViewMatrix * vec4 (position, 1.0);gl_Position = projectionMatrix * mvPosition;}',
-            fragmentShader: 'uniform sampler2D texture;uniform vec3 color;varying vec2 vUv;void main(){vec3 tColor = texture2D( texture, vUv).rgb;float a = (length(tColor - color) ) * 0.9;gl_FragColor = vec4(tColor, a);}',
-            transparent: true
-        })
-        this.plane = new THREE.Mesh(planeGeo, planeMaterial);
-        this.plane.position.x = 0;
-        this.plane.position.y = 0;
-        this.scene.add(this.plane);
-    }
-    update=()=>{
-        requestAnimationFrame(this.update);
-   
-        this.renderer.render(this.scene, this.camera);
         
-       
     }
-    onWindowResize=()=> {
 
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
-
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
-
-    }
     render=()=>{
         return <div>
                 <div id="substanceSection" ref={this.onSequenceLoad}> 
-                    <canvas ref={ref=>{this.canvasRef = ref}}></canvas>
                     <video src="../images/cotton3_.mp4" id="video" ref={this.onVideoUpload}></video>
                     <div id="substanceHeadline" ref={ref=>{this.headlineRef = ref}}>
                         {this.state.shouldAnimate && (generateTextForAnimation(texts.substanceSequence.headline.split('')))}

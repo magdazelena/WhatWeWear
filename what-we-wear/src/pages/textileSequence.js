@@ -195,7 +195,7 @@ class TextileSequence extends Component{
                         this.mesh.setMatrixAt( i ++, this.dummy.matrix );
                 }
             }
-            this.mesh.material.color = new THREE.Color('hsl('+39*this.zoom/10+',100%, 44%)');
+            this.mesh.material.color = new THREE.Color('hsl('+39*this.zoom/20+',100%, '+Math.round(44+this.zoom/3)+'%)');
             this.mesh.instanceMatrix.needsUpdate = true;
             this.mesh.material.needsUpdate = true;
        }

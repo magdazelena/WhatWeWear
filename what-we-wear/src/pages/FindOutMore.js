@@ -140,13 +140,13 @@ function FindOutMore(props){
         });
         if(renderer)
             renderer.render(globalStage);
-        if(findRef){
-            if(findRef.current.getBoundingClientRect().top > window.innerHeight){
-                buttonRef.current.style.display = "none";
-            }else{
-                buttonRef.current.style.display = "block";
-            }
-        }
+        // if(findRef){
+        //     if(findRef.current.getBoundingClientRect().top > window.innerHeight+ 500){
+        //         buttonRef.current.style.display = "none";
+        //     }else{
+        //         buttonRef.current.style.display = "block";
+        //     }
+        // }
     }
 
     return (
@@ -178,9 +178,9 @@ function FindOutMore(props){
                 </div>
                 
             })}
-            <div ref={buttonRef}>
+            {/* <div ref={buttonRef}>
                 <DragButton  buttonId="drag-info"/>
-            </div>
+            </div> */}
         </div>
     );
 };

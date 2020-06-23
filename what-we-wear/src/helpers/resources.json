@@ -151,6 +151,15 @@
         "title": "Garment workers diaries reports",
         "thumb": "/images/fashion_revolution.jpg",
         "language": "EN"
+    },
+    {
+        "category" : "hazard", 
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=n7hzomuDEIk",
+        "author": "DW Documentary",
+        "title": "Luxury: Behind the mirror of high-end fashion",
+        "thumb": "/images/rana.jpg",
+        "language": "EN"
     }
 
 ]
