@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './styles/base.scss';
 import ScrollMagic from 'scrollmagic';
 import LoadingApp from './pages/LoadingApp';
+import Menu from './pages/Menu';
 import DressesSequence from './pages/DressesSequence';
 import ExplosionsSequence from './pages/ExplosionsSequence';
 import SweatshopsSequence from './pages/SweatshopsSequence';
@@ -50,6 +51,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        {this.state.introIsDone && (<Menu setScene={this.setSceneID}/>)}
         {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} controller={this.controller} loading="true"/>)}
         {this.state.introIsDone && this.state.sceneId===1 &&(<DressesSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="1" />)} 
         {this.state.introIsDone && this.state.sceneId===2 && (<ExplosionsSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="2"/>)}

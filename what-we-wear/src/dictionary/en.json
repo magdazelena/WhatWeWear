@@ -65,5 +65,16 @@
         "zoomOut": "zoom out using scroll",
         "scroll": "scroll down",
         "drag": "drag the slider to the side"
+    },
+    "menu": {
+        "scene1": "We own too much clothes",
+        "scene2": "We follow fake trends",
+        "scene3": "We exploit people",
+        "scene4": "We create things that won't last",
+        "scene5": "We poison our home",
+        "scene6": "We dispose the undisposable",
+        "findMore": "We want to change",
+        "about": "Learn about the project",
+        "resources": "Credits and acknowledgements"
     }
 }

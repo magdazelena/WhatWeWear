@@ -8,9 +8,9 @@ body{
     background-color: $dark;
     padding: 0;
     margin: 0;
-    background-image: url('../images/1003.png'), url('../images/5015.png');
+    background-image: url('../images/5015.png');
     background-color: $dark;
-    background-blend-mode: multiply;
+    background-blend-mode: overlay;
     animation: backgroundPulse 12s infinite;
     width: 100vw;
     overflow-x: hidden;
@@ -106,6 +106,79 @@ a{
         height: 50vh;
     }
 }
+#menu{
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    z-index: 200;
+    #menu-button{
+        height: 5em;
+        width: 5em;
+        font-family: $regularFont;
+        text-align: center;
+        cursor: pointer;
+        z-index: 1200;
+        p{
+            padding-top: 0;
+            margin-top:0;
+        }
+        svg{
+            width: 100%;
+            height: 100%;
+            path{
+                fill: $three;
+            }
+        }
+    }
+    #menu-content{
+        z-index: -1;
+        background-image:  url('../images/5015.png');
+        background-color: $dark;
+        background-blend-mode: overlay;
+        animation: backgroundPulse 12s infinite;
+        position: fixed;
+        height: 200vh;
+        width: 200vw;
+        top: -100vh;
+        left: 0;
+        border-radius: 0%;
+        transform: scale(0);
+        ul{
+            list-style-type: none;
+            position: absolute;
+            li{
+                margin: .5em 0;
+                cursor: pointer;
+                transition: color 1s ease;
+                span{
+                    display: inline-block;
+                    position: relative;
+                    min-width: .4em;
+                    transform: translate3d(0px, 0px, 0px) scale(1, 1);
+                }
+                &:hover{
+                    color: $two;
+                }
+            }
+        }
+        #main-menu{
+            left: 17vw;
+            top: 120vh;
+            font-size: 3em;
+           
+        }
+        #side-menu{
+            left: 0;
+            padding: 0;
+            bottom: 1em;
+            width: 100vw;
+            display: flex;
+            font-size: 2em;
+            justify-content: space-evenly;
+        }
+    }
+}
+
 .nextButton, .informativeButton{
     color: $three;
     width: 200px;
@@ -115,7 +188,7 @@ a{
     left: 50%;
     margin-left: -50px;
     cursor: pointer;
-    z-index: 1000000;
+    z-index: 100;
     text-align: center;
     svg{
         width: 100px;
