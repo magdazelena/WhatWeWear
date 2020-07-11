@@ -134,13 +134,13 @@ class DressesSequence extends Component {
           this.camera.position.x = 0;
           this.camera.position.y = -3;
           //lights
-          let hemiLight = new THREE.HemisphereLight(0xffffff,  0.91);
+          let hemiLight = new THREE.HemisphereLight(0xE29380 ,  0.91);
             hemiLight.position.set(0, 50, 0);
             // Add hemisphere light to scene
             this.scene.add(hemiLight);
 
             let d = 8.25;
-            this.dirLight = new THREE.DirectionalLight(0xffffff, 0.84);
+            this.dirLight = new THREE.DirectionalLight(0xff00ff, 0.84);
             this.dirLight.position.set(8, 28, 18);
             this.dirLight.castShadow = true;
             this.dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);

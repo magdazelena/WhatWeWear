@@ -100,7 +100,8 @@ function FindOutMore(props){
             playground.renderer.autoResize = true;
             let tp = PIXI.Texture.from(item.dataset.path);  //get thumbnail texture path from list json object based on index of iteration
             
-	        let preview = new PIXI.Sprite(tp); //create the main sprite
+            let preview = new PIXI.Sprite(tp); //create the main sprite
+            preview.alpha = .2;
             preview.anchor.set(0.5);
             preview.width = thumbs[index].offsetWidth;
             preview.height = thumbs[index].offsetHeight;

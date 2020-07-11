@@ -44,7 +44,7 @@ class SubstanceSequence extends Component{
     }
     animateTexts = function(){
         this.tl.to('video', .5, {
-            opacity: .4
+            opacity: .2
         })
         this.tl.to(this.headlineRef, .3, {
             onComplete: ()=> {

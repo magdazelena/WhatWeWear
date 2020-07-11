@@ -100,13 +100,13 @@ class SweatshopsSequence extends Component{
             this.camera.position.set( 0, 20, 100 );
             this.controls.update();
           //lights
-          let hemiLight = new THREE.HemisphereLight(0xffffff,  0.99);
+          let hemiLight = new THREE.HemisphereLight(0xE29380,  0.99);
             hemiLight.position.set(100, 50, 100);
             // Add hemisphere light to scene
             this.scene.add(hemiLight);
 
             let d = 8.25;
-            this.dirLight = new THREE.DirectionalLight(0xffffff, 0.84);
+            this.dirLight = new THREE.DirectionalLight(0xff0000, 0.84);
             this.dirLight.position.set(8, 28, 18);
             this.dirLight.castShadow = true;
             this.dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
