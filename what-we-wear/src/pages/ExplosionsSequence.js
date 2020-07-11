@@ -370,7 +370,7 @@ class ExplosionsSequence extends Component{
         return <div id="explosionsContainer">
                 <div id="explosionsSequence" ref={this.onSequenceLoad}> 
                     <canvas ref={ref=>{this.canvasRef = ref}}></canvas>
-                    <video src="../images/Untitled.mp4" id="video" ref={this.onVideoUpload}></video>
+                    <video src="../images/Untitled.mp4" id="explvideo" ref={this.onVideoUpload}></video>
                     <div id="explosionsHeadline" ref={ref=>{this.headlineRef = ref}}>
                         {this.state.shouldAnimate && (generateTextForAnimation(texts.explosionsSequence.headline.split('')))}
                     </div>

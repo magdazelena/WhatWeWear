@@ -10,7 +10,7 @@ body{
     margin: 0;
     background-image: url('../images/5015.png');
     background-color: $dark;
-    background-blend-mode: overlay;
+    background-blend-mode: multiply;
     animation: backgroundPulse 12s infinite;
     width: 100vw;
     overflow-x: hidden;
@@ -31,17 +31,12 @@ a{
 //     animation: backgroundPulse 12s infinite;
 // }
 @keyframes backgroundPulse{
+
     0%{
-        background-color: $dark;
-    }
-    15%{
-        background-color: lighten($dark, 6);
-    }
-    60%{
-        background-color: darken($dark, 10);
+        background-color: darken($dark, 6);
     }
     100%{
-        background-color: $dark;
+        background-color: darken($dark, 10);
     }
 }
 #loader{
@@ -110,7 +105,7 @@ a{
     position: fixed;
     top: 1em;
     right: 1em;
-    z-index: 200;
+    z-index: 2000;
     #menu-button{
         height: 5em;
         width: 5em;
@@ -119,14 +114,63 @@ a{
         cursor: pointer;
         z-index: 1200;
         p{
-            padding-top: 0;
+            padding-top: .3em;
             margin-top:0;
         }
-        svg{
-            width: 100%;
-            height: 100%;
-            path{
-                fill: $three;
+        #menu-icon {
+            width: 5em;
+            height: 5em;
+            border: 2px solid $three;
+            border-radius: 50%;
+            position: relative;
+            span {
+                width: 2.4em;
+                height: 2px;
+                display: block;
+                background-color: $three;
+                position: absolute;
+                left: -1.2em;
+                margin-left: 50%;
+                opacity: 1;
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+                -webkit-transition: .25s ease-in-out;
+                -moz-transition: .25s ease-in-out;
+                -o-transition: .25s ease-in-out;
+                transition: .25s ease-in-out;
+                &:nth-child(1){
+                    top: 23px;
+                }
+                &:nth-child(2){
+                    top: 37px;
+                }
+                &:nth-child(3){
+                    top: 52px;
+                }
+            }
+            &.active{
+                span {
+                    &:nth-child(1){
+                        top: 40px;
+                        -webkit-transform: rotate(45deg);
+                        -moz-transform: rotate(45deg);
+                        -o-transform: rotate(45deg);
+                        transform: rotate(45deg);
+                    }
+                    &:nth-child(2){
+                        width: 0%;
+                        opacity: 0;
+                    }
+                    &:nth-child(3){
+                        -webkit-transform: rotate(-45deg);
+                        -moz-transform: rotate(-45deg);
+                        -o-transform: rotate(-45deg);
+                        transform: rotate(-45deg);
+                        top: 40px;
+                    }
+                }
             }
         }
     }
@@ -140,7 +184,8 @@ a{
         height: 200vh;
         width: 200vw;
         top: -100vh;
-        left: 0;
+        left: -6px;
+        border: 5px solid $three;
         border-radius: 0%;
         transform: scale(0);
         ul{
@@ -221,6 +266,9 @@ a{
 }
 .show-up{
     opacity: 0;
+}
+#explvideo{
+    display: none;
 }
 #dressesSequence, #explosionsSequence, #sweatshopsContainer, #textileSequence, #substanceSection, #trashSequence{
     position: relative;

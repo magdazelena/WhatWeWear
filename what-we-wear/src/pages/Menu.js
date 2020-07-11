@@ -1,7 +1,6 @@
 import React, {useState, useRef} from 'react';
 import {TimelineMax} from 'gsap';
 import {animateText,  generateTextForAnimation} from '../helpers/textAnimations';
-import {ReactComponent as Button} from '../images/button.svg';
 import {menu} from "../dictionary/en.json";
 export default function Menu(props){
     const [menuActive, setMenuActive] = useState('inactive');
@@ -35,7 +34,11 @@ export default function Menu(props){
         <div id="menu-button" onClick={()=>{setMenuActive(menuActive==="inactive"? "active":"inactive")
                                             animateMenu(menuActive==="inactive")
                                             }}>
-            <Button />
+            <div id="menu-icon" className={menuActive}>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <p>{menuActive==="inactive"?"menu":"back"}</p>
         </div>
         <div id="menu-content" ref={menuRef} className={menuActive}>

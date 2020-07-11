@@ -126,6 +126,7 @@ function FindOutMore(props){
             playground.parent = thumbs[index];
             playgrounds.push(playground);
             animate();
+            resize();
             return false;
         })
     }
@@ -148,11 +149,23 @@ function FindOutMore(props){
         //     }
         // }
     }
-
+    function resize() {
+        // if (window.innerWidth / window.innerHeight >= ratio) {
+        //     var w = window.innerHeight * ratio;
+        //     var h = window.innerHeight;
+        // } else {
+        //     var w = window.innerWidth;
+        //     var h = window.innerWidth / ratio;
+        // }
+        if(renderer){
+        renderer.view.style.width = window.innerWidth + 'px';
+        renderer.view.style.height = window.innerHeight + 'px';
+        }
+    }
+    window.onresize = resize;
     return (
         <div id="findMore" ref={findRef}>
             <canvas ref={canvasRef} className="dummy-canvas"></canvas>
-            {/* <div onClick={()=>props.setScene(1)}>Start from the beginning</div> */}
             {dictionary.resources.map((title, index) => {
                 return <div key={index}>
                     <h1>{title.title}</h1>
