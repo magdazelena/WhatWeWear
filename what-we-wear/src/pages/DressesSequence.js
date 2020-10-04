@@ -11,6 +11,7 @@ import yellowHemiLight from '../3d/utils/lights/hemisphereLight--yellow';
 //3d tools
 import camera from '../3d/utils/camera';
 import renderer from '../3d/utils/renderer';
+import resizeRendererToDisplaySize from '../3d/utils/resizeRendererToDisplaySize';
 //texts
 import texts from '../dictionary/en.json';
 //helpers
@@ -25,12 +26,11 @@ class DressesSequence extends Component {
     this.dressesDescRef = React.createRef();
     this.dressesHeadRef = React.createRef();
     this.buttonRef = React.createRef();
-    this.scene = null;
+    this.scene = new THREE.Scene();
     this.renderer = renderer;
     this.camera = camera;
     this.models = [];
     this.mixers = [];
-    this.possibleAnims = null;                      // Animations found in our file
     this.actions = [];
     this.loader = null;                            // Idle, the default state our character returns to
     this.clock = new THREE.Clock();          // Used for anims, which run to a clock instead of frame rate 
@@ -119,9 +119,6 @@ class DressesSequence extends Component {
   }
   //initialize the models
   init = () => {
-
-    //scene
-    this.scene = new THREE.Scene();
     //this.scene.background = new THREE.Color(backgroundColor);
     this.scene.fog = new THREE.Fog(0x000000, 80, 100);
     //replace canvas with renderer
@@ -143,62 +140,63 @@ class DressesSequence extends Component {
     this.loader = new THREE.FBXLoader();
     this.loader.load(
       modelPath,
-      obj => creationFuntion(obj)
+      obj => this.creationFuntion(obj)
       , undefined,
       function (error) {
         console.error(error);
       }
     );
-    //create the models
-    var creationFuntion = (function (obj) {
-      let model = obj;
-      model.traverse(o => {
-        if (o.isMesh) {
-          o.castShadow = true;
-          o.receiveShadow = true;
-          o.material = yellowPhong;
-        }
-      });
-      // Set the models initial scale
-      model.scale.set(.5, .5, .5);
-      model.position.y = -10;
-      model.position.x = -10;
-      this.models.push(model);
-      for (let i = 0; i < 4; i++) {
-        let newModel = model.clone();
-        newModel.position.x = model.position.x - 4 * (i + 1);
-        this.models.push(newModel);
-      }
-      this.models.forEach(model => {
-        this.scene.add(model);
-        this.mixers.push(new THREE.AnimationMixer(model));
-      })
-
-      let fileAnimations = obj.animations;
-      let anim = fileAnimations[0];
-      anim.optimize();
-
-      let modified = {
-        loop: THREE.LoopOnce,
-        clampWhenFinished: true,
-        timeScale: 4
-      }
-      this.mixers.forEach(mixer => {
-        this.actions.push(
-          overwriteProps(
-            mixer.clipAction(anim),
-            modified
-          )
-        )
-      })
-      this.actions.forEach(action => {
-        action.play();
-      });
-      this.animateScene();
-    }).bind(this);
   }
+  //create the models
+  creationFuntion = (function (obj) {
+    let model = obj;
+    model.traverse(o => {
+      if (o.isMesh) {
+        o.castShadow = true;
+        o.receiveShadow = true;
+        o.material = yellowPhong;
+      }
+    });
+    // Set the models initial scale
+    model.scale.set(.5, .5, .5);
+    model.position.y = -10;
+    model.position.x = -10;
+    this.models.push(model);
+    for (let i = 0; i < 4; i++) {
+      let newModel = model.clone();
+      newModel.position.x = model.position.x - 4 * (i + 1);
+      this.models.push(newModel);
+    }
+    this.models.forEach(model => {
+      this.scene.add(model);
+      this.mixers.push(new THREE.AnimationMixer(model));
+    })
+
+    let fileAnimations = obj.animations;
+    let anim = fileAnimations[0];
+    anim.optimize();
+
+    let modified = {
+      loop: THREE.LoopOnce,
+      clampWhenFinished: true,
+      timeScale: 4
+    }
+    this.mixers.forEach(mixer => {
+      this.actions.push(
+        overwriteProps(
+          mixer.clipAction(anim),
+          modified
+        )
+      )
+    })
+    this.actions.forEach(action => {
+      action.play();
+    });
+    this.animateScene();
+  }).bind(this);
+  //animation update
   update = () => {
-    if (this.resizeRendererToDisplaySize(this.renderer)) {
+    if (resizeRendererToDisplaySize(this.renderer)) {
       const canvas = this.renderer.domElement;
       this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
       this.camera.updateProjectionMatrix();
@@ -216,22 +214,8 @@ class DressesSequence extends Component {
     }
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.update);
-
   }
-  resizeRendererToDisplaySize = (renderer) => {
-    const canvas = renderer.domElement;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    let canvasPixelWidth = canvas.width / window.devicePixelRatio;
-    let canvasPixelHeight = canvas.height / window.devicePixelRatio;
 
-    const needResize =
-      canvasPixelWidth !== width || canvasPixelHeight !== height;
-    if (needResize) {
-      renderer.setSize(width, height, false);
-    }
-    return needResize;
-  }
 
   render() {
     return <div id="dressesSequence" ref={this.onSectionLoad}>
