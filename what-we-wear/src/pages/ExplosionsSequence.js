@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import THREE from '../3d/three';
-import SimplexNoise from 'simplex-noise';
 import ScrollDown from '../objects/ScrollDown';
 import ScrollMagic from 'scrollmagic';
-import particlesFragmentShader from '../3d/shaders/particlesFragmentShader';
-import particlesVertexShader from '../3d/shaders/particlesVertexShader';
+
 import camera from '../3d/utils/camera';
 import yellowHemiLight from '../3d/utils/lights/hemisphereLight--yellow';
 import texts from '../dictionary/en.json';
-import { animateText, generateTextForAnimation } from '../helpers/textAnimations';
+import AnimatedText, { animateComponentText } from './components/AnimatedText';
 import gsap from 'gsap';
+
 //particle system by example of Rugile, Jack: https://github.com/jackrugile/3d-particle-explorations/blob/master/js/demo-8/system.js
 class ExplosionsSequence extends Component {
 	constructor(props) {
@@ -22,23 +21,34 @@ class ExplosionsSequence extends Component {
 			shouldAnimateSeason: false,
 			counter: 1
 		}
-		this.headlineRef = React.createRef();
-		this.numberRef = React.createRef();
-		this.pRef = React.createRef();
-		this.descriptionRef = React.createRef();
-		this.buttonRef = React.createRef();
-		this.clock = new THREE.Clock();
-		this.simplex = new SimplexNoise();
-		this.scene = new THREE.Scene();
 		this.renderer = props.renderer;
 		this.camera = camera;
+		this.references = {
+			headlineRef: React.createRef(),
+			numberRef: React.createRef(),
+			lastSeasonTextRef: React.createRef(),
+			descriptionRef: React.createRef(),
+			buttonRef: React.createRef(),
+		}
+		this.scene = new THREE.Scene();
+	}
+	componentDidMount = () => {
+		this._isMounted = true;
+	}
+	componentWillUnmount = () => {
+		this._isMounted = false;
+		this.references = {};
+		this.props.onUnmount();
 	}
 	onVideoUpload = node => {
 		this.setState({
 			videoRef: node
 		},
 			() => {
-				this.animateInfo();
+				if (this._isMounted) {
+					this.animateInfo();
+				}
+
 			}
 		)
 	}
@@ -48,7 +58,6 @@ class ExplosionsSequence extends Component {
 		},
 			() => {
 				this.init();
-				this.generateParticles();
 				this.createVideoTexture();
 				this.onScroll();
 			}
@@ -58,41 +67,37 @@ class ExplosionsSequence extends Component {
 	animateInfo = () => {
 		let counter = { value: this.state.counter };
 		let timeline = gsap.timeline();
-		timeline.to(this.headlineRef, {
+		timeline.to(this.references.headlineRef.current, {
 			duration: 0.2,
 			onComplete: () => {
 				this.setState({
 					shouldAnimate: true
 				}, () => {
-					[...this.headlineRef.getElementsByTagName('span')].forEach((span, i) => {
-						animateText(span, i).play();
-					});
+					animateComponentText(this.references.headlineRef.current);
 				})
 			},
 		});
-		timeline.to(this.numberRef, {
+		timeline.to(this.references.numberRef, {
 			duration: 3,
 			opacity: 1
-		}, '+=2')
+		}, '+=2');
 		timeline.to(counter, {
 			duration: 3,
 			value: 26,
 			roundProps: 'value',
 			onUpdate: () => updateCounter(counter.value)
 		}, "-=3");
-		timeline.to(this.descriptionRef, {
+		timeline.to(this.references.descriptionRef.current, {
 			duration: 0.2,
 			onComplete: () => {
 				this.setState({
 					shouldAnimateDesc: true
 				}, () => {
-					[...this.descriptionRef.getElementsByTagName('span')].forEach((span, i) => {
-						animateText(span, i).play();
-					});
+					animateComponentText(this.references.descriptionRef.current)
 				})
 			},
 		}, "-=2");
-		timeline.to(this.buttonRef, {
+		timeline.to(this.references.buttonRef, {
 			duration: 1,
 			opacity: 1
 		})
@@ -117,19 +122,17 @@ class ExplosionsSequence extends Component {
 				if (this.video)
 					this.video.pause();
 				let timeline = gsap.timeline();
-				timeline.to(this.pRef, {
+				timeline.to(this.references.lastSeasonTextRef.current, {
 					duration: 0.2,
 					onComplete: () => {
 						this.setState({
 							shouldAnimateSeason: true
 						}, () => {
-							[...this.pRef.getElementsByTagName('span')].forEach((span, i) => {
-								animateText(span, i).play();
-							});
+							animateComponentText(this.references.lastSeasonTextRef.current)
 						})
 					},
 				});
-				timeline.to(this.pRef, {
+				timeline.to(this.references.lastSeasonTextRef.current, {
 					duration: 4,
 					x: '-100%',
 					onComplete: () => {
@@ -147,113 +150,9 @@ class ExplosionsSequence extends Component {
 	}
 
 	init = () => {
-		this.color = new THREE.Color();
-		//scene
-		//camera
-		this.camera.position.z = 1000;
-		this.camera.position.x = 0;
-		this.camera.position.y = 100;
-		this.camera.updateProjectionMatrix();
-		this.camera.lookAt(new THREE.Vector3());
-
-		// Add hemisphere light to scene
-		this.scene.add(yellowHemiLight);
-
 		window.addEventListener('resize', this.onWindowResize, false);
 	}
 
-	generateParticles = () => {
-
-		// geometry
-		this.geometry = new THREE.BufferGeometry();
-		this.particles = 10000;
-		this.positions = new Float32Array(this.particles * 3);
-		this.colors = new Float32Array(this.particles * 4);
-		this.sizes = new Float32Array(this.particles);
-		this.size = 1000;
-		this.parts = [];
-		//vec3 attributes
-		this.geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.positions, 3));
-		this.geometry.setAttribute('color', new THREE.Float32BufferAttribute(this.colors, 4));
-		this.geometry.setAttribute('size', new THREE.Float32BufferAttribute(this.sizes, 1));
-
-		for (var i = 0; i < this.particles; i++) {
-			let size = rand(2, 30);
-			this.color.setHex(0xffffff);
-			let part = {
-				offset: 0,
-				position: new THREE.Vector3(
-					rand(-this.size / 2, this.size / 2),
-					rand(-this.size / 2, this.size / 2),
-					rand(-this.size / 2, this.size / 2)
-				),
-				baseSize: size,
-				size: size,
-				r: this.color.r,
-				g: this.color.g,
-				b: this.color.b,
-				a: 0.6,
-				life: 2,
-				decay: rand(0.05, 0.15),
-				firstRun: true
-			};
-			this.parts.push(part);
-		}
-
-
-		this.material = new THREE.ShaderMaterial({
-			uniforms: {
-				pointTexture: { value: new THREE.TextureLoader().load("../3d/particle.png") }
-
-			},
-			vertexShader: particlesVertexShader,
-			fragmentShader: particlesFragmentShader,
-			blending: THREE.AdditiveBlending,
-			depthTest: false,
-			transparent: true,
-			vertexColors: true
-		});
-		this.particleSystem = new THREE.Points(this.geometry, this.material);
-
-		this.scene.add(this.particleSystem);
-		this.updateParticleAttributes(true, true, true);
-		this.update();
-	}
-	updateParticleAttributes = (color, position, size) => {
-		let i = 0;
-		while (i < this.particles) {
-			let part = this.parts[i];
-			if (color) {
-				const colorAttribute = this.geometry.attributes.color;
-				colorAttribute.array[i * 3 + 0] = part.r;
-				colorAttribute.array[i * 3 + 1] = part.g;
-				colorAttribute.array[i * 3 + 2] = part.b;
-				colorAttribute.array[i * 4 + 3] = part.a;
-			}
-			if (position) {
-				const positionAttribute = this.geometry.attributes.position;
-				positionAttribute.array[i * 3 + 0] = part.position.x;
-				positionAttribute.array[i * 3 + 1] = part.position.y;
-				positionAttribute.array[i * 3 + 2] = part.position.z;
-			}
-			if (size) {
-				const sizeAttribute = this.geometry.attributes.size;
-				sizeAttribute.array[i] = part.size;
-			}
-			i++;
-		}
-
-		if (color) {
-			this.geometry.attributes.color.needsUpdate = true;
-		}
-		if (position) {
-			this.geometry.attributes.position.needsUpdate = true;
-		}
-		if (size) {
-			this.geometry.attributes.size.needsUpdate = true;
-		}
-		this.geometry.computeBoundingSphere();
-	}
 	createVideoTexture = () => {
 		const video = this.state.videoRef;
 		if (!video) return;
@@ -288,64 +187,8 @@ class ExplosionsSequence extends Component {
 		this.scene.add(this.plane);
 	}
 	update = () => {
+		if (!this._isMounted) return;
 		requestAnimationFrame(this.update);
-		const delta = this.clock.getDelta();
-		let noiseTime = this.clock.getElapsedTime() * 0.0008;
-		let noiseVelocity = this.simplex.noise2D(rand(200, 300), delta);
-		const noiseScale = 0.001;
-
-		for (var i = 0; i < this.particles; i++) {
-			let part = this.parts[i];
-			let xScaled = part.position.x * noiseScale;
-			let yScaled = part.position.y * noiseScale;
-			let zScaled = part.position.z * noiseScale;
-			let noise1 = this.simplex.noise4D(
-				xScaled,
-				yScaled,
-				zScaled,
-				50 + noiseTime
-			) * 0.5;
-			let noise2 = this.simplex.noise4D(
-				xScaled + 100,
-				yScaled + 100,
-				zScaled + 100,
-				50 + noiseTime
-			) * 0.5 + 0.5;
-			let noise3 = this.simplex.noise4D(
-				xScaled + 200,
-				yScaled + 200,
-				zScaled + 200,
-				50 + noiseTime
-			) * 0.5 + 0.5;
-			part.position.x -= Math.sin(noise1 * Math.PI * 2) + noiseVelocity * delta;
-			part.position.y -= Math.sin(noise2 * Math.PI * 2) * noiseVelocity * delta;
-			part.position.z += Math.sin(noise3 * Math.PI * 1.3) + noiseVelocity * delta;
-
-
-			if (part.position.x - 100 < -window.innerWidth / 2)
-				part.position.x = window.innerWidth + 20;
-			if (part.position.y - 100 < -window.innerHeight / 2)
-				part.position.y = window.innerHeight + 20;
-			if (part.position.x + 100 > window.innerWidth / 2)
-				part.position.x = 20;
-			if (part.position.y + 100 > window.innerHeight / 2)
-				part.position.y = 20;
-
-			if (part.life > 0) {
-				part.life -= part.decay * delta;
-				part.a -= part.decay * delta;
-			}
-			if (part.life <= 0 || part.firstRun) {
-				part.life = 2;
-				part.position.x = rand(-this.size / 2, this.size / 2);
-				part.position.y = rand(-this.size / 2, this.size / 2);
-				part.position.z = rand(-this.size / 2, this.size / 2);
-				part.firstRun = false;
-			}
-			this.parts[i] = part;
-
-		}
-		this.updateParticleAttributes(true, true, true);
 		this.renderer.render(this.scene, this.camera);
 	}
 	onWindowResize = () => {
@@ -357,22 +200,43 @@ class ExplosionsSequence extends Component {
 		return <div id="explosionsContainer">
 			<div id="explosionsSequence" ref={this.onSequenceLoad}>
 				<video src="../images/Untitled.mp4" id="explvideo" ref={this.onVideoUpload}></video>
-				<div id="explosionsHeadline" ref={ref => { this.headlineRef = ref }}>
-					{this.state.shouldAnimate && (generateTextForAnimation(texts.explosionsSequence.headline.split('')))}
-				</div>
-				<div id="explosionsNumber" ref={ref => { this.numberRef = ref }}>{this.state.counter}</div>
-				<div id="explosionsDescription" ref={ref => { this.descriptionRef = ref }}>
-					{this.state.shouldAnimateDesc && (generateTextForAnimation(texts.explosionsSequence.description.split('')))}
-				</div>
-				<div ref={ref => this.buttonRef = ref} className="show-up">
+				<AnimatedText
+					id="explosionsHeadline"
+					ref={this.references.headlineRef}
+					animatedText={
+						[{
+							shouldAnimate: this.state.shouldAnimate,
+							text: texts.explosionsSequence.headline
+						}]
+					}
+				/>
+				<div id="explosionsNumber" ref={ref => { this.references.numberRef = ref }}>{this.state.counter}</div>
+				<AnimatedText
+					id="explosionsDescription"
+					ref={this.references.descriptionRef}
+					animatedText={
+						[{
+							shouldAnimate: this.state.shouldAnimateDesc,
+							text: texts.explosionsSequence.description
+						}]
+					}
+				/>
+				<div ref={ref => this.references.buttonRef = ref} className="show-up">
 					<ScrollDown />
 				</div>
 			</div>
-			<div id="lastSeason">
-				<p ref={ref => this.pRef = ref}>{this.state.shouldAnimateSeason && (generateTextForAnimation('This is sooooooooooooooooooooooooooooooo last season...'.split('')))}</p>
-			</div>
+			<AnimatedText
+				id="lastSeason"
+				ref={this.references.lastSeasonTextRef}
+				animatedText={
+					[{
+						shouldAnimate: this.state.shouldAnimateSeason,
+						text: "This is sooooooooooooooooooooooooooooooo last season..."
+					}]
+				}
+			/>
 		</div>
 	}
 }
-const rand = (min, max) => min + Math.random() * (max - min);
+
 export default ExplosionsSequence;

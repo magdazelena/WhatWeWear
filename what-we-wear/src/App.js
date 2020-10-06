@@ -65,20 +65,23 @@ class App extends Component {
       sceneId: this.state.sceneId - 1
     })
   }
+  emptyRenderer = () => {
+    this.renderer.clear();
+  }
   render() {
     return (
       <div className="App" ref={this.onSequenceLoad}>
         {this.state.introIsDone && (
-          <canvas ref={ref => this.canvasRef = ref}></canvas>
+          <canvas id="mainCanvas" ref={ref => this.canvasRef = ref}></canvas>
         )}
         {this.state.introIsDone && (<Menu setScene={this.setSceneID} />)}
         {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} controller={this.controller} loading="true" />)}
-        {this.state.introIsDone && this.state.sceneId === 1 && (<DressesSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="1" />)}
-        {this.state.introIsDone && this.state.sceneId === 2 && (<ExplosionsSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="2" />)}
-        {this.state.introIsDone && this.state.sceneId === 3 && (<SweatshopsSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="3" />)}
-        {this.state.introIsDone && this.state.sceneId === 4 && (<TextileSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="4" />)}
+        {this.state.introIsDone && this.state.sceneId === 1 && (<DressesSequence controller={this.controller} onUnmount={this.emptyRenderer} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="1" />)}
+        {this.state.introIsDone && this.state.sceneId === 2 && (<ExplosionsSequence controller={this.controller} onUnmount={this.emptyRenderer} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="2" />)}
+        {this.state.introIsDone && this.state.sceneId === 3 && (<SweatshopsSequence controller={this.controller} onUnmount={this.emptyRenderer} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="3" />)}
+        {/* {this.state.introIsDone && this.state.sceneId === 4 && (<TextileSequence controller={this.controller} onUnmount={this.emptyRenderer} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="4" />)}
         {this.state.introIsDone && this.state.sceneId === 5 && (<SubstanceSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="5" />)}
-        {this.state.introIsDone && this.state.sceneId === 6 && (<TrashSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="6" />)}
+        {this.state.introIsDone && this.state.sceneId === 6 && (<TrashSequence controller={this.controller} onUnmount={this.emptyRenderer} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="6" />)} */}
         {this.state.introIsDone && (<FindOutMore setScene={this.setSceneID} />)}
       </div>
     );

@@ -17,12 +17,18 @@ class SubstanceSequence extends Component {
 			shouldAnimateSeason: false,
 			counter: 1
 		}
+	}
+	componentDidMount = () => {
 		this.buttonRef = React.createRef();
 		this.headlineRef = React.createRef();
 		this.descRef = React.createRef();
 		this.desc2Ref = React.createRef();
 		this.desc3Ref = React.createRef();
 		this.tl = new TimelineMax();
+		this._isMounted = true;
+	}
+	componentWillUnmount = () => {
+		this._isMounted = false;
 	}
 	onVideoUpload = node => {
 		this.setState({

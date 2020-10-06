@@ -14,30 +14,44 @@ import resizeRendererToDisplaySize from '../3d/utils/resizeRendererToDisplaySize
 //texts
 import texts from '../dictionary/en.json';
 //helpers
-import { animateText, generateTextForAnimation } from '../helpers/textAnimations';
+import AnimatedText, { animateComponentText } from './components/AnimatedText';
 import ScrollDown from '../objects/ScrollDown';
 import overwriteProps from '../helpers/overwriteProps';
 class DressesSequence extends Component {
   constructor(props) {
     super();
-    this.twentyRef = React.createRef();
-    this.dressesDescRef = React.createRef();
-    this.dressesHeadRef = React.createRef();
-    this.buttonRef = React.createRef();
-    this.scene = new THREE.Scene();
     this.renderer = props.renderer;
     this.camera = camera;
     this.models = [];
     this.mixers = [];
     this.actions = [];
-    this.loader = null;                            // Idle, the default state our character returns to
-    this.clock = new THREE.Clock();          // Used for anims, which run to a clock instead of frame rate 
+    this.loader = null;
     this.t = 0;
     this.state = {
       shouldAnimate: false,
       shouldAnimateDesc: false,
       sectionRef: null
-    }
+    };
+
+  }
+  componentDidMount = () => {
+    this.twentyRef = React.createRef();
+    this.dressesDescRef = React.createRef();
+    this.dressesHeadRef = React.createRef();
+    this.buttonRef = React.createRef();
+    this.scene = new THREE.Scene();
+    this.clock = new THREE.Clock();
+    this._isMounted = true;
+  }
+  componentWillUnmount = () => {
+    this.twentyRef = null;
+    this.dressesDescRef = null;
+    this.dressesHeadRef = null;
+    this.buttonRef = null;
+    this.scene = null;
+    this.clock = null;
+    this._isMounted = false;
+    this.props.onUnmount();
   }
   //run scene on load section
   onSectionLoad = node => {
@@ -68,18 +82,15 @@ class DressesSequence extends Component {
       .addTo(this.props.controller);
   }
   animateScene = () => {
-
     let timeline = gsap.timeline();
     this.mixers[0].addEventListener('finished', e => {
-      timeline.to(this.dressesHeadRef, {
+      timeline.to(this.dressesHeadRef.current, {
         duration: 0.2,
         onComplete: () => {
           this.setState({
             shouldAnimate: true
           }, () => {
-            [...this.dressesHeadRef.getElementsByTagName('span')].forEach((span, i) => {
-              animateText(span, i).play();
-            });
+            animateComponentText(this.dressesHeadRef.current);
           })
         },
       });
@@ -98,15 +109,13 @@ class DressesSequence extends Component {
           });
         }
       }, "+=2");
-      timeline.to(this.dressesDescRef, {
+      timeline.to(this.dressesDescRef.current, {
         duration: 0.2,
         onComplete: () => {
           this.setState({
             shouldAnimateDesc: true
           }, () => {
-            [...this.dressesDescRef.getElementsByTagName('span')].forEach((span, i) => {
-              animateText(span, i).play();
-            });
+            animateComponentText(this.dressesDescRef.current);
           })
         },
       });
@@ -192,6 +201,7 @@ class DressesSequence extends Component {
   }).bind(this);
   //animation update
   update = () => {
+    if (!this._isMounted) return;
     if (resizeRendererToDisplaySize(this.renderer)) {
       const canvas = this.renderer.domElement;
       this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -215,15 +225,27 @@ class DressesSequence extends Component {
 
   render() {
     return <div id="dressesSequence" ref={this.onSectionLoad}>
-      <div id="dressesHeadline" ref={ref => this.dressesHeadRef = ref}>
-        {this.state.shouldAnimate && (generateTextForAnimation(texts.dressesSequence.headline.split('')))}
-      </div>
-      <div id="twenty" ref={ref => this.twentyRef = ref}>20%</div>
-      <div id="dressesDesc" ref={ref => this.dressesDescRef = ref}>
-        {this.state.shouldAnimateDesc && (generateTextForAnimation(texts.dressesSequence.description.split('')))
-
+      <AnimatedText
+        id="dressesHeadline"
+        ref={this.dressesHeadRef}
+        animatedText={
+          [{
+            shouldAnimate: this.state.shouldAnimate,
+            text: texts.dressesSequence.headline
+          }]
         }
-      </div>
+      />
+      <div id="twenty" ref={ref => this.twentyRef = ref}>20%</div>
+      <AnimatedText
+        id="dressesDesc"
+        ref={this.dressesDescRef}
+        animatedText={
+          [{
+            shouldAnimate: this.state.shouldAnimateDesc,
+            text: texts.dressesSequence.description
+          }]
+        }
+      />
       <div ref={ref => this.buttonRef = ref} className="show-up" >
         <ScrollDown />
       </div>

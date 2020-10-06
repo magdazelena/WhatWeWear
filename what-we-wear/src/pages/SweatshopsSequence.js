@@ -6,11 +6,12 @@ import yellowHemiLight from '../3d/utils/lights/hemisphereLight--yellow';
 import yellowPhong from '../3d/materials/yellowPhong';
 import resizeRendererToDisplaySize from '../3d/utils/resizeRendererToDisplaySize';
 import texts from '../dictionary/en.json';
-import { animateText, generateTextForAnimation } from '../helpers/textAnimations';
-import { TimelineMax, TweenLite } from 'gsap';
+import gsap from 'gsap';
 import ZoomInButton from '../objects/ZoomInButton';
 import ZoomOutButton from '../objects/ZoomOutButton';
 import camera from '../3d/utils/camera';
+import { scaleCurve } from '../helpers/tools';
+import AnimatedText, { animateComponentText, deanimateComponentText } from './components/AnimatedText';
 class SweatshopsSequence extends Component {
 	constructor(props) {
 		super();
@@ -24,28 +25,42 @@ class SweatshopsSequence extends Component {
 			shouldAnimate: false,
 			shouldAnimateDesc: false
 		}
-		this.inRef = React.createRef();
-		this.outRef = React.createRef();
-		this.headlineRef = React.createRef();
-		this.descRef = React.createRef();
+		this.references = {
+			inRef: React.createRef(),
+			outRef: React.createRef(),
+			headlineRef: React.createRef(),
+			descRef: React.createRef(),
+		}
+		this.scene = new THREE.Scene();
+		this.zoom = 100;
+		this.isOver = false;
+		this.renderer = props.renderer;
+		this.camera = camera;
+		this.tl = gsap.timeline();
+	}
+	componentDidMount = () => {
+
 		this.clock = new THREE.Clock();
 		this._position = new THREE.Vector3();
 		this._normal = new THREE.Vector3();
 		this._scale = new THREE.Vector3();
 		this.dummy = new THREE.Object3D();
-		this.sampler = null;
-		this.loader = new THREE.FBXLoader();
-		this.machine = null;
-		this.surface = null;
 		this.ages = new Float32Array(this.state.count);
 		this.scales = new Float32Array(this.state.count);
+		this.loader = new THREE.FBXLoader();
+
+		this.sampler = null;
+		this.machine = null;
+		this.surface = null;
 		this.modelMesh = null;
-		this.zoom = 100;
-		this.isOver = false;
-		this.tl = new TimelineMax();
-		this.renderer = props.renderer;
-		this.camera = camera;
-		this.scene = new THREE.Scene();
+		this._isMounted = true;
+		document.body.classList.add('fixed');
+	}
+	componentWillUnmount = () => {
+		this.references = {};
+		this._isMounted = false;
+		this.props.onUnmount();
+		document.body.classList.remove('fixed');
 	}
 	onSectionLoad = node => {
 		this.setState({
@@ -55,30 +70,27 @@ class SweatshopsSequence extends Component {
 				window.scrollTo({ top: 0, behavior: 'smooth' })
 				this.init();
 				this.update();
-				TweenLite.to(this.outRef, 1, {
+				gsap.to(this.references.outRef.current, {
+					duration: .1,
 					opacity: 1
 				})
-				this.tl.to(this.headlineRef, {
+				this.tl.to(this.references.headlineRef.current, {
 					duration: 0.5,
 					onComplete: () => {
 						this.setState({
 							shouldAnimate: true
 						}, () => {
-							[...this.headlineRef.getElementsByTagName('span')].forEach((span, i) => {
-								animateText(span, i).play();
-							});
+							animateComponentText(this.references.headlineRef.current);
 						})
 					},
 				});
-				this.tl.to(this.descRef, {
+				this.tl.to(this.references.descRef.current, {
 					duration: 0.5,
 					onComplete: () => {
 						this.setState({
 							shouldAnimateDesc: true
 						}, () => {
-							[...this.descRef.getElementsByTagName('span')].forEach((span, i) => {
-								animateText(span, i).play();
-							});
+							animateComponentText(this.references.descRef.current)
 						})
 					},
 				});
@@ -221,21 +233,20 @@ class SweatshopsSequence extends Component {
 	inUnanimated = true;
 	animateZoomOut = function () {
 		if (this.outUnanimated) {
-			this.tl.to(this.headlineRef, .1, {
+			this.tl.to(this.references.headlineRef.current, {
+				duration: 0.1,
 				onComplete: () => {
-					[...this.headlineRef.getElementsByTagName('span')].forEach((span, i) => {
-						animateText(span, i).reverse(0);
-					});
+					deanimateComponentText(this.references.headlineRef.current)
 				}
 			});
-			this.tl.to(this.descRef, .1, {
+			this.tl.to(this.references.descRef.current, {
+				duration: 0.1,
 				onComplete: () => {
-					[...this.descRef.getElementsByTagName('span')].forEach((span, i) => {
-						animateText(span, i).reverse(0);
-					});
+					deanimateComponentText(this.references.descRef.current)
 				}
 			});
-			this.tl.to(this.headlineRef, .5, {
+			this.tl.to(this.references.headlineRef.current, {
+				duration: 0.5,
 				onComplete: () => {
 					this.setState({
 						outAnimation: true,
@@ -243,12 +254,8 @@ class SweatshopsSequence extends Component {
 						shouldAnimate: false,
 						shouldAnimateDesc: false
 					}, () => {
-						[...this.headlineRef.getElementsByTagName('span')].forEach((span, i) => {
-							animateText(span, i).play();
-						});
-						[...this.descRef.getElementsByTagName('span')].forEach((span, i) => {
-							animateText(span, i).play();
-						});
+						animateComponentText(this.references.headlineRef.current);
+						animateComponentText(this.references.descRef.current);
 					})
 				}
 			});
@@ -259,24 +266,24 @@ class SweatshopsSequence extends Component {
 	}
 	animateOut = function () {
 		if (this.outAnimated) {
-			TweenLite.to(this.outRef, 1, {
+			gsap.to(this.references.outRef.current, {
+				duration: 0.1,
 				opacity: 0
 			})
-			TweenLite.to(this.inRef, 1, {
+			gsap.to(this.references.inRef.current, {
+				duration: 0.1,
 				opacity: 1
 			})
-			this.tl.to(this.headlineRef, .1, {
+			this.tl.to(this.references.headlineRef.current, {
+				duration: 0.1,
 				onComplete: () => {
-					[...this.headlineRef.getElementsByTagName('span')].forEach((span, i) => {
-						animateText(span, i).reverse(0);
-					});
+					deanimateComponentText(this.references.headlineRef.current)
 				}
 			});
-			this.tl.to(this.descRef, .1, {
+			this.tl.to(this.references.descRef.current, {
+				duration: 0.1,
 				onComplete: () => {
-					[...this.descRef.getElementsByTagName('span')].forEach((span, i) => {
-						animateText(span, i).reverse(0);
-					});
+					deanimateComponentText(this.references.descRef.current)
 				}
 			});
 		}
@@ -296,7 +303,8 @@ class SweatshopsSequence extends Component {
 					centsCounter: value
 				})
 			}
-			this.tl.to(this.headlineRef, .5, {
+			this.tl.to(this.references.headlineRef.current, {
+				duration: 0.5,
 				onComplete: () => {
 					this.setState({
 						outAnimation: false,
@@ -304,20 +312,18 @@ class SweatshopsSequence extends Component {
 						shouldAnimateDesc: false,
 						shouldAnimate: false
 					}, () => {
-						[...this.headlineRef.getElementsByTagName('span')].forEach((span, i) => {
-							animateText(span, i).play();
-						});
-						[...this.descRef.getElementsByTagName('span')].forEach((span, i) => {
-							animateText(span, i).play();
-						});
+						animateComponentText(this.references.headlineRef.current);
+						animateComponentText(this.references.descRef.current);
 					})
 				}
 			});
-			this.tl.to('.dollars-cents', 2, {
+			this.tl.to('.dollars-cents', {
+				duration: 2,
 				fontSize: '8em',
 				opacity: 1
 			})
-			this.tl.to(counter, 1, {
+			this.tl.to(counter, {
+				duration: 1,
 				delay: 1,
 				value: 60,
 				roundProps: 'value',
@@ -325,7 +331,8 @@ class SweatshopsSequence extends Component {
 					updateCounter(counter.value)
 				}
 			}, "-=1")
-			this.tl.to(ccounter, 1, {
+			this.tl.to(ccounter, {
+				duration: 1,
 				value: 10,
 				roundProps: 'value',
 				onUpdate: function () {
@@ -337,6 +344,7 @@ class SweatshopsSequence extends Component {
 		this.inUnanimated = false;
 	}
 	update = () => {
+		if (!this._isMounted) return;
 		if (resizeRendererToDisplaySize(this.renderer)) {
 			const canvas = this.renderer.domElement;
 			this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -347,7 +355,7 @@ class SweatshopsSequence extends Component {
 		this.zoom = this.controls.target.distanceTo(this.controls.object.position)
 		if (this.modelMesh) {
 			if (this.zoom > 200 && this.zoom < 1000) {
-				if (!this.state.outAnimation && this.headlineRef) {
+				if (!this.state.outAnimation && this.references.headlineRef) {
 					this.animateZoomOut();
 				}
 			}
@@ -358,11 +366,11 @@ class SweatshopsSequence extends Component {
 		}
 
 		if (Math.round(this.zoom) >= this.controls.maxDistance - 400 && Math.round(this.zoom) < this.controls.maxDistance) {
-			if (this.headlineRef && this.descRef)
+			if (this.references.headlineRef && this.references.descRef)
 				this.animateOut();
 		}
 		if (Math.round(this.zoom) > this.controls.minDistance && Math.round(this.zoom) <= 100) {
-			if (!this.state.inAnimation && this.headlineRef) {
+			if (!this.state.inAnimation && this.references.headlineRef) {
 				this.animateZoomIn();
 			}
 
@@ -386,28 +394,58 @@ class SweatshopsSequence extends Component {
 
 	render() {
 		return <div id="sweatshopsContainer" ref={this.onSectionLoad}>
-			<div ref={ref => this.inRef = ref} className="show-up">
+			<div ref={ref => this.references.inRef = ref} className="show-up">
 				<ZoomInButton />
 			</div>
-			<div ref={ref => this.outRef = ref} className="show-up">
+			<div ref={ref => this.references.outRef = ref} className="show-up">
 				<ZoomOutButton />
 			</div>
-			<div id="sweatshopsHeadline" ref={ref => { this.headlineRef = ref }}>
-				{this.state.shouldAnimate && (generateTextForAnimation(texts.sweatshopsSequence.headline.split('')))}
-				{this.state.outAnimation && (generateTextForAnimation(texts.sweatshopsSequence.zoomOutheadline.split('')))}
-				{this.state.inAnimation && (generateTextForAnimation(texts.sweatshopsSequence.zoomInheadline.split('')))}
-			</div>
+
+			<AnimatedText
+				id="sweatshopsHeadline"
+				ref={this.references.headlineRef}
+				animatedText={[
+					{
+						shouldAnimate: this.state.shouldAnimate,
+						text: texts.sweatshopsSequence.headline
+					},
+					{
+						shouldAnimate: this.state.outAnimation,
+						text: texts.sweatshopsSequence.zoomOutheadline
+					},
+					{
+						shouldAnimate: this.state.inAnimation,
+						text: texts.sweatshopsSequence.zoomInheadline
+					},
+				]
+				}
+			/>
 			<div id="sixty" className="dollars-cents">
 				{this.state.inAnimation && (<span><span ref={ref => this.sixtyRef = ref}>{this.state.sixtyCounter}</span>$</span>)}
 			</div>
 			<div id="ten" className="dollars-cents">
 				{this.state.inAnimation && (<span><span ref={ref => this.tenRef = ref}>{this.state.centsCounter}</span>c</span>)}
 			</div>
-			<div id="sweatshopsDesc" ref={ref => { this.descRef = ref }}>
-				{this.state.shouldAnimateDesc && (generateTextForAnimation(texts.sweatshopsSequence.description.split('')))}
-				{this.state.outAnimation && (generateTextForAnimation(texts.sweatshopsSequence.zoomOutdescription.split('')))}
-				{this.state.inAnimation && (generateTextForAnimation(texts.sweatshopsSequence.zoomIndescription.split('')))}
-			</div>
+
+			<AnimatedText
+				id="sweatshopsDesc"
+				ref={this.references.descRef}
+				animatedText={[
+					{
+						shouldAnimate: this.state.shouldAnimateDesc,
+						text: texts.sweatshopsSequence.description
+					},
+					{
+						shouldAnimate: this.state.outAnimation,
+						text: texts.sweatshopsSequence.zoomOutdescription
+					},
+					{
+						shouldAnimate: this.state.inAnimation,
+						text: texts.sweatshopsSequence.zoomIndescription
+					},
+				]
+				}
+			/>
 
 		</div>
 	}
@@ -415,17 +453,3 @@ class SweatshopsSequence extends Component {
 
 export default SweatshopsSequence;
 
-//from three.js->examples->instancing
-// Source: https://gist.github.com/gre/1650294
-const easeOutCubic = function (t) {
-
-	return (--t) * t * t + 1;
-
-};
-// Scaling curve causes particles to grow quickly, ease gradually into full scale, then
-// disappear quickly. More of the particle's lifetime is spent around full scale.
-const scaleCurve = function (t) {
-
-	return Math.abs(easeOutCubic((t > 0.5 ? 1 - t : t) * 2));
-
-};
