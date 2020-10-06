@@ -10,56 +10,76 @@ import TextileSequence from './pages/TextileSequence';
 import FindOutMore from './pages/FindOutMore';
 import TrashSequence from './pages/TrashSequence';
 import SubstanceSequence from './pages/SubstanceSequence';
+//3d tools
+import camera from './3d/utils/camera';
+import renderer from './3d/utils/renderer';
 class App extends Component {
-  constructor(props){
-    super(props);
-    this.state ={
+  constructor() {
+    super();
+    this.state = {
       introIsDone: true,
-      sceneId:1
+      sceneId: 1,
+      sectionRef: null
     }
+    this.renderer = renderer;
+    this.camera = camera;
     this.controller = new ScrollMagic.Controller();
+    this.canvasRef = React.createRef();
     this.markIntroDone = this.markIntroDone.bind(this);
-    window.scrollBy({ 
+    window.scrollBy({
       top: -10, // could be negative value
-      left: 0, 
-      behavior: 'smooth' 
+      left: 0,
+      behavior: 'smooth'
     });
   }
-  markIntroDone=()=>{
+  onSequenceLoad = node => {
+    this.setState({
+      sectionRef: node
+    }, () => {
+      this.setup();
+    });
+  }
+  markIntroDone = () => {
     this.setState({
       introIsDone: true,
       sceneId: 1
-    })
+    });
   }
-  setSceneID=id=>{
+  setup = () => {
+    this.state.sectionRef.replaceChild(this.renderer.domElement, this.state.sectionRef.getElementsByTagName('canvas')[0]);
+  }
+  setSceneID = id => {
     this.setState({
       sceneId: id
     })
   }
-  nextScene= ()=>{
+  nextScene = () => {
     this.setState({
-      sceneId: this.state.sceneId+1
-    }, ()=> {
+      sceneId: this.state.sceneId + 1
+    }, () => {
       console.log(this.state.sceneId)
     })
   }
-  prevScene=()=>{
+  prevScene = () => {
     this.setState({
-      sceneId: this.state.sceneId-1
+      sceneId: this.state.sceneId - 1
     })
   }
   render() {
     return (
-      <div className="App">
-        {this.state.introIsDone && (<Menu setScene={this.setSceneID}/>)}
-        {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} controller={this.controller} loading="true"/>)}
-        {this.state.introIsDone && this.state.sceneId===1 &&(<DressesSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="1" />)} 
-        {this.state.introIsDone && this.state.sceneId===2 && (<ExplosionsSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="2"/>)}
-        {this.state.introIsDone && this.state.sceneId===3 && (<SweatshopsSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="3"/>)}
-        {this.state.introIsDone && this.state.sceneId===4 && (<TextileSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="4"/>)}
-        {this.state.introIsDone && this.state.sceneId===5 &&(<SubstanceSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="5"/>)}
-        {this.state.introIsDone && this.state.sceneId===6 &&(<TrashSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="6"/>)}
-       {this.state.introIsDone && ( <FindOutMore setScene={this.setSceneID}/>) }
+      <div className="App" ref={this.onSequenceLoad}>
+        {this.state.introIsDone && (
+          <canvas ref={ref => this.canvasRef = ref}></canvas>
+        )}
+        {this.state.introIsDone && (<Menu setScene={this.setSceneID} />)}
+        {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} controller={this.controller} loading="true" />)}
+        {this.state.introIsDone && this.state.sceneId === 1 && (<DressesSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="1" />)}
+        {this.state.introIsDone && this.state.sceneId === 2 && (<ExplosionsSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="2" />)}
+        {this.state.introIsDone && this.state.sceneId === 3 && (<SweatshopsSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="3" />)}
+        {this.state.introIsDone && this.state.sceneId === 4 && (<TextileSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="4" />)}
+        {this.state.introIsDone && this.state.sceneId === 5 && (<SubstanceSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="5" />)}
+        {this.state.introIsDone && this.state.sceneId === 6 && (<TrashSequence controller={this.controller} camera={this.camera} renderer={this.renderer} prevScene={this.prevScene} nextScene={this.nextScene} id="6" />)}
+        {this.state.introIsDone && (<FindOutMore setScene={this.setSceneID} />)}
       </div>
     );
   }

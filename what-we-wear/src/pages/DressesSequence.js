@@ -8,9 +8,8 @@ import bluePhong from '../3d/materials/bluePhong';
 import floor from '../3d/utils/floor';
 import magentaDirectionalLight from '../3d/utils/lights/directionalLight--magenta';
 import yellowHemiLight from '../3d/utils/lights/hemisphereLight--yellow';
-//3d tools
 import camera from '../3d/utils/camera';
-import renderer from '../3d/utils/renderer';
+//3d tools
 import resizeRendererToDisplaySize from '../3d/utils/resizeRendererToDisplaySize';
 //texts
 import texts from '../dictionary/en.json';
@@ -19,15 +18,14 @@ import { animateText, generateTextForAnimation } from '../helpers/textAnimations
 import ScrollDown from '../objects/ScrollDown';
 import overwriteProps from '../helpers/overwriteProps';
 class DressesSequence extends Component {
-  constructor() {
+  constructor(props) {
     super();
-    this.canvasRef = React.createRef();
     this.twentyRef = React.createRef();
     this.dressesDescRef = React.createRef();
     this.dressesHeadRef = React.createRef();
     this.buttonRef = React.createRef();
     this.scene = new THREE.Scene();
-    this.renderer = renderer;
+    this.renderer = props.renderer;
     this.camera = camera;
     this.models = [];
     this.mixers = [];
@@ -53,6 +51,7 @@ class DressesSequence extends Component {
     this.update();
     this.onScroll();
   }
+
   //scene handlers:
 
   //scroll actions
@@ -119,10 +118,7 @@ class DressesSequence extends Component {
   }
   //initialize the models
   init = () => {
-    //this.scene.background = new THREE.Color(backgroundColor);
     this.scene.fog = new THREE.Fog(0x000000, 80, 100);
-    //replace canvas with renderer
-    this.state.sectionRef.appendChild(this.renderer.domElement, this.state.sectionRef.getElementsByTagName('canvas')[0]);
 
     //camera
     this.camera.position.x = 0;
@@ -219,7 +215,6 @@ class DressesSequence extends Component {
 
   render() {
     return <div id="dressesSequence" ref={this.onSectionLoad}>
-      <canvas ref={ref => this.canvasRef = ref} width={window.innerWidth} height={window.innerHeight}></canvas>
       <div id="dressesHeadline" ref={ref => this.dressesHeadRef = ref}>
         {this.state.shouldAnimate && (generateTextForAnimation(texts.dressesSequence.headline.split('')))}
       </div>
