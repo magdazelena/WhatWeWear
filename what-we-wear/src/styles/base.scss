@@ -291,9 +291,13 @@ a{
     max-width: 100vw;
     height: 100vh;
     overflow: hidden;
+    pointer-events: none;
     canvas{
         position: absolute;
     }
+}
+#explosionSequence {
+    z-index: 2000;
 }
 #dressesHeadline, #dressesDesc, #sweatshopsHeadline, #sweatshopsDesc, #textileHeadline, #textileDesc, #substanceHeadline, #substanceDesc, #substanceDesc2, #substanceDesc3, #trashHeadline, #trashDesc, #trashDesc2, #trashDesc3{
     font-size: 3em;
@@ -408,9 +412,10 @@ a{
     right: 0;
     color: $two;
 }
-#video{
+#explosionsVideo{
     width: auto;
     height: 100vh;
+    z-index: -10;
 }
 #lastSeason{
     height: 60vh;

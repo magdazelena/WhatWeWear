@@ -76,7 +76,6 @@ class DressesSequence extends Component {
       triggerElement: this.state.sectionRef
     })
       .on('leave', () => {
-        this.props.nextScene();
         scene.remove();
       })
       .addTo(this.props.controller);

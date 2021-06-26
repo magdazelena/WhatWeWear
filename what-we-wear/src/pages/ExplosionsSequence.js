@@ -26,11 +26,11 @@ class ExplosionsSequence extends Component {
 		this.references = {
 			headlineRef: React.createRef(),
 			numberRef: React.createRef(),
-			lastSeasonTextRef: React.createRef(),
 			descriptionRef: React.createRef(),
 			buttonRef: React.createRef(),
 		}
 		this.scene = new THREE.Scene();
+		document.body.classList.add('fixed');
 	}
 	componentDidMount = () => {
 		this._isMounted = true;
@@ -39,15 +39,15 @@ class ExplosionsSequence extends Component {
 		this._isMounted = false;
 		this.references = {};
 		this.props.onUnmount();
+		document.body.classList.remove('fixed');
 	}
 	onVideoUpload = node => {
 		this.setState({
 			videoRef: node
 		},
 			() => {
-				if (this._isMounted) {
-					this.animateInfo();
-				}
+
+				this.animateInfo();
 
 			}
 		)
@@ -57,9 +57,11 @@ class ExplosionsSequence extends Component {
 			sequenceRef: node
 		},
 			() => {
-				this.init();
-				this.createVideoTexture();
-				this.onScroll();
+				if (this._isMounted) {
+					this.init();
+					this.createVideoTexture();
+					this.onScroll();
+				}
 			}
 		)
 	}
@@ -115,56 +117,44 @@ class ExplosionsSequence extends Component {
 			triggerElement: this.state.sequenceRef
 		})
 			.on('enter', () => {
-				if (this.video)
-					this.video.play();
+				this.video.play();
 			})
 			.on('leave', e => {
-				if (this.video)
-					this.video.pause();
-				let timeline = gsap.timeline();
-				timeline.to(this.references.lastSeasonTextRef.current, {
-					duration: 0.2,
-					onComplete: () => {
-						this.setState({
-							shouldAnimateSeason: true
-						}, () => {
-							animateComponentText(this.references.lastSeasonTextRef.current)
-						})
-					},
-				});
-				timeline.to(this.references.lastSeasonTextRef.current, {
-					duration: 4,
-					x: '-100%',
-					onComplete: () => {
-						scene.remove();
-						if (e.scrollDirection === "FORWARD") {
-							this.props.nextScene();
-
-						} else {
-							this.props.prevScene();
-						}
-					}
-				})
+				this.video.pause();
+				scene.remove();
 			})
 			.addTo(this.props.controller);
 	}
 
 	init = () => {
+		console.log(this.renderer);
+		this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+		this.controls.maxDistance = 1000;
+		this.controls.minDistance = 2;
+		this.camera.position.set(0, 20, 100);
+		this.controls.update();
+		this.camera.near = 1;
+		this.camera.far = 10000;
+		this.camera.position.z = 1000;
+		this.camera.position.x = 0;
+		this.camera.position.y = 100;
+		this.camera.updateProjectionMatrix();
+		this.camera.lookAt(new THREE.Vector3());
+		yellowHemiLight.position.set(0, 50, 0);
+		this.scene.add(yellowHemiLight);
 		window.addEventListener('resize', this.onWindowResize, false);
 	}
 
 	createVideoTexture = () => {
 		const video = this.state.videoRef;
-		if (!video) return;
 		video.currentTime = 1;
-		video.mute = true;
+		video.muted = true;
 		video.loop = true;
 		this.video = video;
 		const videoTexture = new THREE.VideoTexture(video);
 		videoTexture.minFilter = THREE.LinearFilter;
 		videoTexture.magFilter = THREE.LinearFilter;
 		videoTexture.format = THREE.RGBFormat;
-
 		let planeGeo = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
 		let planeMaterial = new THREE.ShaderMaterial({
 			uniforms: {
@@ -189,6 +179,7 @@ class ExplosionsSequence extends Component {
 	update = () => {
 		if (!this._isMounted) return;
 		requestAnimationFrame(this.update);
+
 		this.renderer.render(this.scene, this.camera);
 	}
 	onWindowResize = () => {
@@ -199,7 +190,7 @@ class ExplosionsSequence extends Component {
 	render = () => {
 		return <div id="explosionsContainer">
 			<div id="explosionsSequence" ref={this.onSequenceLoad}>
-				<video src="../images/Untitled.mp4" id="explvideo" ref={this.onVideoUpload}></video>
+				<video src="../images/Untitled.mp4" muted="muted" autoPlay={true} id="explosionsVideo" ref={this.onVideoUpload}></video>
 				<AnimatedText
 					id="explosionsHeadline"
 					ref={this.references.headlineRef}
@@ -225,16 +216,6 @@ class ExplosionsSequence extends Component {
 					<ScrollDown />
 				</div>
 			</div>
-			<AnimatedText
-				id="lastSeason"
-				ref={this.references.lastSeasonTextRef}
-				animatedText={
-					[{
-						shouldAnimate: this.state.shouldAnimateSeason,
-						text: "This is sooooooooooooooooooooooooooooooo last season..."
-					}]
-				}
-			/>
 		</div>
 	}
 }
