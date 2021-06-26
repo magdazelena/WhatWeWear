@@ -9,7 +9,7 @@ import TextileSequence from './TextileSequence';
 import FindOutMore from './FindOutMore';
 import TrashSequence from './TrashSequence';
 import SubstanceSequence from './SubstanceSequence';
-
+import NextButton from 'objects/NextButton';
 
 function Container({ location, controller, renderer }) {
 
@@ -18,7 +18,7 @@ function Container({ location, controller, renderer }) {
   const [currentIndex, setCurrentIndex] = useState(currentScreen);
   const { state } = location;
   const previousScreen = state ? state.previousScreen : 0;
-  const animationClassNames = currentScreen > previousScreen ? 'slide-down' : 'slide-up';
+  const animationClassNames = currentScreen > previousScreen ? 'fade-out' : 'fade-in';
   const history = useHistory();
 
   const nextScene = () => {
@@ -54,7 +54,7 @@ function Container({ location, controller, renderer }) {
     <CSSTransition key={location.key}
       appear={true}
       timeout={{ enter: 600, exit: 600, appear: 600 }}
-      classNames={`${animationClassNames} slide`}>
+      classNames={`${animationClassNames} fade`}>
       <section className={`route-section section-nr-${currentScreen}`}>
         <Switch location={location}>
           <Route exact path={routes[0]} component={() => <DressesSequence {...sequenceProps} />} />
@@ -66,7 +66,6 @@ function Container({ location, controller, renderer }) {
           <Route path={routes[6]} component={() => <FindOutMore {...sequenceProps} />} />
         </Switch>
       </section>
-
     </CSSTransition>
   </TransitionGroup>
   )

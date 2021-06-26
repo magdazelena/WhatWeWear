@@ -1,7 +1,7 @@
 import React from 'react';
 import { animateText, generateTextForAnimation } from '../../helpers/textAnimations';
 const AnimatedText = React.forwardRef((props, ref) => (
-    <div id={props.id} ref={ref}>
+    <div id={props.id} ref={ref} className='text'>
         {props.animatedText.map(item => (
             item.shouldAnimate && (generateTextForAnimation(item.text.split('')))
         ))}

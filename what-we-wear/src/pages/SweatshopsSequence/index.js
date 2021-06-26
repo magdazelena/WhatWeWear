@@ -422,10 +422,10 @@ class SweatshopsSequence extends Component {
         ]
         }
       />
-      <div id="sixty" className="dollars-cents">
+      <div id="sixty" className="dollars-cents text">
         {this.state.inAnimation && (<span><span ref={ref => this.sixtyRef = ref}>{this.state.sixtyCounter}</span>$</span>)}
       </div>
-      <div id="ten" className="dollars-cents">
+      <div id="ten" className="dollars-cents text">
         {this.state.inAnimation && (<span><span ref={ref => this.tenRef = ref}>{this.state.centsCounter}</span>c</span>)}
       </div>
 

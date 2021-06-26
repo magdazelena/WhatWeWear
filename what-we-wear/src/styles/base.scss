@@ -23,13 +23,6 @@ a{
 .breaker{
     height: 60vh;
 }
-// .App{
-//     //background-tiles.com
-//     background-image: url('../images/1003.png'), url('../images/5015.png');
-//     background-color: $dark;
-//     background-blend-mode: multiply;
-//     animation: backgroundPulse 12s infinite;
-// }
 @keyframes backgroundPulse{
 
     0%{
@@ -68,6 +61,14 @@ a{
             width: 0px;
         }
     }
+}
+.route-section {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    pointer-events: none;
 }
 .loadingSection{
     height: 100vh;
@@ -235,6 +236,7 @@ a{
     cursor: pointer;
     z-index: 1000;
     text-align: center;
+    pointer-events: all;
     svg{
         width: 100px;
         fill: $three;
@@ -261,11 +263,6 @@ a{
     }
 }
 .App > canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     width: 100vw;
     height: 100vh;
     z-index: -1;
