@@ -9,9 +9,8 @@ import TextileSequence from './TextileSequence';
 import FindOutMore from './FindOutMore';
 import TrashSequence from './TrashSequence';
 import SubstanceSequence from './SubstanceSequence';
-import NextButton from 'objects/NextButton';
 
-function Container({ location, controller, renderer }) {
+function Container({ location, controller, renderer, startScene }) {
 
   const routes = ["/", "/too-old", "/too-cheap", "/too-weak", "/too-toxic", "/to-trash", "/find-out-more"];
   const currentScreen = routes.indexOf(location.pathname);
@@ -19,7 +18,11 @@ function Container({ location, controller, renderer }) {
   const { state } = location;
   const previousScreen = state ? state.previousScreen : 0;
   const animationClassNames = currentScreen > previousScreen ? 'fade-out' : 'fade-in';
-  const history = useHistory();
+  const history = useHistory()
+
+  useEffect(() => {
+    setScene(startScene)
+  }, [startScene])
 
   const nextScene = () => {
     setCurrentIndex(prevIndex => prevIndex + 1);
@@ -35,7 +38,13 @@ function Container({ location, controller, renderer }) {
       state: { previousScreen: currentScreen }
     })
   }
-
+  const setScene = (id) => {
+    setCurrentIndex(id)
+    history.push({
+      pathname: routes[id - 1],
+      state: { previousScreen: currentScreen }
+    })
+  }
   const emptyRenderer = () => {
     renderer.clear();
   }
