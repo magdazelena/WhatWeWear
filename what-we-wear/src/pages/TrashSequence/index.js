@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import THREE from '../3d/three';
+import THREE from '3d/three';
 import { TimelineMax } from 'gsap';
-import texts from '../dictionary/en.json';
-import { animateText, generateTextForAnimation } from '../helpers/textAnimations';
-import trashFragmentShader from '../3d/shaders/trashFragmentShader';
-import trashVertexShader from '../3d/shaders/trashVertexShader';
-import camera from '../3d/utils/camera';
+import texts from 'dictionary/en.json';
+import { animateText, generateTextForAnimation } from 'helpers/textAnimations';
+import trashFragmentShader from '3d/shaders/trashFragmentShader';
+import trashVertexShader from '3d/shaders/trashVertexShader';
+import camera from '3d/utils/camera';
 
 class TrashSequence extends Component {
     constructor(props) {

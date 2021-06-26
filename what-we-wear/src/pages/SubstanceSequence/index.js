@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import ScrollMagic from 'scrollmagic';
 import { TimelineMax, TweenLite } from 'gsap';
-import texts from '../dictionary/en.json';
-import { animateText, generateTextForAnimation } from '../helpers/textAnimations';
-import ScrollDown from '../objects/ScrollDown';
+import texts from 'dictionary/en.json';
+import { animateText, generateTextForAnimation } from 'helpers/textAnimations';
+import ScrollDown from 'objects/ScrollDown';
 class SubstanceSequence extends Component {
 	constructor(props) {
 		super();
@@ -137,7 +137,7 @@ class SubstanceSequence extends Component {
 	render = () => {
 		return <div>
 			<div id="substanceSection" ref={this.onSequenceLoad}>
-				<video src="../images/cotton3_.mp4" id="video" ref={this.onVideoUpload}></video>
+				<video src="images/cotton3_.mp4" id="video" ref={this.onVideoUpload}></video>
 				<div id="substanceHeadline" ref={ref => { this.headlineRef = ref }}>
 					{this.state.shouldAnimate && (generateTextForAnimation(texts.substanceSequence.headline.split('')))}
 				</div>

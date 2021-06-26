@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import THREE from '../3d/three';
-import NextButton from '../objects/NextButton';
+import THREE from '3d/three';
+import NextButton from 'objects/NextButton';
 import ScrollMagic from 'scrollmagic';
 
-import camera from '../3d/utils/camera';
-import yellowHemiLight from '../3d/utils/lights/hemisphereLight--yellow';
-import texts from '../dictionary/en.json';
-import AnimatedText, { animateComponentText } from './components/AnimatedText';
+import camera from '3d/utils/camera';
+import yellowHemiLight from '3d/utils/lights/hemisphereLight--yellow';
+import texts from 'dictionary/en.json';
+import AnimatedText, { animateComponentText } from '../components/AnimatedText';
 import gsap from 'gsap';
 
 //particle system by example of Rugile, Jack: https://github.com/jackrugile/3d-particle-explorations/blob/master/js/demo-8/system.js
@@ -190,7 +190,7 @@ class ExplosionsSequence extends Component {
 	render = () => {
 		return <div id="explosionsContainer">
 			<div id="explosionsSequence" ref={this.onSequenceLoad}>
-				<video src="../images/Untitled.mp4" muted="muted" autoPlay={true} id="explosionsVideo" ref={this.onVideoUpload}></video>
+				<video src="images/Untitled.mp4" muted="muted" autoPlay={true} id="explosionsVideo" ref={this.onVideoUpload}></video>
 				<AnimatedText
 					id="explosionsHeadline"
 					ref={this.references.headlineRef}

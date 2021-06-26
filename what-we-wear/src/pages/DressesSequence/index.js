@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import gsap from 'gsap';
 import ScrollMagic from 'scrollmagic';
-import THREE from '../3d/three';
+import THREE from '3d/three';
 //3d materials
-import yellowPhong from '../3d/materials/yellowPhong';
-import bluePhong from '../3d/materials/bluePhong';
-import floor from '../3d/utils/floor';
-import magentaDirectionalLight from '../3d/utils/lights/directionalLight--magenta';
-import yellowHemiLight from '../3d/utils/lights/hemisphereLight--yellow';
-import camera from '../3d/utils/camera';
+import yellowPhong from '3d/materials/yellowPhong';
+import bluePhong from '3d/materials/bluePhong';
+import floor from '3d/utils/floor';
+import magentaDirectionalLight from '3d/utils/lights/directionalLight--magenta';
+import yellowHemiLight from '3d/utils/lights/hemisphereLight--yellow';
+import camera from '3d/utils/camera';
 //3d tools
-import resizeRendererToDisplaySize from '../3d/utils/resizeRendererToDisplaySize';
+import resizeRendererToDisplaySize from '3d/utils/resizeRendererToDisplaySize';
 //texts
-import texts from '../dictionary/en.json';
+import texts from 'dictionary/en.json';
 //helpers
-import AnimatedText, { animateComponentText } from './components/AnimatedText';
-import NextButton from '../objects/NextButton';
-import overwriteProps from '../helpers/overwriteProps';
+import AnimatedText, { animateComponentText } from '../components/AnimatedText';
+import NextButton from 'objects/NextButton';
+import overwriteProps from 'helpers/overwriteProps';
 class DressesSequence extends Component {
   constructor(props) {
     super();
@@ -140,7 +140,7 @@ class DressesSequence extends Component {
     // Floor
     this.scene.add(floor);
     //upload the model
-    const modelPath = '../3d/models/dress_slide.fbx';
+    const modelPath = '3d/models/dress_slide.fbx';
     this.loader = new THREE.FBXLoader();
     this.loader.load(
       modelPath,

@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import THREE from '../3d/three';
+import THREE from '3d/three';
 import { TimelineMax, TweenLite } from 'gsap';
-import texts from '../dictionary/en.json';
-import { animateText, generateTextForAnimation } from '../helpers/textAnimations';
-import ZoomInButton from '../objects/ZoomInButton';
-import ZoomOutButton from '../objects/ZoomOutButton';
+import texts from 'dictionary/en.json';
+import { animateText, generateTextForAnimation } from 'helpers/textAnimations';
+import ZoomInButton from 'objects/ZoomInButton';
+import ZoomOutButton from 'objects/ZoomOutButton';
 //3d tools
-import resizeRendererToDisplaySize from '../3d/utils/resizeRendererToDisplaySize';
-import camera from '../3d/utils/camera';
-import yellowHemiLight from '../3d/utils/lights/hemisphereLight--yellow';
-import yellowPhong from '../3d/materials/yellowPhong';
+import resizeRendererToDisplaySize from '3d/utils/resizeRendererToDisplaySize';
+import camera from '3d/utils/camera';
+import yellowHemiLight from '3d/utils/lights/hemisphereLight--yellow';
+import yellowPhong from '3d/materials/yellowPhong';
 class TextileSequence extends Component {
 	constructor(props) {
 		super();
@@ -88,7 +88,7 @@ class TextileSequence extends Component {
 		//lights
 		// Add hemisphere light to scene
 		this.scene.add(yellowHemiLight);
-		const modelPath = '../3d/models/th.fbx';
+		const modelPath = '3d/models/th.fbx';
 		var creationFuntion = (function (obj) {
 			let model = obj;
 
