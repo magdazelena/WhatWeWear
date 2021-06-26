@@ -1,9 +1,9 @@
 import THREE from '../three';
 var yellowPhong = new THREE.MeshPhongMaterial({
-    color: 0xE29300,
+    color: 0xffe1a8,
     skinning: true,
     morphTargets: true,
-    specular: 0xE29380,
+    specular: 0xffe1a8,
     reflectivity: 0.8,
     shininess: 20,
 });

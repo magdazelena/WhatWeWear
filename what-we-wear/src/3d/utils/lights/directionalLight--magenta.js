@@ -1,6 +1,6 @@
 import THREE from '../../three';
 let d = 8.25;
-var magentaDirectionalLight = new THREE.DirectionalLight(0xff00ff, 0.84);
+var magentaDirectionalLight = new THREE.DirectionalLight(0xe26d5c, 0.84);
 magentaDirectionalLight.position.set(8, 28, 18);
 magentaDirectionalLight.castShadow = true;
 magentaDirectionalLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
