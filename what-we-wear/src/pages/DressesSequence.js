@@ -15,7 +15,7 @@ import resizeRendererToDisplaySize from '../3d/utils/resizeRendererToDisplaySize
 import texts from '../dictionary/en.json';
 //helpers
 import AnimatedText, { animateComponentText } from './components/AnimatedText';
-import ScrollDown from '../objects/ScrollDown';
+import NextButton from '../objects/NextButton';
 import overwriteProps from '../helpers/overwriteProps';
 class DressesSequence extends Component {
   constructor(props) {
@@ -246,7 +246,7 @@ class DressesSequence extends Component {
         }
       />
       <div ref={ref => this.buttonRef = ref} className="show-up" >
-        <ScrollDown />
+        <NextButton onClick={this.props.nextScene} />
       </div>
 
     </div>

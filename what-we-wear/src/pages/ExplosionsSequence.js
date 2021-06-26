@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import THREE from '../3d/three';
-import ScrollDown from '../objects/ScrollDown';
+import NextButton from '../objects/NextButton';
 import ScrollMagic from 'scrollmagic';
 
 import camera from '../3d/utils/camera';
@@ -213,7 +213,7 @@ class ExplosionsSequence extends Component {
 					}
 				/>
 				<div ref={ref => this.references.buttonRef = ref} className="show-up">
-					<ScrollDown />
+					<NextButton onClick={this.props.nextScene} />
 				</div>
 			</div>
 		</div>
