@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import ScrollMagic from 'scrollmagic';
 import THREE from '3d/three';
 //3d materials
 import yellowPhong from '3d/materials/yellowPhong';
@@ -17,87 +16,65 @@ import texts from 'dictionary/en.json';
 import AnimatedText, { animateComponentText } from '../components/AnimatedText';
 import NextButton from 'objects/NextButton';
 import overwriteProps from 'helpers/overwriteProps';
-class DressesSequence extends Component {
-  constructor(props) {
-    super();
-    this.renderer = props.renderer;
-    this.camera = camera;
-    this.models = [];
-    this.mixers = [];
-    this.actions = [];
-    this.loader = null;
-    this.t = 0;
-    this.state = {
-      shouldAnimate: false,
-      shouldAnimateDesc: false,
-      sectionRef: null
-    };
+const DressesSequence = (props) => {
+  const { renderer, onUnmount, nextScene } = props
+  const sectionRef = useRef(null)
+  const twentyRef = useRef(null)
+  const dressesDescRef = useRef(null)
+  const dressesHeadRef = useRef(null)
+  const buttonRef = useRef()
 
-  }
-  componentDidMount = () => {
-    this.twentyRef = React.createRef();
-    this.dressesDescRef = React.createRef();
-    this.dressesHeadRef = React.createRef();
-    this.buttonRef = React.createRef();
-    this.scene = new THREE.Scene();
-    this.clock = new THREE.Clock();
-    this._isMounted = true;
-  }
-  componentWillUnmount = () => {
-    this.twentyRef = null;
-    this.dressesDescRef = null;
-    this.dressesHeadRef = null;
-    this.buttonRef = null;
-    this.scene = null;
-    this.clock = null;
-    this._isMounted = false;
-    this.props.onUnmount();
-  }
-  //run scene on load section
-  onSectionLoad = node => {
-    this.setState({
-      sectionRef: node
-    }, () => this.runScene())
-  }
+  const [shouldAnimate, setShouldAnimate] = useState(false)
+  const [shouldAnimateDesc, setShouldAnimateDesc] = useState(false)
+
+  const models = [];
+  const mixers = [];
+  const actions = [];
+  let scene, clock, loader
+  let _isMounted = false
+  useEffect(() => {
+    scene = new THREE.Scene()
+    clock = new THREE.Clock()
+    _isMounted = true
+    return () => {
+      scene = null;
+      clock = null;
+      _isMounted = false;
+      onUnmount()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (sectionRef) runScene()
+  }, [sectionRef])
+
+  useEffect(() => {
+    if (shouldAnimate) animateComponentText(dressesHeadRef.current)
+  }, [shouldAnimate])
+  useEffect(() => {
+    if (shouldAnimateDesc) animateComponentText(dressesDescRef.current)
+  }, [shouldAnimateDesc])
   //run scene
-  runScene = () => {
-    this.init();
-    this.update();
-    this.onScroll();
+  const runScene = () => {
+    init();
+    update();
   }
-
   //scene handlers:
 
-  //scroll actions
-  onScroll = () => {
-    let scene = new ScrollMagic.Scene({
-      duration: "60%",
-      offset: 100,
-      triggerElement: this.state.sectionRef
-    })
-      .on('leave', () => {
-        scene.remove();
-      })
-      .addTo(this.props.controller);
-  }
-  animateScene = () => {
+  const animateScene = () => {
     let timeline = gsap.timeline();
-    this.mixers[0].addEventListener('finished', e => {
-      timeline.to(this.dressesHeadRef.current, {
+    mixers[0].addEventListener('finished', e => {
+      timeline.to(dressesHeadRef.current, {
         duration: 0.2,
         onComplete: () => {
-          this.setState({
-            shouldAnimate: true
-          }, () => {
-            animateComponentText(this.dressesHeadRef.current);
-          })
+          setShouldAnimate(true)
         },
       });
-      timeline.to(this.twentyRef, {
+      timeline.to(twentyRef.current, {
         duration: .3,
         opacity: 1,
         onStart: () => {
-          this.models.forEach((model, index) => {
+          models.forEach((model, index) => {
             if (index !== 2) {
               model.traverse(o => {
                 if (o.isMesh) {
@@ -108,43 +85,39 @@ class DressesSequence extends Component {
           });
         }
       }, "+=2");
-      timeline.to(this.dressesDescRef.current, {
+      timeline.to(dressesDescRef.current, {
         duration: 0.2,
         onComplete: () => {
-          this.setState({
-            shouldAnimateDesc: true
-          }, () => {
-            animateComponentText(this.dressesDescRef.current);
-          })
+          setShouldAnimateDesc(true)
         },
       });
-      timeline.to(this.buttonRef, {
+      timeline.to(buttonRef.current, {
         duration: 1,
         opacity: 1
       });
     });
   }
   //initialize the models
-  init = () => {
-    this.scene.fog = new THREE.Fog(0x000000, 80, 100);
+  const init = () => {
+    scene.fog = new THREE.Fog(0x000000, 80, 100);
 
     //camera
-    this.camera.position.x = 0;
-    this.camera.position.y = -3;
-    this.camera.position.z = 30;
+    camera.position.x = 0;
+    camera.position.y = -3;
+    camera.position.z = 30;
     //lights
     // Add hemisphere light to scene
-    this.scene.add(yellowHemiLight);
+    scene.add(yellowHemiLight);
     // Add directional Light to scene
-    this.scene.add(magentaDirectionalLight);
+    scene.add(magentaDirectionalLight);
     // Floor
-    this.scene.add(floor);
+    scene.add(floor);
     //upload the model
     const modelPath = '3d/models/dress_slide.fbx';
-    this.loader = new THREE.FBXLoader();
-    this.loader.load(
+    loader = new THREE.FBXLoader();
+    loader.load(
       modelPath,
-      obj => this.creationFuntion(obj)
+      obj => creationFuntion(obj)
       , undefined,
       function (error) {
         console.error(error);
@@ -152,7 +125,7 @@ class DressesSequence extends Component {
     );
   }
   //create the models
-  creationFuntion = (function (obj) {
+  const creationFuntion = (function (obj) {
     let model = obj;
     model.traverse(o => {
       if (o.isMesh) {
@@ -165,15 +138,15 @@ class DressesSequence extends Component {
     model.scale.set(.5, .5, .5);
     model.position.y = -10;
     model.position.x = -10;
-    this.models.push(model);
+    models.push(model);
     for (let i = 0; i < 4; i++) {
       let newModel = model.clone();
       newModel.position.x = model.position.x - 4 * (i + 1);
-      this.models.push(newModel);
+      models.push(newModel);
     }
-    this.models.forEach(model => {
-      this.scene.add(model);
-      this.mixers.push(new THREE.AnimationMixer(model));
+    models.forEach(model => {
+      scene.add(model);
+      mixers.push(new THREE.AnimationMixer(model));
     })
 
     let fileAnimations = obj.animations;
@@ -185,72 +158,70 @@ class DressesSequence extends Component {
       clampWhenFinished: true,
       timeScale: 4
     }
-    this.mixers.forEach(mixer => {
-      this.actions.push(
+    mixers.forEach(mixer => {
+      actions.push(
         overwriteProps(
           mixer.clipAction(anim),
           modified
         )
       )
     })
-    this.actions.forEach(action => {
+    actions.forEach(action => {
       action.play();
     });
-    this.animateScene();
+    animateScene();
   }).bind(this);
   //animation update
-  update = () => {
-    if (!this._isMounted) return;
-    if (resizeRendererToDisplaySize(this.renderer)) {
-      const canvas = this.renderer.domElement;
-      this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      this.camera.updateProjectionMatrix();
+  const update = () => {
+    if (!_isMounted) return;
+    if (resizeRendererToDisplaySize(renderer)) {
+      const canvas = renderer.domElement;
+      camera.aspect = canvas.clientWidth / canvas.clientHeight;
+      camera.updateProjectionMatrix();
     }
     if (magentaDirectionalLight) {
       magentaDirectionalLight.position.x = -5 * Math.cos(Date.now() / 1400);
       magentaDirectionalLight.position.z = -30 * Math.sin(Date.now() / 1400);
     }
 
-    let delta = this.clock.getDelta();
-    if (this.mixers.length !== 0) {
-      for (let i = 0, l = this.mixers.length; i < l; i++) {
-        this.mixers[i].update(delta);
+    let delta = clock.getDelta();
+    if (mixers.length !== 0) {
+      for (let i = 0, l = mixers.length; i < l; i++) {
+        mixers[i].update(delta);
       }
     }
-    this.renderer.render(this.scene, this.camera);
-    requestAnimationFrame(this.update);
+    renderer.render(scene, camera);
+    requestAnimationFrame(update);
   }
 
-
-  render() {
-    return <div id="dressesSequence" ref={this.onSectionLoad}>
-      <AnimatedText
-        id="dressesHeadline"
-        ref={this.dressesHeadRef}
-        animatedText={
-          [{
-            shouldAnimate: this.state.shouldAnimate,
-            text: texts.dressesSequence.headline
-          }]
-        }
-      />
-      <div id="twenty" ref={ref => this.twentyRef = ref}>20%</div>
-      <AnimatedText
-        id="dressesDesc"
-        ref={this.dressesDescRef}
-        animatedText={
-          [{
-            shouldAnimate: this.state.shouldAnimateDesc,
-            text: texts.dressesSequence.description
-          }]
-        }
-      />
-      <div ref={ref => this.buttonRef = ref} className="show-up" >
-        <NextButton onClick={this.props.nextScene} />
-      </div>
-
+  return <div id="dressesSequence" ref={sectionRef}>
+    <AnimatedText
+      id="dressesHeadline"
+      ref={dressesHeadRef}
+      animatedText={
+        [{
+          shouldAnimate,
+          text: texts.dressesSequence.headline
+        }]
+      }
+    />
+    <div id="twenty" ref={twentyRef}>20%</div>
+    <AnimatedText
+      id="dressesDesc"
+      ref={dressesDescRef}
+      animatedText={
+        [{
+          shouldAnimate: shouldAnimateDesc,
+          text: texts.dressesSequence.description
+        }]
+      }
+    />
+    <div ref={buttonRef} className="show-up" >
+      <NextButton onClick={nextScene} />
     </div>
-  }
+
+  </div>
+
 }
 
 export default DressesSequence;
