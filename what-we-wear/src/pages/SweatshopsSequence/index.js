@@ -352,13 +352,6 @@ const SweatshopsSequence = (props) => {
       }
 
     }
-    if (Math.round(zoom) === controls.minDistance) {
-      if (!isOver) {
-        scene.remove()
-        nextScene()
-      }
-      isOver = true;
-    }
     renderer.render(scene, camera);
     requestAnimationFrame(update);
 
