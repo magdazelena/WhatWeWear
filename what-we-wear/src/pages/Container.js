@@ -10,7 +10,7 @@ import FindOutMore from './FindOutMore';
 import TrashSequence from './TrashSequence';
 import SubstanceSequence from './SubstanceSequence';
 
-function Container({ location, controller, renderer, startScene }) {
+const Container = ({ location, controller, renderer, startScene }) => {
 
   const routes = ["/", "/too-old", "/too-cheap", "/too-weak", "/too-toxic", "/to-trash", "/find-out-more"];
   const currentScreen = routes.indexOf(location.pathname);

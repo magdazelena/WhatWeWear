@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import THREE from '3d/three';
 import { TimelineMax, TweenLite } from 'gsap';
 import texts from 'dictionary/en.json';
@@ -72,6 +72,7 @@ const TextileSequence = (props) => {
 		})
 		return () => {
 			onUnmount()
+			renderer.clear()
 		}
 	}, [])
 
@@ -94,7 +95,7 @@ const TextileSequence = (props) => {
 
 			createInstancedMesh(model.children[0].geometry);
 
-		}).bind(this);
+		})
 		loader.load(
 			modelPath,
 			obj => {

@@ -17,7 +17,7 @@ import AnimatedText, { animateComponentText, deanimateComponentText } from 'page
 const SweatshopsSequence = (props) => {
   const { renderer, onUnmount, nextScene } = props
   const sectionRef = useRef()
-  const [count, setCount] = useState(10000)
+  const count = 10000
   const [sixtyCounter, setSixtyCounter] = useState(1)
   const [centsCounter, setCentsCounter] = useState(60)
   const [outAnimation, setOutAnimation] = useState(false)
@@ -35,12 +35,10 @@ const SweatshopsSequence = (props) => {
   }
   const scene = new THREE.Scene();
   let zoom = 100;
-  const isOver = false;
   const tl = gsap.timeline();
-  let clock, _position, _normal, _scale, dummy, ages, scales, loader, sampler, machine, surface, modelMesh, controls
+  let _position, _normal, _scale, dummy, ages, scales, loader, sampler, machine, surface, modelMesh, controls
 
   useEffect(() => {
-    clock = new THREE.Clock();
     _position = new THREE.Vector3();
     _normal = new THREE.Vector3();
     _scale = new THREE.Vector3();
@@ -53,11 +51,10 @@ const SweatshopsSequence = (props) => {
     machine = null;
     surface = null;
     modelMesh = null;
-    document.body.classList.add('fixed');
     return () => {
       references = {};
       onUnmount();
-      document.body.classList.remove('fixed');
+      renderer.clear()
     }
   }, [])
 
@@ -123,19 +120,11 @@ const SweatshopsSequence = (props) => {
 
       scene.add(surface);
       createInstancing();
-    }).bind(this);
-    loader.load(
-      modelPath,
-      obj => creationFuntion(obj)
-      , undefined,
-      function (error) {
-        console.error(error);
-      }
-    );
+    })
     var machinecreationFuntion = (function (obj) {
       machine = obj;
 
-    }).bind(this);
+    })
     loader.load(
       machinePath,
       obj => {
@@ -147,7 +136,14 @@ const SweatshopsSequence = (props) => {
         console.error(error);
       }
     );
-
+    loader.load(
+      modelPath,
+      obj => creationFuntion(obj)
+      , undefined,
+      function (error) {
+        console.error(error);
+      }
+    );
   }
   const createInstancing = () => {
     const modelGeometry = new THREE.InstancedBufferGeometry();

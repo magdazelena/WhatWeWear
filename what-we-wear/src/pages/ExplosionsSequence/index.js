@@ -1,7 +1,6 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import THREE from '3d/three';
 import NextButton from 'objects/NextButton';
-import ScrollMagic from 'scrollmagic';
 
 import camera from '3d/utils/camera';
 import yellowHemiLight from '3d/utils/lights/hemisphereLight--yellow';
@@ -20,27 +19,30 @@ const ExplosionsSequence = (props) => {
 	const numberRef = useRef()
 	const [shouldAnimate, setShouldAnimate] = useState(false)
 	const [shouldAnimateDesc, setShouldAnimateDesc] = useState(false)
-	const [shouldAnimateSeason, setShouldAnimateSeason] = useState(false)
 	const [counter, setCounter] = useState(1)
 
-	const scene = new THREE.Scene();
-	document.body.classList.add('fixed');
+	let scene, controls
 
 	useEffect(() => {
+		scene = new THREE.Scene()
 		return () => {
-			document.body.classList.remove('fixed')
 			onUnmount()
+			renderer.clear()
 		}
 	}, [])
 
 	useEffect(() => {
-		if (videoRef) animateInfo()
+		if (videoRef) {
+			animateInfo()
+			createVideoTexture()
+			update()
+			videoRef.current.play()
+		}
 	}, [videoRef])
 
 	useEffect(() => {
 		if (sequenceRef) {
 			init();
-			createVideoTexture()
 		}
 	}, [sequenceRef])
 	useEffect(() => {
@@ -87,7 +89,7 @@ const ExplosionsSequence = (props) => {
 	}
 
 	const init = () => {
-		const controls = new THREE.OrbitControls(camera, renderer.domElement);
+		controls = new THREE.OrbitControls(camera, renderer.domElement)
 		controls.maxDistance = 1000;
 		controls.minDistance = 2;
 		camera.position.set(0, 20, 100);
@@ -100,7 +102,7 @@ const ExplosionsSequence = (props) => {
 		camera.updateProjectionMatrix();
 		camera.lookAt(new THREE.Vector3());
 		yellowHemiLight.position.set(0, 50, 0);
-		scene.add(yellowHemiLight);
+		//scene.add(yellowHemiLight);
 		window.addEventListener('resize', onWindowResize, false);
 	}
 
@@ -109,6 +111,7 @@ const ExplosionsSequence = (props) => {
 		video.currentTime = 1;
 		video.muted = true;
 		video.loop = true;
+		video.autoPlay = true
 		const videoTexture = new THREE.VideoTexture(video);
 		videoTexture.minFilter = THREE.LinearFilter;
 		videoTexture.magFilter = THREE.LinearFilter;
@@ -122,11 +125,11 @@ const ExplosionsSequence = (props) => {
 				},
 				color: {
 					type: 'c',
-					value: new THREE.Color(0x000000)
+					value: new THREE.Color(0x00ff00)
 				}
 			},
 			vertexShader: 'varying vec2 vUv;void main(){vUv = uv;vec4 mvPosition = modelViewMatrix * vec4 (position, 1.0);gl_Position = projectionMatrix * mvPosition;}',
-			fragmentShader: 'uniform sampler2D texture;uniform vec3 color;varying vec2 vUv;void main(){vec3 tColor = texture2D( texture, vUv).rgb;float a = (length(tColor - color) - 0.7) * 0.9;gl_FragColor = vec4(tColor, a);}',
+			fragmentShader: 'uniform sampler2D texture;uniform vec3 color;varying vec2 vUv;void main(){vec3 tColor = texture2D( texture, vUv).rgb;float a = (length(tColor - color) - 0.3) * 0.4;gl_FragColor = vec4(tColor, a);}',
 			transparent: true
 		})
 		const plane = new THREE.Mesh(planeGeo, planeMaterial);
@@ -135,8 +138,8 @@ const ExplosionsSequence = (props) => {
 		scene.add(plane);
 	}
 	const update = () => {
-		requestAnimationFrame(update);
 
+		requestAnimationFrame(update);
 		renderer.render(scene, camera);
 	}
 	const onWindowResize = () => {

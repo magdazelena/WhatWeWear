@@ -5,11 +5,12 @@ import texts from 'dictionary/en.json';
 import { animateText, generateTextForAnimation } from 'helpers/textAnimations';
 import trashFragmentShader from '3d/shaders/trashFragmentShader';
 import trashVertexShader from '3d/shaders/trashVertexShader';
+import NextButton from 'objects/NextButton';
 import resizeRendererToDisplaySize from '3d/utils/resizeRendererToDisplaySize';
 import camera from '3d/utils/camera';
 
 const TrashSequence = (props) => {
-    const { renderer, nexScene, onUnmount } = props
+    const { renderer, nextScene, onUnmount } = props
     let refs = {
         buttonRef: useRef(),
         headlineRef: useRef(),
@@ -90,6 +91,10 @@ const TrashSequence = (props) => {
                 setShouldAnimateDesc3(true)
             }
         }, "-=3")
+        tl.to(refs.buttonRef.current, {
+            opacity: 1,
+            duration: 1,
+        })
     }
     const init = () => {
         //scene
@@ -187,6 +192,9 @@ const TrashSequence = (props) => {
         </div>
         <div id="trashDesc3" ref={refs.desc3Ref}>
             {shouldAnimateDesc3 && (generateTextForAnimation(texts.trashSequence.description3.split('')))}
+        </div>
+        <div ref={refs.buttonRef} className="show-up">
+            <NextButton onClick={nextScene} />
         </div>
     </div>
 

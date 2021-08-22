@@ -1,12 +1,10 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
-import ScrollMagic from 'scrollmagic';
+import React, { useEffect, useRef, useState } from 'react';
 import { TimelineMax, TweenLite } from 'gsap';
 import texts from 'dictionary/en.json';
 import { animateText, generateTextForAnimation } from 'helpers/textAnimations';
-import ScrollDown from 'objects/ScrollDown';
 import NextButton from 'objects/NextButton';
 const SubstanceSequence = (props) => {
-	const { renderer, nextScene, onUnmount } = props
+	const { nextScene, onUnmount } = props
 	let refs = {
 		buttonRef: useRef(),
 		headlineRef: useRef(),
@@ -21,7 +19,6 @@ const SubstanceSequence = (props) => {
 	const [shouldAnimateDesc2, setShouldAnimateDesc2] = useState(false)
 	const [shouldAnimateDesc3, setShouldAnimateDesc3] = useState(false)
 	const tl = new TimelineMax()
-	const [counter, setCounter] = useState(1)
 
 	useEffect(() => {
 		createVideoTexture()
