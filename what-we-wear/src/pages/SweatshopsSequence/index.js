@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import THREE from '3d/three';
 import { MeshSurfaceSampler } from '3d/meshSurfaceSampler';
 import magentaDirectionalLight from '3d/utils/lights/directionalLight--magenta';
@@ -9,6 +9,7 @@ import texts from 'dictionary/en.json';
 import gsap from 'gsap';
 import ZoomInButton from 'objects/ZoomInButton';
 import ZoomOutButton from 'objects/ZoomOutButton';
+import NextButton from 'objects/NextButton';
 import camera from '3d/utils/camera';
 import { scaleCurve } from 'helpers/tools';
 import AnimatedText, { animateComponentText, deanimateComponentText } from 'pages/components/AnimatedText';
@@ -25,6 +26,7 @@ const SweatshopsSequence = (props) => {
   const [shouldAnimateDesc, setShouldAnimateDesc] = useState(false)
   const tenRef = useRef()
   const sixtyRef = useRef()
+  const buttonRef = useRef()
   let references = {
     inRef: useRef(),
     outRef: useRef(),
@@ -317,7 +319,10 @@ const SweatshopsSequence = (props) => {
           updatecCounter(ccounter.value)
         }
       })
-
+      tl.to(buttonRef.current, {
+        duration: 0.2,
+        opacity: 1,
+      })
     }
     inUnanimated = false;
   }
@@ -411,7 +416,9 @@ const SweatshopsSequence = (props) => {
       ]
       }
     />
-
+    <div ref={buttonRef} className="show-up">
+      <NextButton onClick={nextScene} />
+    </div>
   </div>
 }
 
