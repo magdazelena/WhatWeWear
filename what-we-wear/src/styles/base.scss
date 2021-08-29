@@ -231,8 +231,6 @@ a{
     height: 100px;
     position: fixed;
     bottom: 80px;
-    left: 50%;
-    margin-left: -50px;
     cursor: pointer;
     z-index: 1000;
     text-align: center;
@@ -250,6 +248,8 @@ a{
     color: $two;
     font-family: $regularFont;
     cursor: default;
+        left: 50%;
+    margin-left: -50px;
     svg{
         fill: $two;
         #hand{
@@ -261,6 +261,9 @@ a{
             transform: rotate(90deg)
         }
     }
+}
+.nextButton {
+    right: 1em;
 }
 .App > canvas {
     width: 100vw;

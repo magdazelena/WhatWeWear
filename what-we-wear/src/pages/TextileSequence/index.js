@@ -13,12 +13,15 @@ import yellowHemiLight from '3d/utils/lights/hemisphereLight--yellow';
 import yellowPhong from '3d/materials/yellowPhong';
 const TextileSequence = (props) => {
 	const { renderer, onUnmount, nextScene } = props
-	const sequenceRef = useRef()
-	const headlineRef = useRef()
-	const descRef = useRef()
-	const buttonRef = useRef()
-	const inRef = useRef()
-	const outRef = useRef()
+	let refs = {
+		sequenceRef: useRef(),
+		headlineRef: useRef(),
+		descRef: useRef(),
+		buttonRef: useRef(),
+		inRef: useRef(),
+		outRef: useRef(),
+	}
+
 	const [shouldAnimate, setShouldAnimate] = useState(false)
 	const [shouldAnimateDesc, setShouldAnimateDesc] = useState(false)
 	const [inAnimation, setInAnimation] = useState(false)
@@ -30,41 +33,42 @@ const TextileSequence = (props) => {
 	const amount = 15;
 	const tl = new TimelineMax();
 	let controls, zoom, outUnanimated, count
-
+	let _isMounted = false
 	useEffect(() => {
-		if (shouldAnimate && headlineRef.current) [...headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
+		if (shouldAnimate && refs.headlineRef.current) [...refs.headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
 			animateText(span, i).play();
 		})
-	}, [shouldAnimate, headlineRef])
+	}, [shouldAnimate, refs.headlineRef])
 	useEffect(() => {
-		if (shouldAnimateDesc && descRef.current) [...descRef.current.getElementsByTagName('span')].forEach((span, i) => {
+		if (shouldAnimateDesc && refs.descRef.current) [...refs.descRef.current.getElementsByTagName('span')].forEach((span, i) => {
 			animateText(span, i).play();
 		})
-	}, [shouldAnimateDesc, descRef])
+	}, [shouldAnimateDesc, refs.descRef])
 	useEffect(() => {
-		[...headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
+		[...refs.headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
 			animateText(span, i).play();
 		});
-		[...descRef.current.getElementsByTagName('span')].forEach((span, i) => {
+		[...refs.descRef.current.getElementsByTagName('span')].forEach((span, i) => {
 			animateText(span, i).play();
 		})
-	}, [inAnimation, headlineRef, descRef])
+	}, [inAnimation, refs.headlineRef, refs.descRef])
 	useEffect(() => {
+		_isMounted = true
 		init();
 		update();
-		TweenLite.to(outRef.current, 1, {
+		TweenLite.to(refs.outRef.current, 1, {
 			opacity: 1
 		})
-		TweenLite.to(inRef.current, 1, {
+		TweenLite.to(refs.inRef.current, 1, {
 			opacity: 0
 		})
-		tl.to(headlineRef.current, {
+		tl.to(refs.headlineRef.current, {
 			duration: 0.2,
 			onComplete: () => {
 				setShouldAnimate(true)
 			}
 		})
-		tl.to(descRef.current, {
+		tl.to(refs.descRef.current, {
 			duration: 0.2,
 			onComplete: () => {
 				setShouldAnimateDesc(true)
@@ -72,9 +76,13 @@ const TextileSequence = (props) => {
 		})
 		return () => {
 			onUnmount()
-			renderer.clear()
+			_isMounted = false
+
 		}
 	}, [])
+	useEffect(() => {
+		console.log(renderer)
+	}, [renderer])
 
 	const init = () => {
 		controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -117,29 +125,29 @@ const TextileSequence = (props) => {
 	outUnanimated = true;
 	const animateOut = function () {
 		if (outUnanimated) {
-			TweenLite.to(outRef.current, 1, {
+			TweenLite.to(refs.outRef.current, 1, {
 				opacity: 0
 			})
-			TweenLite.to(inRef.current, 1, {
+			TweenLite.to(refs.inRef.current, 1, {
 				opacity: 1
 			});
-			tl.to(headlineRef.current, {
+			tl.to(refs.headlineRef.current, {
 				duration: .1,
 				onComplete: () => {
-					if (headlineRef.current) [...headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
+					if (refs.headlineRef.current) [...refs.headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
 						animateText(span, i).reverse(0);
 					});
 				}
 			});
-			tl.to(descRef.current, {
+			tl.to(refs.descRef.current, {
 				duration: .1,
 				onComplete: () => {
-					if (descRef.current) [...descRef.current.getElementsByTagName('span')].forEach((span, i) => {
+					if (refs.descRef.current) [...refs.descRef.current.getElementsByTagName('span')].forEach((span, i) => {
 						animateText(span, i).reverse(0);
 					});
 				}
 			});
-			tl.to(headlineRef.current, {
+			tl.to(refs.headlineRef.current, {
 				duration: .1,
 				onComplete: () => {
 					setInAnimation(true)
@@ -151,12 +159,13 @@ const TextileSequence = (props) => {
 		outUnanimated = false;
 	}
 	const showNextButton = () => {
-		tl.to(buttonRef.current, {
+		tl.to(refs.buttonRef.current, {
 			opacity: 1,
 			duration: .1,
 		})
 	}
 	const update = () => {
+		if (!_isMounted) return
 		if (resizeRendererToDisplaySize(renderer)) {
 			const canvas = renderer.domElement;
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -197,23 +206,23 @@ const TextileSequence = (props) => {
 
 	}
 
-	return <div id="textileSequence" ref={sequenceRef}>
-		<div id="textileHeadline" ref={headlineRef}>
+	return <div id="textileSequence" ref={refs.sequenceRef}>
+		<div id="textileHeadline" ref={refs.headlineRef}>
 			{shouldAnimate && (generateTextForAnimation(texts.textileSequence.headline.split('')))}
 			{inAnimation && (generateTextForAnimation(texts.textileSequence.zoomInheadline.split('')))}
 		</div>
-		<div id="textileDesc" ref={descRef}>
+		<div id="textileDesc" ref={refs.descRef}>
 			{shouldAnimateDesc && (generateTextForAnimation(texts.textileSequence.description.split('')))}
 			{inAnimation && (generateTextForAnimation(texts.textileSequence.zoomIndescription.split('')))}
 		</div>
 
-		<div ref={inRef} className="show-up">
+		<div ref={refs.inRef} className="show-up">
 			<ZoomInButton />
 		</div>
-		<div ref={outRef} className="show-up">
+		<div ref={refs.outRef} className="show-up">
 			<ZoomOutButton />
 		</div>
-		<div ref={buttonRef} className="show-up">
+		<div ref={refs.buttonRef} className="show-up">
 			<NextButton onClick={nextScene} />
 		</div>
 	</div>;
