@@ -26,13 +26,16 @@ const TrashSequence = (props) => {
     const [shouldAnimateDesc3, setShouldAnimateDesc3] = useState(false)
     const tl = new TimelineMax()
     let scene
+    let _isMounted = false
     useEffect(() => {
         init()
         animateTexts()
         update()
+        _isMounted = true
         return () => {
             refs = {}
             onUnmount()
+            _isMounted = false
         }
     }, [])
     useEffect(() => {
@@ -159,6 +162,7 @@ const TrashSequence = (props) => {
         scene.add(mesh);
     }
     const update = () => {
+        if (!_isMounted) return
         if (resizeRendererToDisplaySize(renderer)) {
             const canvas = renderer.domElement;
             camera.aspect = canvas.clientWidth / canvas.clientHeight;

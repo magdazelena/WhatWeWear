@@ -19,12 +19,14 @@ const SubstanceSequence = (props) => {
 	const [shouldAnimateDesc2, setShouldAnimateDesc2] = useState(false)
 	const [shouldAnimateDesc3, setShouldAnimateDesc3] = useState(false)
 	const tl = new TimelineMax()
-
+	let _isMounted = false
 	useEffect(() => {
 		createVideoTexture()
+		_isMounted = true
 		return () => {
 			refs = {}
 			onUnmount()
+			_isMounted = false
 		}
 	})
 	useEffect(() => {

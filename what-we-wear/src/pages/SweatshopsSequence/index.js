@@ -27,6 +27,7 @@ const SweatshopsSequence = (props) => {
   const tenRef = useRef()
   const sixtyRef = useRef()
   const buttonRef = useRef()
+  let _isMounted = false
   let references = {
     inRef: useRef(),
     outRef: useRef(),
@@ -51,10 +52,12 @@ const SweatshopsSequence = (props) => {
     machine = null;
     surface = null;
     modelMesh = null;
+    _isMounted = true
     return () => {
       references = {};
       onUnmount();
       renderer.clear()
+      _isMounted = false
     }
   }, [])
 
@@ -323,6 +326,7 @@ const SweatshopsSequence = (props) => {
     inUnanimated = false;
   }
   const update = () => {
+    if (!_isMounted) return
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;

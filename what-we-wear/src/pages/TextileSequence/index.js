@@ -77,12 +77,9 @@ const TextileSequence = (props) => {
 		return () => {
 			onUnmount()
 			_isMounted = false
-
+			refs = {}
 		}
 	}, [])
-	useEffect(() => {
-		console.log(renderer)
-	}, [renderer])
 
 	const init = () => {
 		controls = new THREE.OrbitControls(camera, renderer.domElement);

@@ -20,14 +20,16 @@ const ExplosionsSequence = (props) => {
 	const [shouldAnimate, setShouldAnimate] = useState(false)
 	const [shouldAnimateDesc, setShouldAnimateDesc] = useState(false)
 	const [counter, setCounter] = useState(1)
-
+	let _isMounted = false
 	let scene, controls
 
 	useEffect(() => {
+		_isMounted = true
 		scene = new THREE.Scene()
 		return () => {
 			onUnmount()
 			renderer.clear()
+			_isMounted = false
 		}
 	}, [])
 
@@ -138,7 +140,7 @@ const ExplosionsSequence = (props) => {
 		scene.add(plane);
 	}
 	const update = () => {
-
+		if (!_isMounted) return
 		requestAnimationFrame(update);
 		renderer.render(scene, camera);
 	}
