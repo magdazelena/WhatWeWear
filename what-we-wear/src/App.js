@@ -1,68 +1,45 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './styles/base.scss';
 import ScrollMagic from 'scrollmagic';
 import LoadingApp from './pages/LoadingApp';
 import Menu from './pages/Menu';
-import DressesSequence from './pages/DressesSequence';
-import ExplosionsSequence from './pages/ExplosionsSequence';
-import SweatshopsSequence from './pages/SweatshopsSequence';
-import TextileSequence from './pages/TextileSequence';
-import FindOutMore from './pages/FindOutMore';
-import TrashSequence from './pages/TrashSequence';
-import SubstanceSequence from './pages/SubstanceSequence';
-class App extends Component {
-  constructor(props){
-    super(props);
-    this.state ={
-      introIsDone: true,
-      sceneId:1
+
+//3d tools
+import renderer from './3d/utils/renderer';
+import Container from './pages/Container';
+const App = () => {
+  const [introIsDone, setIntroDone] = useState(true);
+  const [startScene, setStartScene] = useState(0)
+  const sectionRef = useRef();
+  const controller = new ScrollMagic.Controller();
+  const canvasRef = useRef();
+
+  useEffect(() => {
+    if (sectionRef.current) {
+      setup();
     }
-    this.controller = new ScrollMagic.Controller();
-    this.markIntroDone = this.markIntroDone.bind(this);
-    window.scrollBy({ 
-      top: -10, // could be negative value
-      left: 0, 
-      behavior: 'smooth' 
-    });
+  }, [sectionRef.current]);
+  const markIntroDone = () => {
+    setIntroDone(true);
   }
-  markIntroDone=()=>{
-    this.setState({
-      introIsDone: true,
-      sceneId: 1
-    })
+  const setup = () => {
+    if (introIsDone)
+      sectionRef.current.replaceChild(renderer.domElement, sectionRef.current.getElementsByTagName('canvas')[0]);
   }
-  setSceneID=id=>{
-    this.setState({
-      sceneId: id
-    })
-  }
-  nextScene= ()=>{
-    this.setState({
-      sceneId: this.state.sceneId+1
-    }, ()=> {
-      console.log(this.state.sceneId)
-    })
-  }
-  prevScene=()=>{
-    this.setState({
-      sceneId: this.state.sceneId-1
-    })
-  }
-  render() {
-    return (
-      <div className="App">
-        {this.state.introIsDone && (<Menu setScene={this.setSceneID}/>)}
-        {!this.state.introIsDone && (<LoadingApp markIntroDone={this.markIntroDone} controller={this.controller} loading="true"/>)}
-        {this.state.introIsDone && this.state.sceneId===1 &&(<DressesSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="1" />)} 
-        {this.state.introIsDone && this.state.sceneId===2 && (<ExplosionsSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="2"/>)}
-        {this.state.introIsDone && this.state.sceneId===3 && (<SweatshopsSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="3"/>)}
-        {this.state.introIsDone && this.state.sceneId===4 && (<TextileSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="4"/>)}
-        {this.state.introIsDone && this.state.sceneId===5 &&(<SubstanceSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="5"/>)}
-        {this.state.introIsDone && this.state.sceneId===6 &&(<TrashSequence controller={this.controller} prevScene={this.prevScene} nextScene={this.nextScene} id="6"/>)}
-       {this.state.introIsDone && ( <FindOutMore setScene={this.setSceneID}/>) }
-      </div>
-    );
-  }
+
+
+
+  return (
+    <div className="App" ref={sectionRef}>
+      {introIsDone && (
+        <canvas id="mainCanvas" ref={canvasRef} width={window.innerWidth} height={window.innerHeight}></canvas>
+      )}
+      {introIsDone && (<Menu setScene={setStartScene} />)}
+      {!introIsDone && (<LoadingApp markIntroDone={markIntroDone} controller={controller} loading="true" />)}
+      {introIsDone && (<Container controller={controller} renderer={renderer} startScene={startScene} />)}
+    </div>
+  );
+
 }
 
 export default App;

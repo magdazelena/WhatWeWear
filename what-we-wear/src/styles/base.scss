@@ -23,13 +23,6 @@ a{
 .breaker{
     height: 60vh;
 }
-// .App{
-//     //background-tiles.com
-//     background-image: url('../images/1003.png'), url('../images/5015.png');
-//     background-color: $dark;
-//     background-blend-mode: multiply;
-//     animation: backgroundPulse 12s infinite;
-// }
 @keyframes backgroundPulse{
 
     0%{
@@ -68,6 +61,14 @@ a{
             width: 0px;
         }
     }
+}
+.route-section {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    pointer-events: none;
 }
 .loadingSection{
     height: 100vh;
@@ -230,11 +231,10 @@ a{
     height: 100px;
     position: fixed;
     bottom: 80px;
-    left: 50%;
-    margin-left: -50px;
     cursor: pointer;
-    z-index: 100;
+    z-index: 1000;
     text-align: center;
+    pointer-events: all;
     svg{
         width: 100px;
         fill: $three;
@@ -248,6 +248,8 @@ a{
     color: $two;
     font-family: $regularFont;
     cursor: default;
+        left: 50%;
+    margin-left: -50px;
     svg{
         fill: $two;
         #hand{
@@ -260,14 +262,22 @@ a{
         }
     }
 }
-
+.nextButton {
+    right: 1em;
+}
+.App > canvas {
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
 #drag-info{
     position: fixed;
 }
 .show-up{
     opacity: 0;
+    z-index: 2000;
 }
-#explvideo{
+#explosionsVideo{
     display: none;
 }
 #dressesSequence, #explosionsSequence, #sweatshopsContainer, #textileSequence, #substanceSection, #trashSequence{
@@ -278,6 +288,12 @@ a{
     canvas{
         position: absolute;
     }
+}
+#video {
+    width: 100vw;
+}
+#explosionSequence {
+    z-index: 2000;
 }
 #dressesHeadline, #dressesDesc, #sweatshopsHeadline, #sweatshopsDesc, #textileHeadline, #textileDesc, #substanceHeadline, #substanceDesc, #substanceDesc2, #substanceDesc3, #trashHeadline, #trashDesc, #trashDesc2, #trashDesc3{
     font-size: 3em;
@@ -392,9 +408,10 @@ a{
     right: 0;
     color: $two;
 }
-#video{
+#explosionsVideo{
     width: auto;
     height: 100vh;
+    z-index: -10;
 }
 #lastSeason{
     height: 60vh;

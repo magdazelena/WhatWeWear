@@ -1,6 +1,6 @@
 {
     "pageOne": {
-        "headline" : "on average",
+        "headline": "on average",
         "description": "kilograms of clothes is consumed yearly in a European country"
     },
     "pageTwo": {
@@ -17,7 +17,7 @@
     },
     "explosionsSequence": {
         "headline": "To trick you into buying more and more things you don't need, fast fashion brands produce new collections every 2 weeks. That is up to",
-        "description": "collections per year" 
+        "description": "collections per year"
     },
     "sweatshopsSequence": {
         "headline": "You can afford to follow those trends",
@@ -45,7 +45,7 @@
         "description2": "This approach leads to ",
         "description3": " tons of unrecyclable waste every year"
     },
-    "resources":[
+    "resources": [
         {
             "slug": "sustainability",
             "title": "Shopping reasonably"
@@ -61,6 +61,8 @@
     ],
     "buttons": {
         "click": "click me",
+        "next": "See next",
+        "prev": "See previous",
         "zoomIn": "zoom in using scroll",
         "zoomOut": "zoom out using scroll",
         "scroll": "scroll down",
