@@ -24,6 +24,10 @@ const Container = ({ location, controller, renderer, startScene }) => {
     setScene(startScene)
   }, [startScene])
 
+  useEffect(() => {
+    setCurrentIndex(routes.indexOf(location.pathname))
+  }, [location.pathname])
+
   const nextScene = () => {
     setCurrentIndex(prevIndex => prevIndex + 1);
     history.push({
