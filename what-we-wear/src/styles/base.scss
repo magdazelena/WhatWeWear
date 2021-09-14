@@ -113,7 +113,7 @@ a{
   background-repeat:no-repeat;
   animation: 
    b .7s infinite steps(1),   
-   t calc(var(--n)*.1s) steps(var(--n)) forwards;
+   t calc(var(--n)*var(--time)) steps(var(--n)) forwards;
 }
 
 @keyframes t{
