@@ -102,6 +102,26 @@ a{
         height: 50vh;
     }
 }
+.type {
+  color:transparent;
+  background:
+    linear-gradient(-90deg,white 2px,#0000 0) 10px 0,
+    linear-gradient(white 0 0) 0 0;
+  background-size:calc(var(--n)*1ch) 200%;
+  -webkit-background-clip:padding-box,text;
+  background-clip:padding-box,text;
+  background-repeat:no-repeat;
+  animation: 
+   b .7s infinite steps(1),   
+   t calc(var(--n)*.1s) steps(var(--n)) forwards;
+}
+
+@keyframes t{
+  from {background-size:0 200%}
+}
+@keyframes b{
+  50% {background-position:0 -100%,0 0}
+}
 #menu{
     position: fixed;
     top: 1em;
@@ -298,12 +318,6 @@ a{
 #dressesHeadline, #dressesDesc, #sweatshopsHeadline, #sweatshopsDesc, #textileHeadline, #textileDesc, #substanceHeadline, #substanceDesc, #substanceDesc2, #substanceDesc3, #trashHeadline, #trashDesc, #trashDesc2, #trashDesc3{
     font-size: 3em;
     position: absolute;
-   span{
-        display: inline-block;
-        position: relative;
-        min-width: .4em;
-        transform: translate3d(0px, 0px, 0px) scale(1, 1);
-   }
 }
 #dressesHeadline{
     top: 10vh;
@@ -316,16 +330,12 @@ a{
 #substanceHeadline, #substanceDesc, #substanceDesc2,  #trashHeadline, #trashDesc, #trashDesc2{
     left: 2em;
     color: white;
+    max-width: 80%;
 }
 #sweatshopsHeadline, #textileHeadline, #substanceHeadline, #trashHeadline{
     top: 10vh;
 }
-#substanceDesc, #trashDesc{
-    top: 15vh;
-}
-#substanceDesc2, #trashDesc2{
-    top: 20vh;
-}
+
 #substanceDesc3{
     color: $two;
     font-family: $neon;
