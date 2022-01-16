@@ -13,7 +13,7 @@ import resizeRendererToDisplaySize from '3d/utils/resizeRendererToDisplaySize';
 //texts
 import texts from 'dictionary/en.json';
 //helpers
-import AnimatedText, { animateComponentText } from '../components/AnimatedText';
+import AnimatedText from '../components/AnimatedText';
 import NextButton from 'objects/NextButton';
 import overwriteProps from 'helpers/overwriteProps';
 const DressesSequence = (props) => {
@@ -48,16 +48,12 @@ const DressesSequence = (props) => {
     if (sectionRef) runScene()
   }, [sectionRef])
 
-  useEffect(() => {
-    if (shouldAnimate) animateComponentText(dressesHeadRef.current)
-  }, [shouldAnimate])
   //run scene
   const runScene = () => {
     init();
     update();
   }
   //scene handlers:
-
   const animateScene = () => {
     let timeline = gsap.timeline();
     mixers[0].addEventListener('finished', e => {
@@ -67,27 +63,30 @@ const DressesSequence = (props) => {
           setShouldAnimate(true)
         },
       });
-      timeline.to(twentyRef.current, {
-        duration: .3,
-        opacity: 1,
-        onStart: () => {
-          models.forEach((model, index) => {
-            if (index !== 2) {
-              model.traverse(o => {
-                if (o.isMesh) {
-                  o.material = bluePhong
-                }
-              });
-            };
-          });
-        }
-      }, "+=2");
       timeline.to(buttonRef.current, {
         duration: 1,
         opacity: 1
       });
-    });
+    })
   }
+  useEffect(() => {
+    if (!shouldAnimateDesc) return
+    gsap.to(twentyRef.current, {
+      duration: .3,
+      opacity: 1,
+      onStart: () => {
+        models.forEach((model, index) => {
+          if (index !== 2) {
+            model.traverse(o => {
+              if (o.isMesh) {
+                o.material = bluePhong
+              }
+            });
+          };
+        });
+      }
+    });
+  }, [shouldAnimateDesc])
   //initialize the models
   const init = () => {
     scene.fog = new THREE.Fog(0x000000, 80, 100);
@@ -193,7 +192,7 @@ const DressesSequence = (props) => {
       text={texts.dressesSequence.headline}
       onAnimationEnd={() => setShouldAnimateDesc(true)}
     />
-    <div id="twenty" ref={twentyRef}>20%</div>
+    {shouldAnimateDesc && (<div id="twenty" ref={twentyRef}>20%</div>)}
     <AnimatedText
       id="dressesDesc"
       ref={dressesDescRef}
