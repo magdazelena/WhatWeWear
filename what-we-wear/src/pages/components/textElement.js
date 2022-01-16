@@ -1,5 +1,5 @@
 import React from 'react'
-const time = 0.1
+const time = 0.02
 const TextElement = ({ text }) => {
   if (!text) return <></>
   return <span className='type' style={{ '--n': text.length, '--time': `${time}s` }}>{text}</span>

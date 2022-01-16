@@ -85,13 +85,6 @@ const SweatshopsSequence = (props) => {
     }
   }, [sectionRef])
 
-  useEffect(() => {
-    if (shouldAnimate) animateComponentText(references.headlineRef.current)
-  }, [shouldAnimate])
-  useEffect(() => {
-    if (shouldAnimateDesc) animateComponentText(references.descRef.current)
-  }, [shouldAnimateDesc])
-
   const init = () => {
     //camera
     controls = new THREE.OrbitControls(camera, renderer.domElement);
