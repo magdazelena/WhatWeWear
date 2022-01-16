@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { TimelineMax, TweenLite } from 'gsap';
 import texts from 'dictionary/en.json';
 import NextButton from 'objects/NextButton';
-import TextElement from 'pages/components/textElement';
+import AnimatedText from 'pages/components/AnimatedText';
 const SubstanceSequence = (props) => {
 	const { nextScene, onUnmount } = props
 	let refs = {
@@ -66,13 +66,18 @@ const SubstanceSequence = (props) => {
 	return <div>
 		<div id="substanceSection" ref={refs.sequenceRef}>
 			<video src="images/cotton3_.mp4" id="video" ref={refs.videoRef}></video>
-			<div id="substanceHeadline" ref={refs.headlineRef}>
-				{shouldAnimate && <TextElement text={texts.substanceSequence.headline} />}
-			</div>
-
-			<div id="substanceDesc3" ref={refs.desc3Ref}>
-				{shouldAnimateDesc3 && <TextElement text={texts.substanceSequence.description3} />}
-			</div>
+			<AnimatedText
+				ref={refs.headlineRef}
+				id="substanceHeadline"
+				shouldAnimate={shouldAnimate}
+				text={texts.substanceSequence.headline}
+			/>
+			<AnimatedText
+				ref={refs.desc3Ref}
+				id="substanceDesc"
+				shouldAnimate={shouldAnimateDesc3}
+				text={texts.substanceSequence.description3}
+			/>
 			<div ref={refs.buttonRef} className="show-up">
 				<NextButton onClick={nextScene} />
 			</div>
