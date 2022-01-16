@@ -6,7 +6,7 @@ const AnimatedText = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         if (!props.text && !props.onAnimationEnd) return
-        const timeout = getTextTimeout(props.text) * 2500
+        const timeout = getTextTimeout(props.text) * 200
         const timer = setTimeout(() => {
             onEnd()
             console.log('end')

@@ -5,8 +5,7 @@ import NextButton from 'objects/NextButton';
 import camera from '3d/utils/camera';
 import yellowHemiLight from '3d/utils/lights/hemisphereLight--yellow';
 import texts from 'dictionary/en.json';
-import AnimatedText, { animateComponentText } from '../components/AnimatedText';
-import gsap from 'gsap';
+import AnimatedText from '../components/AnimatedText';
 
 //particle system by example of Rugile, Jack: https://github.com/jackrugile/3d-particle-explorations/blob/master/js/demo-8/system.js
 const ExplosionsSequence = (props) => {
@@ -15,17 +14,15 @@ const ExplosionsSequence = (props) => {
 	const sequenceRef = useRef()
 	const headlineRef = useRef()
 	const descriptionRef = useRef()
-	const buttonRef = useRef()
-	const numberRef = useRef()
 	const [shouldAnimate, setShouldAnimate] = useState(false)
 	const [shouldAnimateDesc, setShouldAnimateDesc] = useState(false)
-	const [counter, setCounter] = useState(1)
 	let _isMounted = false
 	let scene, controls
 
 	useEffect(() => {
 		_isMounted = true
 		scene = new THREE.Scene()
+		setShouldAnimate(true)
 		return () => {
 			onUnmount()
 			renderer.clear()
@@ -33,62 +30,6 @@ const ExplosionsSequence = (props) => {
 		}
 	}, [])
 
-	useEffect(() => {
-		if (videoRef) {
-			animateInfo()
-			createVideoTexture()
-			update()
-			videoRef.current.play()
-		}
-	}, [videoRef])
-
-	useEffect(() => {
-		if (sequenceRef) {
-			init();
-		}
-	}, [sequenceRef])
-	useEffect(() => {
-		if (shouldAnimate) animateComponentText(headlineRef.current)
-	}, [shouldAnimate])
-
-	useEffect(() => {
-		if (shouldAnimateDesc) animateComponentText(descriptionRef.current)
-	}, [shouldAnimateDesc])
-
-	const animateInfo = () => {
-		let animCounter = { value: counter };
-		let timeline = gsap.timeline();
-		timeline.to(headlineRef.current, {
-			duration: 0.2,
-			onComplete: () => {
-				setShouldAnimate(true)
-			},
-		});
-		timeline.to(numberRef.current, {
-			duration: 3,
-			opacity: 1
-		}, '+=2');
-		timeline.to(counter, {
-			duration: 3,
-			value: 26,
-			roundProps: 'value',
-			onUpdate: () => updateCounter(animCounter.value)
-		}, "-=3");
-		timeline.to(descriptionRef.current, {
-			duration: 0.2,
-			onComplete: () => {
-				setShouldAnimateDesc(true)
-			},
-		}, "-=2");
-		timeline.to(buttonRef.current, {
-			duration: 1,
-			opacity: 1
-		})
-		let updateCounter = value => {
-			setCounter(value)
-		}
-
-	}
 
 	const init = () => {
 		controls = new THREE.OrbitControls(camera, renderer.domElement)
@@ -150,6 +91,20 @@ const ExplosionsSequence = (props) => {
 		renderer.setSize(window.innerWidth, window.innerHeight);
 	}
 
+	useEffect(() => {
+		if (videoRef) {
+			createVideoTexture()
+			update()
+			videoRef.current.play()
+		}
+	}, [videoRef])
+
+	useEffect(() => {
+		if (sequenceRef) {
+			init();
+		}
+	}, [sequenceRef])
+
 	return <div id="explosionsContainer">
 		<div id="explosionsSequence" ref={sequenceRef}>
 			<video src="images/Untitled.mp4" muted="muted" autoPlay={true} id="explosionsVideo" ref={videoRef}></video>
@@ -158,17 +113,15 @@ const ExplosionsSequence = (props) => {
 				ref={headlineRef}
 				shouldAnimate={shouldAnimate}
 				text={texts.explosionsSequence.headline}
+				onAnimationEnd={() => setShouldAnimateDesc(true)}
 			/>
-			<div id="explosionsNumber" ref={numberRef}>{counter}</div>
 			<AnimatedText
 				id="explosionsDescription"
 				ref={descriptionRef}
 				shouldAnimate={shouldAnimateDesc}
 				text={texts.explosionsSequence.description}
 			/>
-			<div ref={buttonRef} className="show-up">
-				<NextButton onClick={nextScene} />
-			</div>
+			<NextButton onClick={nextScene} />
 		</div>
 	</div>
 
