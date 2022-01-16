@@ -14,7 +14,7 @@ const AnimatedText = React.forwardRef((props, ref) => {
         return () => clearTimeout(timer);
     }, [props.text])
 
-    const renderMultine = () => (props.animatedText.map(item => (item.shouldAnimate && <TextElement text={item.text} />)))
+    const renderMultine = () => (props.animatedText.map(item => (item.shouldAnimate && <TextElement key={item.text} text={item.text} />)))
     const renderSingleLine = () => (props.shouldAnimate && <TextElement text={props.text} />)
     return (<div id={props.id} ref={ref} className='text'>
         {props.animatedText ?
