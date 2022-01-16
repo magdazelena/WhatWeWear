@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import THREE from '3d/three';
 import { TimelineMax, TweenLite } from 'gsap';
 import texts from 'dictionary/en.json';
-import { animateText, generateTextForAnimation } from 'helpers/textAnimations';
 import ZoomInButton from 'objects/ZoomInButton';
 import ZoomOutButton from 'objects/ZoomOutButton';
 import NextButton from 'objects/NextButton';
@@ -11,6 +10,8 @@ import resizeRendererToDisplaySize from '3d/utils/resizeRendererToDisplaySize';
 import camera from '3d/utils/camera';
 import yellowHemiLight from '3d/utils/lights/hemisphereLight--yellow';
 import yellowPhong from '3d/materials/yellowPhong';
+import AnimatedText, { animateComponentText, deanimateComponentText } from 'pages/components/AnimatedText';
+
 const TextileSequence = (props) => {
 	const { renderer, onUnmount, nextScene } = props
 	let refs = {
@@ -35,23 +36,12 @@ const TextileSequence = (props) => {
 	let controls, zoom, outUnanimated, count
 	let _isMounted = false
 	useEffect(() => {
-		if (shouldAnimate && refs.headlineRef.current) [...refs.headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
-			animateText(span, i).play();
-		})
+		if (shouldAnimate && refs.headlineRef.current) animateComponentText(refs.headlineRef.current)
 	}, [shouldAnimate, refs.headlineRef])
 	useEffect(() => {
-		if (shouldAnimateDesc && refs.descRef.current) [...refs.descRef.current.getElementsByTagName('span')].forEach((span, i) => {
-			animateText(span, i).play();
-		})
+		if (shouldAnimateDesc && refs.descRef.current) animateComponentText(refs.descRef.current)
 	}, [shouldAnimateDesc, refs.descRef])
-	useEffect(() => {
-		[...refs.headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
-			animateText(span, i).play();
-		});
-		[...refs.descRef.current.getElementsByTagName('span')].forEach((span, i) => {
-			animateText(span, i).play();
-		})
-	}, [inAnimation, refs.headlineRef, refs.descRef])
+
 	useEffect(() => {
 		_isMounted = true
 		init();
@@ -131,17 +121,13 @@ const TextileSequence = (props) => {
 			tl.to(refs.headlineRef.current, {
 				duration: .1,
 				onComplete: () => {
-					if (refs.headlineRef.current) [...refs.headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
-						animateText(span, i).reverse(0);
-					});
+					if (refs.headlineRef.current) deanimateComponentText(refs.headlineRef.current)
 				}
 			});
 			tl.to(refs.descRef.current, {
 				duration: .1,
 				onComplete: () => {
-					if (refs.descRef.current) [...refs.descRef.current.getElementsByTagName('span')].forEach((span, i) => {
-						animateText(span, i).reverse(0);
-					});
+					if (refs.descRef.current) deanimateComponentText(refs.descRef.current)
 				}
 			});
 			tl.to(refs.headlineRef.current, {
@@ -204,14 +190,36 @@ const TextileSequence = (props) => {
 	}
 
 	return <div id="textileSequence" ref={refs.sequenceRef}>
-		<div id="textileHeadline" ref={refs.headlineRef}>
-			{shouldAnimate && (generateTextForAnimation(texts.textileSequence.headline.split('')))}
-			{inAnimation && (generateTextForAnimation(texts.textileSequence.zoomInheadline.split('')))}
-		</div>
-		<div id="textileDesc" ref={refs.descRef}>
-			{shouldAnimateDesc && (generateTextForAnimation(texts.textileSequence.description.split('')))}
-			{inAnimation && (generateTextForAnimation(texts.textileSequence.zoomIndescription.split('')))}
-		</div>
+		<AnimatedText
+			id="textileHeadline"
+			ref={refs.headlineRef}
+			animatedText={[
+				{
+					shouldAnimate: shouldAnimate,
+					text: texts.textileSequence.headline
+				},
+				{
+					shouldAnimate: inAnimation,
+					text: texts.textileSequence.zoomInheadline
+				},
+			]
+			}
+		/>
+		<AnimatedText
+			id="textileDesc"
+			ref={refs.descRef}
+			animatedText={[
+				{
+					shouldAnimate: shouldAnimateDesc,
+					text: texts.textileSequence.description
+				},
+				{
+					shouldAnimate: inAnimation,
+					text: texts.textileSequence.zoomIndescription
+				},
+			]
+			}
+		/>
 
 		<div ref={refs.inRef} className="show-up">
 			<ZoomInButton />

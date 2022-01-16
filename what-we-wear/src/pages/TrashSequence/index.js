@@ -2,12 +2,12 @@ import React, { useRef, useState, useEffect } from 'react';
 import THREE from '3d/three';
 import { TimelineMax } from 'gsap';
 import texts from 'dictionary/en.json';
-import { animateText, generateTextForAnimation } from 'helpers/textAnimations';
 import trashFragmentShader from '3d/shaders/trashFragmentShader';
 import trashVertexShader from '3d/shaders/trashVertexShader';
 import NextButton from 'objects/NextButton';
 import resizeRendererToDisplaySize from '3d/utils/resizeRendererToDisplaySize';
 import camera from '3d/utils/camera';
+import AnimatedText from 'pages/components/AnimatedText';
 
 const TrashSequence = (props) => {
     const { renderer, nextScene, onUnmount } = props
@@ -15,15 +15,11 @@ const TrashSequence = (props) => {
         buttonRef: useRef(),
         headlineRef: useRef(),
         descRef: useRef(),
-        desc2Ref: useRef(),
-        desc3Ref: useRef(),
         videoRef: useRef(),
         sequenceRef: useRef()
     }
     const [shouldAnimate, setShouldAnimate] = useState(false)
     const [shouldAnimateDesc, setShouldAnimateDesc] = useState(false)
-    const [shouldAnimateDesc2, setShouldAnimateDesc2] = useState(false)
-    const [shouldAnimateDesc3, setShouldAnimateDesc3] = useState(false)
     const tl = new TimelineMax()
     let scene
     let _isMounted = false
@@ -38,27 +34,7 @@ const TrashSequence = (props) => {
             _isMounted = false
         }
     }, [])
-    useEffect(() => {
-        if (shouldAnimate) [...refs.headlineRef.current.getElementsByTagName('span')].forEach((span, i) => {
-            animateText(span, i).play();
-        })
-    }, [shouldAnimate])
 
-    useEffect(() => {
-        if (shouldAnimateDesc) [...refs.descRef.current.getElementsByTagName('span')].forEach((span, i) => {
-            animateText(span, i).play();
-        })
-    }, [shouldAnimateDesc])
-    useEffect(() => {
-        if (shouldAnimateDesc2) [...refs.desc2Ref.current.getElementsByTagName('span')].forEach((span, i) => {
-            animateText(span, i).play();
-        })
-    }, [shouldAnimateDesc2])
-    useEffect(() => {
-        if (shouldAnimateDesc3) [...refs.desc3Ref.current.getElementsByTagName('span')].forEach((span, i) => {
-            animateText(span, i).play();
-        })
-    }, [shouldAnimateDesc3])
 
     const animateTexts = function () {
         tl.to(refs.headlineRef.current, {
@@ -82,18 +58,6 @@ const TrashSequence = (props) => {
             duration: 1,
             value: -10
         }, '-=3')
-        tl.to(refs.desc2Ref.current, {
-            duration: 1,
-            onComplete: () => {
-                setShouldAnimateDesc2(true)
-            }
-        }, "-=3")
-        tl.to(refs.desc3Ref.current, {
-            duration: 1,
-            onComplete: () => {
-                setShouldAnimateDesc3(true)
-            }
-        }, "-=3")
         tl.to(refs.buttonRef.current, {
             opacity: 1,
             duration: 1,
@@ -185,18 +149,18 @@ const TrashSequence = (props) => {
 
 
     return <div id="trashSequence" ref={refs.sequenceRef}>
-        <div id="trashHeadline" ref={refs.headlineRef}>
-            {shouldAnimate && (generateTextForAnimation(texts.trashSequence.headline.split('')))}
-        </div>
-        <div id="trashDesc" ref={refs.descRef}>
-            {shouldAnimateDesc && (generateTextForAnimation(texts.trashSequence.description.split('')))}
-        </div>
-        <div id="trashDesc2" ref={refs.desc2Ref}>
-            {shouldAnimateDesc2 && (generateTextForAnimation(texts.trashSequence.description2.split('')))}
-        </div>
-        <div id="trashDesc3" ref={refs.desc3Ref}>
-            {shouldAnimateDesc3 && (generateTextForAnimation(texts.trashSequence.description3.split('')))}
-        </div>
+        <AnimatedText
+            ref={refs.headlineRef}
+            id="trashHeadline"
+            shouldAnimate={shouldAnimate}
+            text={texts.trashSequence.headline}
+        />
+        <AnimatedText
+            ref={refs.descRef}
+            id="trashDesc3"
+            shouldAnimate={shouldAnimateDesc}
+            text={texts.trashSequence.description}
+        />
         <div ref={refs.buttonRef} className="show-up">
             <NextButton onClick={nextScene} />
         </div>
