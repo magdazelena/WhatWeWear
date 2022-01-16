@@ -51,9 +51,6 @@ const DressesSequence = (props) => {
   useEffect(() => {
     if (shouldAnimate) animateComponentText(dressesHeadRef.current)
   }, [shouldAnimate])
-  useEffect(() => {
-    if (shouldAnimateDesc) animateComponentText(dressesDescRef.current)
-  }, [shouldAnimateDesc])
   //run scene
   const runScene = () => {
     init();
@@ -85,12 +82,6 @@ const DressesSequence = (props) => {
           });
         }
       }, "+=2");
-      timeline.to(dressesDescRef.current, {
-        duration: 0.2,
-        onComplete: () => {
-          setShouldAnimateDesc(true)
-        },
-      });
       timeline.to(buttonRef.current, {
         duration: 1,
         opacity: 1
@@ -198,23 +189,16 @@ const DressesSequence = (props) => {
     <AnimatedText
       id="dressesHeadline"
       ref={dressesHeadRef}
-      animatedText={
-        [{
-          shouldAnimate,
-          text: texts.dressesSequence.headline
-        }]
-      }
+      shouldAnimate={shouldAnimate}
+      text={texts.dressesSequence.headline}
+      onAnimationEnd={() => setShouldAnimateDesc(true)}
     />
     <div id="twenty" ref={twentyRef}>20%</div>
     <AnimatedText
       id="dressesDesc"
       ref={dressesDescRef}
-      animatedText={
-        [{
-          shouldAnimate: shouldAnimateDesc,
-          text: texts.dressesSequence.description
-        }]
-      }
+      shouldAnimate={shouldAnimateDesc}
+      text={texts.dressesSequence.description}
     />
     <div ref={buttonRef} className="show-up" >
       <NextButton onClick={nextScene} />

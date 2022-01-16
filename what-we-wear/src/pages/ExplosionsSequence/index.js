@@ -156,23 +156,15 @@ const ExplosionsSequence = (props) => {
 			<AnimatedText
 				id="explosionsHeadline"
 				ref={headlineRef}
-				animatedText={
-					[{
-						shouldAnimate,
-						text: texts.explosionsSequence.headline
-					}]
-				}
+				shouldAnimate={shouldAnimate}
+				text={texts.explosionsSequence.headline}
 			/>
 			<div id="explosionsNumber" ref={numberRef}>{counter}</div>
 			<AnimatedText
 				id="explosionsDescription"
 				ref={descriptionRef}
-				animatedText={
-					[{
-						shouldAnimate: shouldAnimateDesc,
-						text: texts.explosionsSequence.description
-					}]
-				}
+				shouldAnimate={shouldAnimateDesc}
+				text={texts.explosionsSequence.description}
 			/>
 			<div ref={buttonRef} className="show-up">
 				<NextButton onClick={nextScene} />
