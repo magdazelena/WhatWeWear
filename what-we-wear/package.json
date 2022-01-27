@@ -16,7 +16,7 @@
     "react-zlib-js": "^1.0.5",
     "scrollmagic": "^2.0.8",
     "simplex-noise": "^2.4.0",
-    "three": "^0.136.0",
+    "three": "^0.137.0",
     "three-fbx-loader": "^1.0.3",
     "zlib": "^1.0.5",
     "zlibjs": "^0.3.1"
