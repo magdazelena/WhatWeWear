@@ -8,7 +8,7 @@ body{
     background-color: $dark;
     padding: 0;
     margin: 0;
-    background-image: url('../images/5015.png');
+   // background-image: url('../images/5015.png');
     background-color: $dark;
     background-blend-mode: multiply;
     animation: backgroundPulse 12s infinite;
@@ -26,10 +26,13 @@ a{
 @keyframes backgroundPulse{
 
     0%{
-        background-color: darken($dark, 6);
+        background-color: $dark;
+    }
+    80%{
+        background-color: lighten($dark, 1);
     }
     100%{
-        background-color: darken($dark, 10);
+        background-color: $dark;
     }
 }
 #loader{

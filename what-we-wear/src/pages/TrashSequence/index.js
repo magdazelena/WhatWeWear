@@ -22,13 +22,14 @@ const TrashSequence = (props) => {
     const [shouldAnimateDesc, setShouldAnimateDesc] = useState(false)
     const [_isMounted, setMounted] = useState(false)
     const tl = new TimelineMax()
-    let scene
+    const scene = new THREE.Scene();
     useEffect(() => {
         setMounted(true)
         return () => {
+            setMounted(false)
             refs = {}
             onUnmount()
-            setMounted(false)
+            renderer.clear()
         }
     }, [])
 
@@ -67,9 +68,6 @@ const TrashSequence = (props) => {
     }
     const init = () => {
         //scene
-        scene = new THREE.Scene();
-
-
         camera.position.set(0, 0, 6);
         //lights 
         let hemiLight = new THREE.HemisphereLight(0xE29300, 0.99);
@@ -150,6 +148,12 @@ const TrashSequence = (props) => {
         requestAnimationFrame(update);
 
     }
+    const goToNextScene = () => {
+        renderer.clear()
+
+        setMounted(false)
+        nextScene()
+    }
 
 
     return <div id="trashSequence" ref={refs.sequenceRef}>
@@ -166,7 +170,7 @@ const TrashSequence = (props) => {
             text={texts.trashSequence.description}
         />
         <div ref={refs.buttonRef} className="show-up">
-            <NextButton onClick={nextScene} />
+            <NextButton onClick={goToNextScene} />
         </div>
     </div>
 
