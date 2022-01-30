@@ -8,7 +8,7 @@ import Menu from './pages/Menu';
 import renderer from './3d/utils/renderer';
 import Container from './pages/Container';
 const App = () => {
-  const [introIsDone, setIntroDone] = useState(true);
+  const [introIsDone, setIntroDone] = useState(false);
   const [startScene, setStartScene] = useState(0)
   const sectionRef = useRef();
   const controller = new ScrollMagic.Controller();

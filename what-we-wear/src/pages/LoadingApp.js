@@ -3,7 +3,7 @@ import { TweenMax, Expo, TimelineMax } from 'gsap/all';
 import ScrollMagic from 'scrollmagic';
 
 import texts from '../dictionary/en.json';
-import { animateText, reanimateText, generateTextForAnimation } from '../helpers/textAnimations';
+import AnimatedText from './components/AnimatedText';
 import NextButton from '../objects/NextButton.js';
 class LoadingApp extends Component {
 
@@ -38,12 +38,7 @@ class LoadingApp extends Component {
 			duration: 50
 		})
 			.on('leave', () => {
-				let requests = [...this.headingRef.getElementsByTagName('span')].map(item => {
-					return new Promise(resolve => {
-						animateText(item, resolve).reverse(0);
-					})
-				})
-				Promise.all(requests);
+				this.setState({ animation: 4 })
 				TweenMax.to(this.counterRef, 1, {
 					fontSize: 200
 				})
@@ -54,11 +49,6 @@ class LoadingApp extends Component {
 					this.setState({
 						counter: "710 000 000",
 						animation: 1
-					}, () => {
-						[...this.headingRef.getElementsByTagName('span')].forEach((span, i) => {
-							reanimateText(span);
-						});
-
 					})
 					TweenMax.to(this.counterRef, 1, {
 						fontSize: 50
@@ -76,14 +66,7 @@ class LoadingApp extends Component {
 						counter: "73%",
 						animation: 2
 					},
-						() => {
-							[...this.headingTopRef.getElementsByTagName('span')].forEach((span, i) => {
-								animateText(span, i).play();
-							});
-							[...this.loader2Ref.getElementsByTagName('span')].forEach((span, i) => {
-								animateText(span, i).play();
-							});
-						}
+
 
 					)
 
@@ -112,34 +95,12 @@ class LoadingApp extends Component {
 					this.setState({
 						counter: "1%",
 						animation: 3
-					}, () => {
-						[...this.headingTopRef.getElementsByTagName('span')].forEach((span, i) => {
-							animateText(span, i).play();
-						});
-						[...this.loader3Ref.getElementsByTagName('span')].forEach((span, i) => {
-							animateText(span, i).play();
-						});
 					});
 
 				}
 			})
 		this.props.controller.addScene([this.scene1, this.scene2, this.scene3])
 
-	}
-	componentDidUpdate(prevProps, prevState) {
-		// if(this.props.loading !== prevProps.loading){
-		//     this.setState({
-		//         loaded: true
-		//     })
-		// }
-		if (this.state.animation === 1 && this.state.animation !== prevState.animation) {
-			[...this.headingRef.getElementsByTagName('span')].forEach((span, i) => {
-				animateText(span, i).play();
-			});
-			[...this.headingTopRef.getElementsByTagName('span')].forEach((span, i) => {
-				animateText(span, i).play();
-			})
-		}
 	}
 
 	startAnimating() {
@@ -261,11 +222,26 @@ class LoadingApp extends Component {
 
 			<div id="loadingPage">
 				<div id="loadingSectionOne" className="loadingSection">
-					<div className="introHeadline"
-						ref={e => this.headingTopRef = e}>
-						{this.state.animation === 1 && (generateTextForAnimation(texts.pageOne.headline.split('')))}
-						{this.state.animation === 2 && (generateTextForAnimation(texts.pageTwo.headline.split('')))}
-						{this.state.animation === 3 && (generateTextForAnimation(texts.pageThree.headline.split('')))}
+					<div className="introHeadline">
+						<AnimatedText
+							className="introHeadline"
+							ref={e => this.headingTopRef = e}
+							animatedText={[
+								{
+									shouldAnimate: this.state.animation === 1,
+									text: texts.pageOne.headline
+								},
+								{
+									shouldAnimate: this.state.animation === 2,
+									text: texts.pageTwo.headline
+								},
+								{
+									shouldAnimate: this.state.animation === 3,
+									text: texts.pageThree.headline
+								},
+							]
+							}
+						/>
 					</div>
 					<div
 						id="loader"
@@ -281,32 +257,37 @@ class LoadingApp extends Component {
 
 					</div>
 					<div
-						ref={element => { this.headingRef = element }}
+
 						className="introText"
 					>
-						{
-							this.state.animation === 1 && (generateTextForAnimation(texts.pageOne.description.split('')))
-						}
+						<AnimatedText
+							ref={element => { this.headingRef = element }}
+							shouldAnimate={this.state.animation === 1}
+							text={texts.pageOne.description}
+						/>
 					</div>
 				</div>
 				<div id="loadingSectionTwo" className="loadingSection">
 					<div
-						ref={element => { this.loader2Ref = element }}
+
 						className="introText"
 					>
-						{this.state.animation === 2 &&
-							(generateTextForAnimation(texts.pageTwo.description.split('')))
-						}
+						<AnimatedText
+							ref={element => { this.loader2Ref = element }}
+							shouldAnimate={this.state.animation === 2}
+							text={texts.pageTwo.description}
+						/>
 					</div>
 				</div>
 				<div id="loadingSectionThree" className="loadingSection">
 					<div
-						ref={element => { this.loader3Ref = element }}
 						className="introText"
 					>
-						{this.state.animation === 3 &&
-							(generateTextForAnimation(texts.pageThree.description.split('')))
-						}
+						<AnimatedText
+							ref={element => { this.loader3Ref = element }}
+							shouldAnimate={this.state.animation === 3}
+							text={texts.pageThree.description}
+						/>
 					</div>
 				</div>
 				{!this.state.animationInProgress && (<NextButton onClick={this.nextButtonPressed} />)}
