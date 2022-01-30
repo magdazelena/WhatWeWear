@@ -49,11 +49,7 @@ export default function Menu(props) {
                 <li onClick={() => moveToScene(4)}><AnimatedText shouldAnimate={itemsVisible} text={menu.scene4} /></li>
                 <li onClick={() => moveToScene(5)}><AnimatedText shouldAnimate={itemsVisible} text={menu.scene5} /></li>
                 <li onClick={() => moveToScene(6)}><AnimatedText shouldAnimate={itemsVisible} text={menu.scene6} /></li>
-                <li onClick={() => {
-                    window.scrollTo({ top: window.innerHeight });
-                    setMenuActive('inactive');
-                    animateMenu(false)
-                }}><AnimatedText shouldAnimate={itemsVisible} text={menu.findMore} /></li>
+                <li onClick={() => moveToScene(7)}><AnimatedText shouldAnimate={itemsVisible} text={menu.findMore} /></li>
             </ul>
             )}
             {itemsVisible && (<ul id="side-menu">

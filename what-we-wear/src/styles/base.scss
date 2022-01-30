@@ -70,6 +70,12 @@ a{
     left: 0;
     pointer-events: none;
 }
+.section-nr-6 {
+    pointer-events: all;
+    position: absolute;
+    min-height: 100vh;
+    height: 100%;
+}
 .loadingSection{
     height: 100vh;
     width: 100%;
@@ -292,6 +298,8 @@ a{
 }
 #drag-info{
     position: fixed;
+    top: 1em;
+    left: 3em;
 }
 .show-up{
     opacity: 0;
