@@ -162,9 +162,9 @@ function FindOutMore(props) {
         <div id="findMore" ref={findRef}>
             <canvas ref={canvasRef} className="dummy-canvas" style={{ zIndex: -1 }}></canvas>
             {dictionary.resources.map((title, index) => {
-                return <div key={index} style={{ zIndex: 2222 }}>
+                return <div key={index} style={{ zIndex: 2 }}>
                     <h1>{title.title}</h1>
-                    <div className="dragg-area" id={title.slug} style={{ zIndex: 2222 }}> {
+                    <div className="dragg-area" id={title.slug} style={{ zIndex: 2 }}> {
                         list.map((item, index) => {
                             if (item.category === title.slug)
                                 return <a href={item.url} key={index}>

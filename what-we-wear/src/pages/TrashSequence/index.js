@@ -20,22 +20,24 @@ const TrashSequence = (props) => {
     }
     const [shouldAnimate, setShouldAnimate] = useState(false)
     const [shouldAnimateDesc, setShouldAnimateDesc] = useState(false)
+    const [_isMounted, setMounted] = useState(false)
     const tl = new TimelineMax()
     let scene
-    let _isMounted = false
     useEffect(() => {
-        init()
-        animateTexts()
-        update()
-        _isMounted = true
+        setMounted(true)
         return () => {
             refs = {}
             onUnmount()
-            _isMounted = false
+            setMounted(false)
         }
     }, [])
 
-
+    useEffect(() => {
+        if (_isMounted) {
+            init()
+            animateTexts()
+        }
+    }, [_isMounted])
     const animateTexts = function () {
         tl.to(refs.headlineRef.current, {
             duration: .3,
@@ -124,6 +126,8 @@ const TrashSequence = (props) => {
 
         const mesh = new THREE.Mesh(geometry, material);
         scene.add(mesh);
+        renderer.render(scene, camera)
+        update()
     }
     const update = () => {
         if (!_isMounted) return
@@ -138,7 +142,7 @@ const TrashSequence = (props) => {
         let obj = scene.children[1];
         obj.rotation.y = delta * 0.0005;
         obj.material.uniforms["time"].value = delta * 0.005;
-        // obj.material.uniforms["sineTime"].value = Math.sin( obj.material.uniforms[ "time" ].value * 0.05 );
+        obj.material.uniforms["sineTime"].value = Math.sin(obj.material.uniforms["time"].value * 0.05);
 
 
 
